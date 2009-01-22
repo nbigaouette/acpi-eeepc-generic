@@ -18,7 +18,9 @@ fi
 
 # Find the right rfkill switch, but default to the second one
 rfkill="rfkill1"
-for r in `ls /sys/class/rfkill/`; do
+lsrfkill=""
+[ -e /sys/class/rfkill ] && lsrfkill=`/bin/ls /sys/class/rfkill/`
+for r in $lsrfkill; do
     echo "r = $r"
     name=`cat /sys/class/rfkill/$r/name`
     [ "$name" == "eeepc-bluetooth" ] && rfkill=$r
@@ -26,6 +28,7 @@ done
 
 # Get rfkill switch state (0 = card off, 1 = card on)
 RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
+RADIO_STATE=0
 [ -e "$RADIO_CONTROL" ] && RADIO_STATE=$(cat $RADIO_CONTROL)
 
 [ ! -d "$EEEPC_VAR" ] && mkdir -p $EEEPC_VAR 2>/dev/null
@@ -42,7 +45,7 @@ function radio_on {
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_Bluetooth_PRE_UP[@]}"
 
     # Enable radio
-    echo 1 > $RADIO_CONTROL
+    [ -e "$RADIO_CONTROL" ] && echo 1 > $RADIO_CONTROL
 
     # Load module
     ( /sbin/modprobe $BLUETOOTH_DRIVER 2>/dev/null && (
@@ -76,7 +79,7 @@ function radio_off {
     # Unload module
     ( /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null && (
         # If successful, disable card through rkfill and save the state
-        echo 0 > $RADIO_CONTROL
+        [ -e "$RADIO_CONTROL" ] && echo 0 > $RADIO_CONTROL
         echo 0 > $EEEPC_RADIO_SAVED_STATE_FILE
 
         # Execute post-down commands
