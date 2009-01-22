@@ -2,6 +2,10 @@ post_install() {
     # This is easy to automate. Do it!
     sed -i 's/^[^#]/#&/' /etc/acpi/events/anything
 
+    # Make sure the right modules are loaded
+    modprobe eeepc_laptop &> /dev/null
+    modprobe rfkill &> /dev/null
+
     /etc/rc.d/acpid restart
 
     echo " "
