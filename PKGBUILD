@@ -15,11 +15,11 @@
 #   Reset values of AC after resume (see powersource.sh, called at the end of suspend2ram.sh)
 #   Fan control??
 
-pkgname=acpi-eeepc-generic
+pkgname=acpi-eeepc-generic-svn
 pkgver=0.3.2
-pkgrel=1
+pkgrel=2
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
-url="http://asus.com"
+url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(i686)
 license=(GPL2)
 depends=(acpid libnotify xorg-server-utils dmidecode)
