@@ -4,16 +4,15 @@
 #   Other Eee acpi packages from AUR: http://aur.archlinux.org/packages.php?K=eee
 
 # TODO
+#   Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
+#   Volume devices autodetection (LineIn/LineOut/iSpeaker...)
 #   Fix Bluetooth
 #   Some models ACPI events might be wrong or not there at all
 #   Restore feature of http://eeepc-acpi-util.sourceforge.net/ has yet to be implemented.
-#   FSB control
 #   Touch /var/eeepc/power.lock on shutdown to prevent accidental suspend. Should be deleted at boot.
-#   More automatic detection of LineIn/LineOut/iSpeaker...
-#   Autodetection of wifi module and include different hacks for each of them. See acpi-eee 10.0-1's wlan.sh
 #   Set resolution with xrandr (see display.sh) necessary?
 #   Reset values of AC after resume (see powersource.sh, called at the end of suspend2ram.sh)
-#   Fan control??
+#   FSB+Fan control
 
 pkgname=acpi-eeepc-generic
 pkgver=0.3.2
