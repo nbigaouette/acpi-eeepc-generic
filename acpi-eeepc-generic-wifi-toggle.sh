@@ -10,6 +10,7 @@
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
+. /home/nicolas/fichiers/programmes/pkgbuilds/acpi-eeepc-generic/trunk/acpi-eeepc-generic-functions.sh
 
 EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/wifi-saved
 
@@ -24,7 +25,6 @@ rfkill="rfkill0"
 lsrfkill=""
 [ -e /sys/class/rfkill ] && lsrfkill=`/bin/ls /sys/class/rfkill/`
 for r in $lsrfkill; do
-    echo "r = $r"
     name=`cat /sys/class/rfkill/$r/name`
     [ "$name" == "eeepc-wlan" ] && rfkill=$r
 done
@@ -38,6 +38,23 @@ RADIO_STATE=0
 
 # Get wifi interface
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
+
+function debug_wifi() {
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi rfkill: $RADIO_CONTROL"
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi state: $RADIO_STATE"
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi interface: $WIFI_IF"
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi module: $WIFI_DRIVER"
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_PRE_UP:"
+    print_commands "${COMMANDS_WIFI_PRE_UP[@]}"
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_POST_UP:"
+    print_commands "${COMMANDS_WIFI_POST_UP[@]}"
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_PRE_DOWN:"
+    print_commands "${COMMANDS_WIFI_PRE_DOWN[@]}"
+    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_POST_DOWN:"
+    print_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
+    
+    eeepc_notify "Can you see this?" gtk-dialog-question
+}
 
 logger "acpi-eeepc-generic-wifi-toggle.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
 
@@ -126,8 +143,11 @@ case $1 in
     "on")
         radio_on 1
     ;;
-  *)
-    radio_toggle
-  ;;
+    "debug")
+        debug_wifi
+    ;;
+    *)
+        radio_toggle
+    ;;
 esac
 

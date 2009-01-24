@@ -17,30 +17,41 @@ if [ -S /tmp/.X11-unix/X0 ]; then
 fi
 
 function eeepc_notify {
-    /bin/su $XUSER --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
-    #/usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
+    if [ "x$UID" == "x0" ]; then
+        echo "using su"
+        /bin/su $XUSER --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
+    else
+        /usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
+    fi
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }
 
+function print_commands() {
+    cmds=( "$@" )
+    cmds_num=${#cmds[@]}
+    [ "$cmds_num" == "0" ] && echo "NONE"
+    for ((i=0;i<${cmds_num};i++)); do
+        c=${cmds[${i}]}
+        echo "#$(($i+1)): $c"
+    done
+}
 function execute_commands() {
     cmds=( "$@" )
     cmds_num=${#cmds[@]}
-    logger "execute_commands = $cmds ($cmds_num)"
     for ((i=0;i<${cmds_num};i++)); do
         c=${cmds[${i}]}
-        logger "execute_commands #$i: $c"
-        echo "execute_commands #$i: $c"
+        logger "execute_commands #$(($i+1)): $c"
+        echo "execute_commands #$(($i+1)): $c"
         ${c} &
     done
 }
 function execute_commands_as_user() {
     cmds=( "$@" )
     cmds_num=${#cmds[@]}
-    logger "execute_commands_as_user = $cmds ($cmds_num)"
     for ((i=0;i<${cmds_num};i++)); do
         c=${cmds[${i}]}
-        logger "execute_commands_as_user #$i: $c"
-        echo "execute_commands_as_user #$i: $c"
+        logger "execute_commands_as_user #$(($i+1)): $c"
+        echo "execute_commands_as_user #$(($i+1)): $c"
         su $XUSER --login -c "${c} &"
     done
 }
