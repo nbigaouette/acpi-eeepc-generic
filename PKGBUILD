@@ -22,7 +22,7 @@ url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(i686)
 license=(GPL2)
 depends=(acpid xorg-server-utils dmidecode)
-optdepends=(libnotify lxtask pcmanfm lxterminal wicd)
+optdepends=(notification-daemon lxtask pcmanfm lxterminal wicd)
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
@@ -82,3 +82,25 @@ build() {
 }
 
 
+md5sums=('64eea385e307556e6149efe644c29604'
+         '1f7067f1f100562b39f82878f6e87aa6'
+         'cf253e386d7e743a3d25ec4165051521'
+         'a17f9fa32514dcd3d3596a237e517cc5'
+         'a1995a198c8e71b1afb0d86a8a8bc5e1'
+         'c21185f97d3ef8298f3c2e28d59eecc9'
+         '166a7a06aea145762799b79ac659974d'
+         '0eeb1f39a431a0eb8d0553d4cd555c2e'
+         '6fa6ac6794bef0e077b3aaa83266365d'
+         'f499c7af27f091cc85237b3fb9aa4a87'
+         '6e46b54564cdd14f2588c921c0a7faf1'
+         '4d9af939dbd59121cd4bb191d340eb1c'
+         '6950474780bed9dcc216e2e965227b2e'
+         '6950474780bed9dcc216e2e965227b2e'
+         '6950474780bed9dcc216e2e965227b2e'
+         '024286372c0a0e005804711b022dc4a3'
+         '024286372c0a0e005804711b022dc4a3'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '6950474780bed9dcc216e2e965227b2e')

@@ -16,6 +16,11 @@ fi
 
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
+        if [ ! -e /usr/bin/notify-send ]; then
+            logger "Please install 'notification-daemon'"
+            echo "Please install 'notification-daemon'"
+            return 1
+        fi
         if [ "x$UID" == "x0" ]; then
             /bin/su $user --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
         else
