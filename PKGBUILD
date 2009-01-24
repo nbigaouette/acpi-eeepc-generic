@@ -17,12 +17,13 @@
 
 pkgname=acpi-eeepc-generic
 pkgver=0.3.2
-pkgrel=2
+pkgrel=3
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(i686)
 license=(GPL2)
 depends=(acpid libnotify xorg-server-utils dmidecode)
+optdepends=(lxtask pcmanfm lxterminal)
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
