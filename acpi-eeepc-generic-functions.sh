@@ -49,7 +49,7 @@ function execute_commands_as_user() {
         c=${cmds[${i}]}
         logger "execute_commands_as_user #$(($i+1)): $c"
         echo "execute_commands_as_user #$(($i+1)): $c"
-        su $XUSER --login -c "${c} &"
+        su $user --login -c "${c} &"
     done
 }
 
