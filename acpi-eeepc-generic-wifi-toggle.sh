@@ -10,7 +10,6 @@
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
-. /home/nicolas/fichiers/programmes/pkgbuilds/acpi-eeepc-generic/trunk/acpi-eeepc-generic-functions.sh
 
 EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/wifi-saved
 

@@ -49,13 +49,14 @@ source=(
     "acpi-eeepc-901-events.conf"
     "acpi-eeepc-904HD-events.conf"
     "acpi-eeepc-S101-events.conf")
+
 md5sums=('64eea385e307556e6149efe644c29604'
-         'b7e8090e433104a398d721c0610da660'
+         '90f03be1f046d7145ffde485596a7401'
          'cf253e386d7e743a3d25ec4165051521'
          'a17f9fa32514dcd3d3596a237e517cc5'
          'a1995a198c8e71b1afb0d86a8a8bc5e1'
-         '7a0476f8feceb206b2f9ffedd15c50b7'
-         'd5da7092be13e12e19b07770da360c60'
+         '3bb0190abb7159ca331cc18ddd467fc9'
+         '166a7a06aea145762799b79ac659974d'
          '0eeb1f39a431a0eb8d0553d4cd555c2e'
          '6fa6ac6794bef0e077b3aaa83266365d'
          'f499c7af27f091cc85237b3fb9aa4a87'
