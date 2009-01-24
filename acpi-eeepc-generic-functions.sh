@@ -15,10 +15,12 @@ if [ -S /tmp/.X11-unix/X0 ]; then
 fi
 
 function eeepc_notify {
-    if [ "x$UID" == "x0" ]; then
-        /bin/su $user --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
-    else
-        /usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
+    if [ "$NOTIFY" == "libnotify" ]; then
+        if [ "x$UID" == "x0" ]; then
+            /bin/su $user --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
+        else
+            /usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
+        fi
     fi
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }

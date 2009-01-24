@@ -15,14 +15,14 @@
 #   FSB+Fan control
 
 pkgname=acpi-eeepc-generic
-pkgver=0.3.3.1
+pkgver=0.3.4
 pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(i686)
 license=(GPL2)
-depends=(acpid libnotify xorg-server-utils dmidecode)
-optdepends=(lxtask pcmanfm lxterminal wicd)
+depends=(acpid xorg-server-utils dmidecode)
+optdepends=(libnotify lxtask pcmanfm lxterminal wicd)
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
@@ -81,27 +81,4 @@ build() {
 
 }
 
-
-md5sums=('64eea385e307556e6149efe644c29604'
-         '673ea78c1aaef1be71b9d113fe363bf3'
-         'cf253e386d7e743a3d25ec4165051521'
-         'a17f9fa32514dcd3d3596a237e517cc5'
-         'a1995a198c8e71b1afb0d86a8a8bc5e1'
-         '28ded918dae6fafb1fd706d0b9a833e5'
-         '166a7a06aea145762799b79ac659974d'
-         '0eeb1f39a431a0eb8d0553d4cd555c2e'
-         '6fa6ac6794bef0e077b3aaa83266365d'
-         'f499c7af27f091cc85237b3fb9aa4a87'
-         '6e46b54564cdd14f2588c921c0a7faf1'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '024286372c0a0e005804711b022dc4a3'
-         '024286372c0a0e005804711b022dc4a3'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '6950474780bed9dcc216e2e965227b2e')
 
