@@ -4,9 +4,10 @@
 if [ -S /tmp/.X11-unix/X0 ]; then
     export DISPLAY=:0
     user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
+    # If autodetection fails, try another way...
+    [ "x$user" == "x" ] && user=`ps aux | awk '{print ""$1""}' | sort | uniq | grep -v root | grep -v hal | grep -v ntp | grep -v dbus | grep -v bin | grep -v USER`
     # If autodetection fails, fallback to default user
     # set in /etc/conf.d/acpi-eeepc-generic.conf
-    [ "x$user" == "x" ] && user=`ps aux | awk '{print ""$1""}' | sort | uniq | grep -v root | grep -v hal | grep -v ntp | grep -v dbus | grep -v bin | grep -v USER`
     [ "x$user" == "x" ] && user=$XUSER
     home=$(getent passwd $user | cut -d: -f6)
     XAUTHORITY=$home/.Xauthority
@@ -15,7 +16,7 @@ fi
 
 function eeepc_notify {
     if [ "x$UID" == "x0" ]; then
-        /bin/su $XUSER --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
+        /bin/su $user --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
     else
         /usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
     fi

@@ -50,29 +50,6 @@ source=(
     "acpi-eeepc-904HD-events.conf"
     "acpi-eeepc-S101-events.conf")
 
-md5sums=('64eea385e307556e6149efe644c29604'
-         '90f03be1f046d7145ffde485596a7401'
-         'cf253e386d7e743a3d25ec4165051521'
-         'a17f9fa32514dcd3d3596a237e517cc5'
-         'a1995a198c8e71b1afb0d86a8a8bc5e1'
-         '3bb0190abb7159ca331cc18ddd467fc9'
-         '166a7a06aea145762799b79ac659974d'
-         '0eeb1f39a431a0eb8d0553d4cd555c2e'
-         '6fa6ac6794bef0e077b3aaa83266365d'
-         'f499c7af27f091cc85237b3fb9aa4a87'
-         '6e46b54564cdd14f2588c921c0a7faf1'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '024286372c0a0e005804711b022dc4a3'
-         '024286372c0a0e005804711b022dc4a3'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '6950474780bed9dcc216e2e965227b2e')
-
 build() {
     #cd $srcdir/$pkgname-$pkgver
 
@@ -104,3 +81,25 @@ build() {
 
 }
 
+md5sums=('64eea385e307556e6149efe644c29604'
+         '9432145e2c64186180481ffed85defab'
+         'cf253e386d7e743a3d25ec4165051521'
+         'a17f9fa32514dcd3d3596a237e517cc5'
+         'a1995a198c8e71b1afb0d86a8a8bc5e1'
+         '3bb0190abb7159ca331cc18ddd467fc9'
+         '166a7a06aea145762799b79ac659974d'
+         '0eeb1f39a431a0eb8d0553d4cd555c2e'
+         '6fa6ac6794bef0e077b3aaa83266365d'
+         'f499c7af27f091cc85237b3fb9aa4a87'
+         '6e46b54564cdd14f2588c921c0a7faf1'
+         '4d9af939dbd59121cd4bb191d340eb1c'
+         '6950474780bed9dcc216e2e965227b2e'
+         '6950474780bed9dcc216e2e965227b2e'
+         '6950474780bed9dcc216e2e965227b2e'
+         '024286372c0a0e005804711b022dc4a3'
+         '024286372c0a0e005804711b022dc4a3'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '36ac41aec1b63e66fcb8ecab72a7af0e'
+         '6950474780bed9dcc216e2e965227b2e')
