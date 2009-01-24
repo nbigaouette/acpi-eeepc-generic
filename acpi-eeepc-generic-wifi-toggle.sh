@@ -5,6 +5,8 @@
 #  Edited by Nicolas Bigaouette
 #  Generic WIFI toggle utility which should work across EeePC models.
 #
+# http://code.google.com/p/acpi-eeepc-generic/
+#
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
