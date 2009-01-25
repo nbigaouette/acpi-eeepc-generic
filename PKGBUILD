@@ -37,6 +37,7 @@ source=(
     "acpi-eeepc-generic-bluetooth-toggle.sh"
     "acpi-eeepc-generic-suspend2ram.sh"
     "acpi-eeepc-generic-rotate-lvds.sh"
+    "acpi-eeepc-generic-resolution-toggle.sh"
     "eeepc.desktop"
     "eee.png"
     "acpi-eeepc-1000-events.conf"
@@ -71,27 +72,27 @@ build() {
     install -m0755 ${srcdir}/acpi-eeepc-generic-logsbackup.rcd ${pkgdir}/etc/rc.d/logsbackup || return 1
 
     # Helper scripts
+    install -m0755 ${srcdir}/acpi-eeepc-generic-bluetooth-toggle.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-resolution-toggle.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-rotate-lvds.sh ${pkgdir}/etc/acpi/eeepc || return 1
 	install -m0755 ${srcdir}/acpi-eeepc-generic-suspend2ram.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-wifi-toggle.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-bluetooth-toggle.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-rotate-lvds.sh ${pkgdir}/etc/acpi/eeepc || return 1
 
     install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications/eeepc.desktop || return 1
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps/eee.png || return 1
 
 }
-
-
 md5sums=('64eea385e307556e6149efe644c29604'
-         '1f7067f1f100562b39f82878f6e87aa6'
+         '67647202c72b3e09eb1899e5ec511121'
          'cf253e386d7e743a3d25ec4165051521'
          'a17f9fa32514dcd3d3596a237e517cc5'
          'a1995a198c8e71b1afb0d86a8a8bc5e1'
          'c21185f97d3ef8298f3c2e28d59eecc9'
-         '166a7a06aea145762799b79ac659974d'
-         '0eeb1f39a431a0eb8d0553d4cd555c2e'
+         '5e2d7f8624890febe8c6abd0ad283a1d'
+         '2c4ffe25f36233caeb8599a0a148792d'
          '6fa6ac6794bef0e077b3aaa83266365d'
-         'f499c7af27f091cc85237b3fb9aa4a87'
+         'a6e00dd68c8d3ff97bc59b1ed24cc2bc'
+         'a0a4b29a815fb945101782a6e0b5808d'
          '6e46b54564cdd14f2588c921c0a7faf1'
          '4d9af939dbd59121cd4bb191d340eb1c'
          '6950474780bed9dcc216e2e965227b2e'

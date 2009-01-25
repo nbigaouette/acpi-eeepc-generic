@@ -6,9 +6,7 @@
 #
 
 source /etc/conf.d/acpi-eeepc-generic.conf
-source /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh 
-
-[ ! -d "$EEEPC_VAR" ] && mkdir $EEEPC_VAR
+source /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
 function rotate_toggle {
   CURRENT=`xrandr  | grep LVDS | awk '{print $4}'`

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ ! -d "$EEEPC_VAR" ] && mkdir -p $EEEPC_VAR
+
 # Get username
 if [ -S /tmp/.X11-unix/X0 ]; then
     export DISPLAY=:0

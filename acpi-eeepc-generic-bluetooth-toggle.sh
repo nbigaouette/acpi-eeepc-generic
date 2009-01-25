@@ -31,8 +31,6 @@ RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
 RADIO_STATE=0
 [ -e "$RADIO_CONTROL" ] && RADIO_STATE=$(cat $RADIO_CONTROL)
 
-[ ! -d "$EEEPC_VAR" ] && mkdir -p $EEEPC_VAR 2>/dev/null
-
 # Get bluetooth interface
 #Bluetooth_IF=
 

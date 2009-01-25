@@ -33,8 +33,6 @@ RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
 RADIO_STATE=0
 [ -e "$RADIO_CONTROL" ] && RADIO_STATE=$(cat $RADIO_CONTROL)
 
-[ ! -d "$EEEPC_VAR" ] && mkdir -p $EEEPC_VAR 2>/dev/null
-
 # Get wifi interface
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
@@ -51,7 +49,7 @@ function debug_wifi() {
     print_commands "${COMMANDS_WIFI_PRE_DOWN[@]}"
     echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_POST_DOWN:"
     print_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
-    
+
     eeepc_notify "Can you see this?" gtk-dialog-question
 }
 
