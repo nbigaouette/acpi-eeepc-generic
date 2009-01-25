@@ -30,18 +30,37 @@ fi
 
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
-        if [ ! -e /usr/bin/notify-send ]; then
-            logger "Please install 'notification-daemon'"
-            echo "Please install 'notification-daemon'"
-            return 1
-        fi
-        if [ "x$UID" == "x0" ]; then
-            /bin/su $user --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
-        else
-            /usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
-        fi
+        send_libnotify $1 $2
+    elif [ "$NOTIFY" == "kdialog" ]; then
+        send_kdialog $1 $2
     fi
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
+}
+
+function send_libnotify() {
+    if [ ! -e /usr/bin/notify-send ]; then
+        logger "To use libnotify's OSD, please install 'notification-daemon'"
+        echo   "To use libnotify's OSD, please install 'notification-daemon'"
+        return 1
+    fi
+    if [ "x$UID" == "x0" ]; then
+        /bin/su $user --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
+    else
+        /usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
+    fi
+}
+
+function send_kdialog() {
+    if [ ! -e /usr/bin/kdialog ]; then
+        logger "To use kdialog's OSD, please install 'kdebase'"
+        echo   "To use kdialog's OSD, please install 'kdebase'"
+        return 1
+    fi
+    if [ "x$UID" == "x0" ]; then
+        /bin/su $user --login -c "/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" 2"
+    else
+        /usr/bin/kdialog --passivepopup "$1" --title "EeePC $EEEPC_MODEL" 2
+    fi
 }
 
 function print_commands() {
