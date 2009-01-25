@@ -44,11 +44,7 @@ function send_libnotify() {
         return 1
     fi
     cmd="/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
-    if [ "x$UID" == "x0" ]; then
-        /bin/su $user --login -c "${cmd}"
-    else
-        bash -c "${cmd}"
-    fi
+    send_generic "${cmd}"
 }
 
 function send_kdialog() {
@@ -58,10 +54,14 @@ function send_kdialog() {
         return 1
     fi
     cmd="/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" 2"
+    send_generic "${cmd}"
+}
+
+function send_generic() {
     if [ "x$UID" == "x0" ]; then
-        /bin/su $user --login -c "${cmd}"
+        /bin/su $user --login -c "${@}"
     else
-        bash -c "${cmd}"
+        bash -c "${@}"
     fi
 }
 
