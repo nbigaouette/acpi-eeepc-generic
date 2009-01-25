@@ -4,15 +4,14 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-eeepc_notify "Bluetooth toggle not implemented yet!!!" stop
-exit 0
+eeepc_notify "Bluetooth toggle not fully implemented. Please report problems" stop
 
-EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/bluetooth-saved
+BT_SAVED_STATE_FILE=$EEEPC_VAR/bluetooth-saved
 
-if [ -e $EEEPC_RADIO_SAVED_STATE_FILE ]; then
-  RADIO_SAVED_STATE=$(cat $EEEPC_RADIO_SAVED_STATE_FILE)
+if [ -e $BT_SAVED_STATE_FILE ]; then
+  BT_SAVED_STATE=$(cat $BT_SAVED_STATE_FILE)
 else
-  RADIO_SAVED_STATE=0
+  BT_SAVED_STATE=0
 fi
 
 # Find the right rfkill switch, but default to the second one
@@ -20,40 +19,60 @@ rfkill="rfkill1"
 lsrfkill=""
 [ -e /sys/class/rfkill ] && lsrfkill=`/bin/ls /sys/class/rfkill/`
 for r in $lsrfkill; do
-    echo "r = $r"
     name=`cat /sys/class/rfkill/$r/name`
     [ "$name" == "eeepc-bluetooth" ] && rfkill=$r
 done
 
 # Get rfkill switch state (0 = card off, 1 = card on)
-RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
-RADIO_STATE=0
-[ -e "$RADIO_CONTROL" ] && RADIO_STATE=$(cat $RADIO_CONTROL)
+BLUETOOTH_RFKILL="/sys/class/rfkill/${rfkill}/state"
+BLUETOOTH_STATE=0
+[ -e "$BLUETOOTH_RFKILL" ] && BLUETOOTH_STATE=$(cat $BLUETOOTH_RFKILL)
 
-# Get bluetooth interface
-#Bluetooth_IF=
+if [ -e "/sys/devices/platform/eeepc/bt" ]; then
+    BLUETOOTH_DEVICE="/sys/devices/platform/eeepc/bt"
+    BLUETOOTH_RADIO=$(cat $BLUETOOTH_DEVICE)
+fi
 
-logger "acpi-eeepc-generic-toggle-bluetooth.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
+
+function debug_bluetooth() {
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): rfkill: $BLUETOOTH_RFKILL"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): State: $BLUETOOTH_STATE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Device: $BLUETOOTH_DEVICE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Radio: $BLUETOOTH_RADIO"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_PRE_UP:"
+    print_commands "${COMMANDS_BT_PRE_UP[@]}"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_POST_UP:"
+    print_commands "${COMMANDS_BT_POST_UP[@]}"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_PRE_DOWN:"
+    print_commands "${COMMANDS_BT_PRE_DOWN[@]}"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_POST_DOWN:"
+    print_commands "${COMMANDS_BT_POST_DOWN[@]}"
+
+    eeepc_notify "Can you see this?" gtk-dialog-question
+}
 
 function radio_on {
-    eeepc_notify "Turning Bluetooth Radio on..." gnome-dev-wavelan
+    eeepc_notify "Turning Bluetooth on..." gnome-dev-wavelan
 
     # Execute pre-up commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_Bluetooth_PRE_UP[@]}"
 
-    # Enable radio
-    [ -e "$RADIO_CONTROL" ] && echo 1 > $RADIO_CONTROL
+    # Enable radio, only on 2.6.29 and up
+    if [ ${KERNEL_rel} -ge 29 ]; then
+        [ -e "$BLUETOOTH_RFKILL" ] && echo 1 > $BLUETOOTH_RFKILL
+    fi
 
     # Load module
     ( /sbin/modprobe $BLUETOOTH_DRIVER 2>/dev/null && (
         # If successful, enable card
-        echo 1 > $EEEPC_RADIO_SAVED_STATE_FILE
+        echo 1 > $BT_SAVED_STATE_FILE
+        echo 1 > $BLUETOOTH_DEVICE
         # Execute post-up commands
         execute_commands "${COMMANDS_Bluetooth_POST_UP[@]}"
 
-        eeepc_notify "Bluetooth Radio is now on" gnome-dev-wavelan
+        eeepc_notify "Bluetooth is now on" gnome-dev-wavelan
     ) || (
-        eeepc_notify "Could not enable Bluetooth radio" stop
+        eeepc_notify "Could not enable Bluetooth" stop
         # If module loading unsuccessful, try again
         if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
             eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
@@ -64,28 +83,27 @@ function radio_on {
 }
 
 function radio_off {
-    eeepc_notify "Turning Bluetooth Radio off..." gnome-dev-wavelan
+    eeepc_notify "Turning Bluetooth off..." gnome-dev-wavelan
 
     # Execute pre-down commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
 
-    # Put interface down and wait 1 second
-    #/sbin/ifconfig $Bluetooth_IF down 2>/dev/null
-    #sleep 1
-
     # Unload module
     ( /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null && (
         # If successful, disable card through rkfill and save the state
-        [ -e "$RADIO_CONTROL" ] && echo 0 > $RADIO_CONTROL
-        echo 0 > $EEEPC_RADIO_SAVED_STATE_FILE
+        # only on 2.6.29 and up
+        if [ ${KERNEL_rel} -ge 29 ]; then
+            [ -e "$BLUETOOTH_RFKILL" ] && echo 0 > $BLUETOOTH_RFKILL
+        fi
+        echo 0 > $BT_SAVED_STATE_FILE
 
         # Execute post-down commands
         execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
 
-        eeepc_notify "Bluetooth Radio is now off" gnome-dev-wavelan
+        eeepc_notify "Bluetooth is now off" gnome-dev-wavelan
     ) || (
         # If module unloading unsuccessful, try again
-        eeepc_notify "Could not disable Bluetooth radio" stop
+        eeepc_notify "Could not disable Bluetooth" stop
         if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
             eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
             sleep 2
@@ -95,7 +113,7 @@ function radio_off {
 }
 
 function radio_toggle {
-    if [ "$RADIO_STATE" = "1" ]; then
+    if [ "$BLUETOOTH_RADIO" = "1" ]; then
         radio_off 1
     else
         radio_on 1
@@ -103,7 +121,7 @@ function radio_toggle {
 }
 
 function radio_restore {
-  if [ "$RADIO_SAVED_STATE" = "1" ]; then
+  if [ "$RADIO_SAVED_RADIO" = "1" ]; then
     radio_on 1
   else
     radio_off 1
