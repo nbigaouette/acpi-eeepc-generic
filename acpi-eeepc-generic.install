@@ -38,6 +38,14 @@ post_install() {
     echo ">>> on AUR: http://aur.archlinux.org/packages.php?ID=23318"
     echo ">>> on the forum: http://bbs.archlinux.org/viewtopic.php?pid=484713"
     echo " "
+    echo ">>> Here is a list of helper script you can use:"
+    echo ">>> Rotate screen:        /etc/acpi/eeepc/acpi-eeepc-generic-rotate-lvds.sh"
+    echo ">>> Suspend to ram:       /etc/acpi/eeepc/acpi-eeepc-generic-suspend2ram.sh"
+    echo ">>> Toggle bluetooth:     /etc/acpi/eeepc/acpi-eeepc-generic-toggle-bluetooth.sh"
+    echo ">>> Toggle resolution:    /etc/acpi/eeepc/acpi-eeepc-generic-toggle-resolution.sh"
+    echo ">>> Toggle touchpad:      /etc/acpi/eeepc/acpi-eeepc-generic-toggle-touchpad.sh"
+    echo ">>> Toggle Wifi:          /etc/acpi/eeepc/acpi-eeepc-generic-toggle-wifi.sh"
+    echo " "
     echo ">>> PLEASE READ:"
     echo ">>> Edit the file /etc/conf.d/acpi-eeepc-generic.conf"
     echo ">>> and adapt it to your own needs. Some defaults are"
@@ -48,6 +56,7 @@ post_install() {
 
     #echo ">>> "
 
+    # Get the model and save it to the configuration file
     . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
     get_model
 }
