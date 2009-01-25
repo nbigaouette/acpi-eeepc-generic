@@ -30,9 +30,9 @@ fi
 
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
-        send_libnotify $1 $2
+        send_libnotify "$1" "$2"
     elif [ "$NOTIFY" == "kdialog" ]; then
-        send_kdialog $1 $2
+        send_kdialog "$1" "$2"
     fi
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }
@@ -44,6 +44,7 @@ function send_libnotify() {
         return 1
     fi
     cmd="/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
+    echo "Comand: ${cmd}"
     send_generic "${cmd}"
 }
 
