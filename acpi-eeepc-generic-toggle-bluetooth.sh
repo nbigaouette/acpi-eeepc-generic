@@ -4,7 +4,7 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-eeepc_notify "Bluetooth toggle not fully implemented. Please report problems" stop
+# eeepc_notify "Bluetooth toggle not fully implemented. Please report problems" stop
 
 BT_SAVED_STATE_FILE=$EEEPC_VAR/bluetooth-saved
 
@@ -57,9 +57,12 @@ function radio_on {
     # Execute pre-up commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_Bluetooth_PRE_UP[@]}"
 
-    # Enable radio, only on 2.6.29 and up
-    if [ ${KERNEL_rel} -ge 29 ]; then
-        [ -e "$BLUETOOTH_RFKILL" ] && echo 1 > $BLUETOOTH_RFKILL
+    # Enable radio, might fail on less then 2.6.29
+    [ -e "$BLUETOOTH_RFKILL" ] && echo 1 > $BLUETOOTH_RFKILL
+    if [ ${KERNEL_rel} -lt 29 ]; then
+        s="rfkill switch usage might fail on kernel lower than 2.6.29"
+        logger "$s"
+        echo "$s"
     fi
 
     # Load module
@@ -91,10 +94,14 @@ function radio_off {
     # Unload module
     ( /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null && (
         # If successful, disable card through rkfill and save the state
-        # only on 2.6.29 and up
-        if [ ${KERNEL_rel} -ge 29 ]; then
-            [ -e "$BLUETOOTH_RFKILL" ] && echo 0 > $BLUETOOTH_RFKILL
+        # might fail on less then 2.6.29
+        [ -e "$BLUETOOTH_RFKILL" ] && echo 0 > $BLUETOOTH_RFKILL
+        if [ ${KERNEL_rel} -lt 29 ]; then
+            s="rfkill switch usage might fail on kernel lower than 2.6.29"
+            logger "$s"
+            echo "$s"
         fi
+
         echo 0 > $BT_SAVED_STATE_FILE
 
         # Execute post-down commands
