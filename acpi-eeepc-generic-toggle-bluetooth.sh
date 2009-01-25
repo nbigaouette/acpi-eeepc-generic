@@ -28,8 +28,8 @@ BLUETOOTH_RFKILL="/sys/class/rfkill/${rfkill}/state"
 BLUETOOTH_STATE=0
 [ -e "$BLUETOOTH_RFKILL" ] && BLUETOOTH_STATE=$(cat $BLUETOOTH_RFKILL)
 
-if [ -e "/sys/devices/platform/eeepc/bt" ]; then
-    BLUETOOTH_DEVICE="/sys/devices/platform/eeepc/bt"
+BLUETOOTH_DEVICE="/sys/devices/platform/eeepc/bt"
+if [ -e $BLUETOOTH_DEVICE ]; then
     BLUETOOTH_RADIO=$(cat $BLUETOOTH_DEVICE)
 fi
 
@@ -69,7 +69,7 @@ function radio_on {
     ( /sbin/modprobe $BLUETOOTH_DRIVER 2>/dev/null && (
         # If successful, enable card
         echo 1 > $BT_SAVED_STATE_FILE
-        echo 1 > $BLUETOOTH_DEVICE
+        [ -e $BLUETOOTH_DEVICE ] && echo 1 > $BLUETOOTH_DEVICE
         # Execute post-up commands
         execute_commands "${COMMANDS_Bluetooth_POST_UP[@]}"
 
@@ -101,6 +101,8 @@ function radio_off {
             logger "$s"
             echo "$s"
         fi
+
+        [ -e $BLUETOOTH_DEVICE ] && echo 0 > $BLUETOOTH_DEVICE
 
         echo 0 > $BT_SAVED_STATE_FILE
 
