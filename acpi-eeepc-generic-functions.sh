@@ -43,10 +43,11 @@ function send_libnotify() {
         echo   "To use libnotify's OSD, please install 'notification-daemon'"
         return 1
     fi
+    cmd="/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
     if [ "x$UID" == "x0" ]; then
-        /bin/su $user --login -c "/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
+        /bin/su $user --login -c "${cmd}"
     else
-        /usr/bin/notify-send -i $2 -t 1500 "EeePC $EEEPC_MODEL" "$1"
+        bash -c "${cmd}"
     fi
 }
 
@@ -56,10 +57,11 @@ function send_kdialog() {
         echo   "To use kdialog's OSD, please install 'kdebase'"
         return 1
     fi
+    cmd="/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" 2"
     if [ "x$UID" == "x0" ]; then
-        /bin/su $user --login -c "/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" 2"
+        /bin/su $user --login -c "${cmd}"
     else
-        /usr/bin/kdialog --passivepopup "$1" --title "EeePC $EEEPC_MODEL" 2
+        bash -c "${cmd}"
     fi
 }
 
