@@ -1,7 +1,6 @@
 #!/bin/sh
 
-source /etc/conf.d/acpi-eeepc-generic.conf
-source /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
+. /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
 function suspend_check_blacklisted_processes() {
     processes=( "$@" )

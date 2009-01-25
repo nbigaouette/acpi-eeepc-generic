@@ -5,10 +5,9 @@
 #  Edited by Nicolas Bigaouette
 #  Generic WIFI toggle utility which should work across EeePC models.
 #
-# http://code.google.com/p/acpi-eeepc-generic/
+#  http://code.google.com/p/acpi-eeepc-generic/
 #
 
-. /etc/conf.d/acpi-eeepc-generic.conf
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
 EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/wifi-saved
@@ -37,23 +36,23 @@ RADIO_STATE=0
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
 function debug_wifi() {
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi rfkill: $RADIO_CONTROL"
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi state: $RADIO_STATE"
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi interface: $WIFI_IF"
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): Wifi module: $WIFI_DRIVER"
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_PRE_UP:"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi rfkill: $RADIO_CONTROL"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi state: $RADIO_STATE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi interface: $WIFI_IF"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi module: $WIFI_DRIVER"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_PRE_UP:"
     print_commands "${COMMANDS_WIFI_PRE_UP[@]}"
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_POST_UP:"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_POST_UP:"
     print_commands "${COMMANDS_WIFI_POST_UP[@]}"
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_PRE_DOWN:"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_PRE_DOWN:"
     print_commands "${COMMANDS_WIFI_PRE_DOWN[@]}"
-    echo "DEBUG (acpi-eeepc-generic-wifi-toggle.sh): COMMANDS_WIFI_POST_DOWN:"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_POST_DOWN:"
     print_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
 
     eeepc_notify "Can you see this?" gtk-dialog-question
 }
 
-logger "acpi-eeepc-generic-wifi-toggle.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
+logger "acpi-eeepc-generic-toggle-wifi.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
 
 function radio_on {
     eeepc_notify "Turning WiFi Radio on..." gnome-dev-wavelan

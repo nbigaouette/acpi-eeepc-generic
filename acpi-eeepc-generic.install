@@ -47,6 +47,7 @@ post_install() {
     echo " "
 
     #echo ">>> "
+
     . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
     get_model
 }

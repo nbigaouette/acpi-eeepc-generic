@@ -19,27 +19,14 @@ pkgver=0.3.4
 pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
-arch=(i686)
+arch=(any)
 license=(GPL2)
 depends=(acpid xorg-server-utils dmidecode)
-optdepends=(notification-daemon lxtask pcmanfm lxterminal wicd)
+optdepends=(notification-daemon lxtask pcmanfm lxterminal wicd xf86-input-synaptics gksu)
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
 source=(
-    "acpi-eeepc-generic-handler.sh"
-    "acpi-eeepc-generic-functions.sh"
-    "acpi-eeepc-generic-events"
-    "acpi-eeepc-generic-restore.rcd"
-    "acpi-eeepc-generic-logsbackup.rcd"
-    "acpi-eeepc-generic.conf"
-    "acpi-eeepc-generic-wifi-toggle.sh"
-    "acpi-eeepc-generic-bluetooth-toggle.sh"
-    "acpi-eeepc-generic-suspend2ram.sh"
-    "acpi-eeepc-generic-rotate-lvds.sh"
-    "acpi-eeepc-generic-resolution-toggle.sh"
-    "eeepc.desktop"
-    "eee.png"
     "acpi-eeepc-1000-events.conf"
     "acpi-eeepc-1000H-events.conf"
     "acpi-eeepc-1000HD-events.conf"
@@ -49,7 +36,20 @@ source=(
     "acpi-eeepc-900A-events.conf"
     "acpi-eeepc-901-events.conf"
     "acpi-eeepc-904HD-events.conf"
-    "acpi-eeepc-S101-events.conf")
+    "acpi-eeepc-S101-events.conf"
+    "acpi-eeepc-generic-events"
+    "acpi-eeepc-generic-functions.sh"
+    "acpi-eeepc-generic-handler.sh"
+    "acpi-eeepc-generic-logsbackup.rcd"
+    "acpi-eeepc-generic-rotate-lvds.sh"
+    "acpi-eeepc-generic-suspend2ram.sh"
+    "acpi-eeepc-generic-toggle-bluetooth.sh"
+    "acpi-eeepc-generic-toggle-resolution.sh"
+    "acpi-eeepc-generic-toggle-touchpad.sh"
+    "acpi-eeepc-generic-toggle-wifi.sh"
+    "acpi-eeepc-generic.conf"
+    "eee.png"
+    "eeepc.desktop")
 
 build() {
     #cd $srcdir/$pkgname-$pkgver
@@ -72,36 +72,14 @@ build() {
     install -m0755 ${srcdir}/acpi-eeepc-generic-logsbackup.rcd ${pkgdir}/etc/rc.d/logsbackup || return 1
 
     # Helper scripts
-    install -m0755 ${srcdir}/acpi-eeepc-generic-bluetooth-toggle.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-resolution-toggle.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-rotate-lvds.sh ${pkgdir}/etc/acpi/eeepc || return 1
-	install -m0755 ${srcdir}/acpi-eeepc-generic-suspend2ram.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-wifi-toggle.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-suspend2ram.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-bluetooth.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-resolution.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-touchpad.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-wifi.sh ${pkgdir}/etc/acpi/eeepc || return 1
 
     install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications/eeepc.desktop || return 1
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps/eee.png || return 1
 
 }
-md5sums=('64eea385e307556e6149efe644c29604'
-         '67647202c72b3e09eb1899e5ec511121'
-         'cf253e386d7e743a3d25ec4165051521'
-         'a17f9fa32514dcd3d3596a237e517cc5'
-         'a1995a198c8e71b1afb0d86a8a8bc5e1'
-         'c21185f97d3ef8298f3c2e28d59eecc9'
-         '5e2d7f8624890febe8c6abd0ad283a1d'
-         '2c4ffe25f36233caeb8599a0a148792d'
-         '6fa6ac6794bef0e077b3aaa83266365d'
-         'a6e00dd68c8d3ff97bc59b1ed24cc2bc'
-         'a0a4b29a815fb945101782a6e0b5808d'
-         '6e46b54564cdd14f2588c921c0a7faf1'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '024286372c0a0e005804711b022dc4a3'
-         '024286372c0a0e005804711b022dc4a3'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '6950474780bed9dcc216e2e965227b2e')

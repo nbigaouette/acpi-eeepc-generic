@@ -5,8 +5,7 @@
 # Tool to rotate LVDS panel
 #
 
-source /etc/conf.d/acpi-eeepc-generic.conf
-source /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
+. /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
 function rotate_toggle {
   CURRENT=`xrandr  | grep LVDS | awk '{print $4}'`

@@ -2,7 +2,6 @@
 #
 #
 
-. /etc/conf.d/acpi-eeepc-generic.conf
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
 eeepc_notify "Bluetooth toggle not implemented yet!!!" stop
@@ -34,7 +33,7 @@ RADIO_STATE=0
 # Get bluetooth interface
 #Bluetooth_IF=
 
-logger "acpi-eeepc-generic-bluetooth-toggle.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
+logger "acpi-eeepc-generic-toggle-bluetooth.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
 
 function radio_on {
     eeepc_notify "Turning Bluetooth Radio on..." gnome-dev-wavelan

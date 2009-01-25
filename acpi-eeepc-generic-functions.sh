@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. /etc/conf.d/acpi-eeepc-generic.conf
+
 [ ! -d "$EEEPC_VAR" ] && mkdir -p $EEEPC_VAR
 
 # Get username
@@ -75,8 +77,13 @@ function get_volume() {
 }
 
 function get_model() {
-    (grep EEEPC_MODEL /etc/conf.d/acpi-eeepc-generic.conf >/dev/null 2>&1) || echo "EEEPC_MODEL=$(dmidecode -s system-product-name)" >> /etc/conf.d/acpi-eeepc-generic.conf
-    (grep EEEPC_CPU /etc/conf.d/acpi-eeepc-generic.conf >/dev/null 2>&1) || echo "EEEPC_CPU=`((grep Celeron /proc/cpuinfo >/dev/null 2>&1) && echo Celeron) || echo Atom`" >> /etc/conf.d/acpi-eeepc-generic.conf
+    if [ -z "${EEEPC_MODEL}" ]; then
+        echo "EEEPC_MODEL=\"$(dmidecode -s system-product-name | sed 's/[ \t]*$//')\"" >> /etc/conf.d/acpi-eeepc-generic.conf
+        CPU=NONE
+        [ grep Celeron /proc/cpuinfo >/dev/null 2>&1 ] && CPU="Celeron"
+        [ grep Atom /proc/cpuinfo >/dev/null 2>&1 ] && CPU="Atom"
+        echo "EEEPC_CPU=\"$CPU\"" >> /etc/conf.d/acpi-eeepc-generic.conf
+    fi
 }
 
 function brightness_get_percentage() {

@@ -9,7 +9,6 @@
 # http://code.google.com/p/acpi-eeepc-generic/
 #
 
-. /etc/conf.d/acpi-eeepc-generic.conf
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
 tmp_xrandr="$EEEPC_VAR/lvds-modes"

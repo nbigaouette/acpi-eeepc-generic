@@ -1,10 +1,9 @@
 #!/bin/sh
 
 
-source /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
-source /etc/conf.d/acpi-eeepc-generic.conf
+. /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 get_model
-source /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
+. /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
 
 # Needed, else libnotify can't display its magic
 su $XUSER --login -c "xhost +"
