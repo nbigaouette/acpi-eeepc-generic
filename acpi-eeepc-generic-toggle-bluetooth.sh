@@ -129,6 +129,9 @@ function radio_restore {
 }
 
 case $1 in
+    "debug")
+        debug_bluetooth
+    ;;
     "restore")
         radio_restore
     ;;
