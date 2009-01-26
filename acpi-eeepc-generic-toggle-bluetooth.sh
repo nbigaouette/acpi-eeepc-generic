@@ -55,7 +55,7 @@ function radio_on {
     eeepc_notify "Turning Bluetooth on..." gnome-dev-wavelan
 
     # Execute pre-up commands just once
-    [ $1 -eq 1 ] && execute_commands "${COMMANDS_Bluetooth_PRE_UP[@]}"
+    [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_UP[@]}"
 
     # Enable radio, might fail on less then 2.6.29
     [ -e "$BLUETOOTH_RFKILL" ] && echo 1 > $BLUETOOTH_RFKILL
@@ -71,7 +71,7 @@ function radio_on {
         echo 1 > $BT_SAVED_STATE_FILE
         [ -e $BLUETOOTH_DEVICE ] && echo 1 > $BLUETOOTH_DEVICE
         # Execute post-up commands
-        execute_commands "${COMMANDS_Bluetooth_POST_UP[@]}"
+        execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
 
         eeepc_notify "Bluetooth is now on" gnome-dev-wavelan
     ) || (
