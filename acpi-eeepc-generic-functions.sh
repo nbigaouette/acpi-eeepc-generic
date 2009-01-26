@@ -119,8 +119,10 @@ function get_model() {
     if [ -z "${EEEPC_MODEL}" ]; then
         echo "EEEPC_MODEL=\"$(dmidecode -s system-product-name | sed 's/[ \t]*$//')\"" >> /etc/conf.d/acpi-eeepc-generic.conf
         CPU=NONE
-        [ grep Celeron /proc/cpuinfo >/dev/null 2>&1 ] && CPU="Celeron"
-        [ grep Atom /proc/cpuinfo >/dev/null 2>&1 ] && CPU="Atom"
+        grep_cpu=`grep Celeron /proc/cpuinfo`
+        [ "x$grep_cpu" != "x" ] && CPU="Celeron"
+        grep_cpu=`grep Atom /proc/cpuinfo`
+        [ "x$grep_cpu" != "x" ] && CPU="Atom"
         echo "EEEPC_CPU=\"$CPU\"" >> /etc/conf.d/acpi-eeepc-generic.conf
     fi
 }
