@@ -30,9 +30,9 @@ fi
 
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
-        send_libnotify "$1" "$2"
+        send_libnotify "$1" "$2" "$3"
     elif [ "$NOTIFY" == "kdialog" ]; then
-        send_kdialog "$1" "$2"
+        send_kdialog "$1" "$2" "$3"
     fi
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }
@@ -43,7 +43,9 @@ function send_libnotify() {
         echo   "To use libnotify's OSD, please install 'notification-daemon'"
         return 1
     fi
-    cmd="/usr/bin/notify-send -i $2 -t 1500 \"EeePC $EEEPC_MODEL\" \"$1\""
+    duration=$3
+    [ "x$duration" == "x" ] && duration="1500"
+    cmd="/usr/bin/notify-send -i $2 -t $duration \"EeePC $EEEPC_MODEL\" \"$1\""
     echo "Comand: ${cmd}"
     send_generic "${cmd}"
 }
@@ -54,7 +56,10 @@ function send_kdialog() {
         echo   "To use kdialog's OSD, please install 'kdebase'"
         return 1
     fi
-    cmd="/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" 2"
+    duration=$3
+    [ "x$duration" == "x" ] && duration="2000"
+    duration=$(( $duration / 1000 ))
+    cmd="/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" $duration"
     send_generic "${cmd}"
 }
 
@@ -76,6 +81,8 @@ function print_commands() {
     done
 }
 function execute_commands() {
+    [ "x$EEEPC_CONF_DONE" == "xno" ] && eeepc_notify "PLEASE EDIT YOUR CONFIGURATION FILE:
+/etc/conf.d/acpi-eeepc-generic.conf" stop 20000
     cmds=( "$@" )
     cmds_num=${#cmds[@]}
     for ((i=0;i<${cmds_num};i++)); do
