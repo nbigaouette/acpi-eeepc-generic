@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 #
 #  EeePC LVDS resolution toggle
 #  Andrew Wyatt

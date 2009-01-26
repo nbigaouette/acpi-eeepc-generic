@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 #
 # LVDS Rotate
 # Andrew Wyatt

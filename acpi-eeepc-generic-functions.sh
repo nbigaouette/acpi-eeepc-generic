@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 
@@ -62,7 +62,7 @@ function send_generic() {
     if [ "x$UID" == "x0" ]; then
         /bin/su $user --login -c "${@}"
     else
-        bash -c "${@}"
+        dash -c "${@}"
     fi
 }
 

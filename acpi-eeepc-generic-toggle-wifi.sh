@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 #
 #  EeePC WIFI Toggle
 #  by Andrew Wyatt

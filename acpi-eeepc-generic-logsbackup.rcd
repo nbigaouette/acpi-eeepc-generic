@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 now=`date +"%Y%m%d_%Hh%m"`
 

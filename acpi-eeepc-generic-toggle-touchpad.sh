@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 #
 #  EeePC Touchpad toggle
 #  Tool to enable / disable touchpad
