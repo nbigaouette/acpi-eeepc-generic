@@ -9,6 +9,8 @@
 #       -VGA only
 #       -VGA clone of LVDS
 #       -VGA left/right/below/top of LVDS
+#   XOSD for really basic osd
+#   Suspend2disk helper script
 #   Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
 #   Volume devices autodetection (LineIn/LineOut/iSpeaker...)
 #   Some models ACPI events might be wrong or not there at all
