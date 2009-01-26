@@ -22,11 +22,11 @@ case "$1" in
 	button/power)
 		case "$2" in
 			PWRF)
-			    eeepc_notify "Power button pressed"
+			    eeepc_notify "Power button pressed" gnome-session-halt
 			    execute_commands "${COMMANDS_POWER_BUTTON[@]}"
 			;;
 			*)
-			    eeepc_notify "Button undefined: $2 $3 $4"
+			    eeepc_notify "Button undefined: $2 $3 $4" keyboard
 			    logger "ACPI power undefined: $2 $3 $4"
 			;;
 		esac
@@ -35,11 +35,11 @@ case "$1" in
 	button/sleep)
 		case "$2" in
 			SLPB)
-			    eeepc_notify "Sleep button pressed"
+			    eeepc_notify "Sleep button pressed" gnome-session-suspend
 			    execute_commands "${COMMANDS_SLEEP[@]}"
 			;;
 			*)
-			    eeepc_notify "Button undefined: $2 $3 $4"
+			    eeepc_notify "Button undefined: $2 $3 $4" keyboard
 			    logger "ACPI sleep undefined: $2 $3 $4"
 			;;
 		esac
@@ -137,23 +137,20 @@ case "$1" in
 
             $EEEPC_SLEEP)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Sleep"
-                eeepc_notify "Going to sleep..."
+                eeepc_notify "Going to sleep..." gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
             $EEEPC_WIFI_TOGGLE) # WiFi Toggle
                 logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi toggle"
                 execute_commands "${COMMANDS_WIFI_TOGGLE[@]}"
-                #eeepc_notify "Wireless" network-wireless
             ;;
             $EEEPC_WIFI_UP) # WiFi Up
                 logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi Up"
                 execute_commands "${COMMANDS_WIFI_UP[@]}"
-                #eeepc_notify "Wireless Up" network-wireless
             ;;
             $EEEPC_WIFI_DOWN) # WiFi Down
                 logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi Down"
                 execute_commands "${COMMANDS_WIFI_DOWN[@]}"
-                eeepc_notify "Wireless Down" network-wireless
             ;;
             $EEEPC_BRIGHTNESS_UP|$EEEPC_BRIGHTNESS_DOWN) # Brightness
                 brightness_direction=`brightness_find_direction`
@@ -233,7 +230,7 @@ case "$1" in
 		;;
 
 	*)
-		eeepc_notify  "ACPI group/action undefined: $1 $2 $3 $4"
+		eeepc_notify  "ACPI group/action undefined: $1 $2 $3 $4" keyboard 
 		logger "ACPI group/action undefined: $1 $2 $3 $4"
 		;;
 esac

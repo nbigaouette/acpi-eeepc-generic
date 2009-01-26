@@ -2,6 +2,9 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
+logger "#############################################"
+logger "acpi-eeepc-generic-suspend2ram.sh:"
+
 function suspend_check_blacklisted_processes() {
     processes=( "$@" )
     p_num=${#processes[@]}
@@ -11,10 +14,11 @@ function suspend_check_blacklisted_processes() {
         pid=`pidof $p`
         logger "process #$i: $p ($pid)"
         echo "process #$i: $p ($pid)"
-        [ "x$pid" != "x" ] &&
-            echo "$p is running! Canceling suspend" &&
-            logger "$p is running! Canceling suspend" &&
+        if [ "x$pid" != "x" ]; then
+            echo "$p is running! Canceling suspend"
+            logger "$p is running! Canceling suspend"
             exit 0
+        fi
     done
 }
 
