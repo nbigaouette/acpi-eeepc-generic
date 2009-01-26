@@ -13,7 +13,7 @@
 #   FSB+Fan control
 
 pkgname=acpi-eeepc-generic
-pkgver=0.6
+pkgver=0.6.1
 pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
@@ -98,7 +98,7 @@ md5sums=('6950474780bed9dcc216e2e965227b2e'
          'a1995a198c8e71b1afb0d86a8a8bc5e1'
          'ee8f9f249302c4bb2aa7fc06114f17cf'
          'c55a560e0fe8c5c18de6a48153b2fcb4'
-         'cfdc5ccf4490044fdcd7c6fb7f751928'
+         '479f82b45823354717b358936229e988'
          'e6234d6135b02e15ebec13034175ba0c'
          '2bb80411eec32ac7d94f19dade82a369'
          'ce3f4006f867882d994274bead2ab906'
