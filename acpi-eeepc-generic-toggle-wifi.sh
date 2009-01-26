@@ -32,6 +32,9 @@ RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
 RADIO_STATE=0
 [ -e "$RADIO_CONTROL" ] && RADIO_STATE=$(cat $RADIO_CONTROL)
 
+RADIO_CONTROL_DEPRECATED=/proc/acpi/asus/wlan
+RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
+
 # Get wifi interface
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
@@ -61,7 +64,9 @@ function radio_on {
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_WIFI_PRE_UP[@]}"
 
     # Enable radio
-    [ -e "$RADIO_CONTROL" ] && echo 1 > $RADIO_CONTROL
+    [ -e "$RADIO_CONTROL" ]            && echo 1 > $RADIO_CONTROL
+    [ -e "$RADIO_CONTROL_DEPRECATED" ] && echo 1 > $RADIO_CONTROL_DEPRECATED
+    [ -e "$RADIO_CONTROL_OTHER" ]      && echo 1 > $RADIO_CONTROL_OTHER
 
     # Load module
     ( /sbin/modprobe $WIFI_DRIVER 2>/dev/null && (
@@ -95,7 +100,10 @@ function radio_off {
     # Unload module
     ( /sbin/modprobe -r $WIFI_DRIVER 2>/dev/null && (
         # If successful, disable card through rkfill and save the state
-        [ -e "$RADIO_CONTROL" ] && echo 0 > $RADIO_CONTROL
+        [ -e "$RADIO_CONTROL" ]            && echo 0 > $RADIO_CONTROL
+        [ -e "$RADIO_CONTROL_DEPRECATED" ] && echo 0 > $RADIO_CONTROL_DEPRECATED
+        [ -e "$RADIO_CONTROL_OTHER" ]      && echo 0 > $RADIO_CONTROL_OTHER
+
         echo 0 > $EEEPC_RADIO_SAVED_STATE_FILE
 
         # Execute post-down commands

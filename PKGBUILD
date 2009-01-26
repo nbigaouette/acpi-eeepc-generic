@@ -4,6 +4,11 @@
 #   Other Eee acpi packages from AUR: http://aur.archlinux.org/packages.php?K=eee
 
 # TODO
+#   XRandR toggle between (see acpi-eeepc900, display.sh):
+#       -LVDS only
+#       -VGA only
+#       -VGA clone of LVDS
+#       -VGA left/right/below/top of LVDS
 #   Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
 #   Volume devices autodetection (LineIn/LineOut/iSpeaker...)
 #   Some models ACPI events might be wrong or not there at all
