@@ -15,6 +15,13 @@ if [ -e "$EEEPC_VAR/touchpad_saved" ]; then
   TPSAVED=$(cat $EEEPC_VAR/touchpad_saved)
 fi
 
+enable=`synclient -l 2>&1`
+if [ "$enable" == "Can't access shared memory area. SHMConfig disabled?" ]; then
+    eeepc_notify "$enable" stop 10000
+    eeepc_notify "Ensure xorg.conf is properly configured." stop 10000
+    exit 1
+fi
+
 function touchpad_toggle {
     TOUCHPAD=`synclient -l | grep TouchpadOff | awk '{print $3}'`
     if [ "$TOUCHPAD" = "0" ]; then
@@ -55,9 +62,6 @@ function touchpad_restore {
 }
 
 case $1 in
-    test)
-        echo "test"
-    ;;
     restore)
         touchpad_restore
     ;;
@@ -65,3 +69,4 @@ case $1 in
         touchpad_toggle
     ;;
 esac
+
