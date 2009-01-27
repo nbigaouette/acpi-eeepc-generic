@@ -220,10 +220,10 @@ case "$1" in
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Volume Up"
                 eeepc_notify "Volume Up ($volume_level%)" audio-volume-high
             ;;
-# 		    00000052) # battery level critical
-# 			logger "Battery is critical, suspending"
-# 			$BATTERY_CRITICAL &
-# 		    ;;
+#             00000052) # battery level critical
+#             logger "Battery is critical, suspending"
+#             $BATTERY_CRITICAL &
+#             ;;
             *) logger "ACPI hotkey undefined: $2 $3 $4"
             ;;
         esac
