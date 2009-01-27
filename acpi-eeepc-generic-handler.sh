@@ -224,15 +224,18 @@ case "$1" in
 #             logger "Battery is critical, suspending"
 #             $BATTERY_CRITICAL &
 #             ;;
-            *) logger "ACPI hotkey undefined: $2 $3 $4"
+            *)
+                logger "ACPI hotkey undefined: $2 $3 $4"
             ;;
         esac
-        ;;
-
+    ;;
+    processor)
+        logger "Processor acpi event not implemented: $1 $2 $3 $4"
+    ;;
     *)
         eeepc_notify  "ACPI group/action undefined: $1 $2 $3 $4" keyboard
         logger "ACPI group/action undefined: $1 $2 $3 $4"
-        ;;
+    ;;
 esac
 
 #su $XUSER --login -c "xhost -"
