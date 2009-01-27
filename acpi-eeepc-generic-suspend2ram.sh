@@ -17,6 +17,7 @@ function suspend_check_blacklisted_processes() {
         if [ "x$pid" != "x" ]; then
             echo "$p is running! Canceling suspend"
             logger "$p is running! Canceling suspend"
+            eeepc_notify "$p is running! Canceling suspend" stop 5000
             exit 0
         fi
     done

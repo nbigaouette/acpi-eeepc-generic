@@ -4,6 +4,13 @@
 #   Other Eee acpi packages from AUR: http://aur.archlinux.org/packages.php?K=eee
 
 # TODO
+#   XRandR toggle between (see acpi-eeepc900, display.sh):
+#       -LVDS only
+#       -VGA only
+#       -VGA clone of LVDS
+#       -VGA left/right/below/top of LVDS
+#   XOSD for really basic osd
+#   Suspend2disk helper script
 #   Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
 #   Volume devices autodetection (LineIn/LineOut/iSpeaker...)
 #   Some models ACPI events might be wrong or not there at all
@@ -13,7 +20,7 @@
 #   FSB+Fan control
 
 pkgname=acpi-eeepc-generic
-pkgver=0.6.2
+pkgver=0.6.3
 pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
@@ -46,6 +53,7 @@ source=(
     "acpi-eeepc-generic-toggle-touchpad.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
     "acpi-eeepc-generic.conf"
+    "bluetooth.png"
     "eee.png"
     "eeepc.desktop")
 
@@ -78,8 +86,8 @@ build() {
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-wifi.sh ${pkgdir}/etc/acpi/eeepc || return 1
 
     install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications/eeepc.desktop || return 1
-    install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps/eee.png || return 1
-
+    install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
+    install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
 
 md5sums=('6950474780bed9dcc216e2e965227b2e'
@@ -94,14 +102,15 @@ md5sums=('6950474780bed9dcc216e2e965227b2e'
          '6950474780bed9dcc216e2e965227b2e'
          'cf253e386d7e743a3d25ec4165051521'
          '9f6b62ca1b430c547d6e6251aef2075f'
-         '6a20ed431b57aa108489a9a39cbf7c65'
+         '6e159e68513e63a97a4f7a96aaa768b3'
          'a1995a198c8e71b1afb0d86a8a8bc5e1'
          'ee8f9f249302c4bb2aa7fc06114f17cf'
-         '4e8e6c69cbf090b213c578e50e144cb8'
-         '479f82b45823354717b358936229e988'
+         '3c06e1607db782bef91f68766ade0d24'
+         '72e73d6bce91b5daa1e364d6f34d203a'
          'e6234d6135b02e15ebec13034175ba0c'
          '9df840979397399e94a10a381449c959'
-         'ce3f4006f867882d994274bead2ab906'
-         '5e857a2b9ea1a325148088e5e321c38c'
+         'af1fe01d3e713b6c7f755ad5052a2e3d'
+         'e7596549c7243880c3d4f580ac924eb9'
+         'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
          '6e46b54564cdd14f2588c921c0a7faf1')
