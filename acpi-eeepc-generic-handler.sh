@@ -173,8 +173,8 @@ case "$1" in
             ;;
             $EEEPC_XRANDR_TOGGLE) # RandR
                 logger "acpi-eeepc-generic-handler.sh (hotkey): RandR"
-                execute_commands "${COMMANDS_XRANDR_CLONE[@]}"
-                eeepc_notify "Clone" video-display
+                execute_commands "${COMMANDS_XRANDR_TOGGLE[@]}"
+                #eeepc_notify "Clone" video-display
             ;;
             $EEEPC_XRANDR_CLONE) # RandR (clone)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): RandR (clone)"
