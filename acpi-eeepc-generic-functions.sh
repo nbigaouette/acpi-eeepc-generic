@@ -46,7 +46,6 @@ function send_libnotify() {
     duration=$3
     [ "x$duration" == "x" ] && duration="1500"
     cmd="/usr/bin/notify-send -i $2 -t $duration \"EeePC $EEEPC_MODEL\" \"$1\""
-    echo "Comand: ${cmd}"
     send_generic "${cmd}"
 }
 
