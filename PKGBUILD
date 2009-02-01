@@ -27,7 +27,16 @@ url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
 license=(GPL2)
 depends=(acpid xorg-server-utils dmidecode)
-optdepends=(notification-daemon kdebase lxtask pcmanfm lxterminal wicd xf86-input-synaptics gksu)
+optdepends=(
+    "notification-daemon: On Screen Display (OSD) of notifications (GTK+)"
+    "kdebase: On Screen Display (OSD) of notifications (KDE)"
+    "lxtask: Lightweight task manager from LXDE"
+    "pcmanfm: Lightweight file browser from LXDE"
+    "lxterminal: Lightweight terminal from LXDE"
+    "wicd: Network connection GUI"
+    "xf86-input-synaptics: Touchpad driver"
+    "gksu: Graphical su frontend to edit the configuration file"
+)
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
