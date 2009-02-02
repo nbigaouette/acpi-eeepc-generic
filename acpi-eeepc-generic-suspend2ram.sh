@@ -26,9 +26,9 @@ function suspend_check_blacklisted_processes() {
 suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
 
 if [ -e "${EEEPC_VAR}/power.lock" ]; then
-    msg="${EEEPC_VAR}/power.lock exist, canceling suspend"
-    logger "$msg"
-    eeepc_notify "$msg" stop 
+    msg="Suspend lock exist, canceling suspend"
+    logger "$msg (${EEEPC_VAR}/power.lock)"
+    eeepc_notify "$msg" stop 5000
 	exit 0
 fi
 
