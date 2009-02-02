@@ -5,16 +5,16 @@
 lock="${EEEPC_VAR}/power.lock"
 
 if [ -e "$lock" ]; then
-    msg="Disabling suspend lock"
+    msg="You can now suspend normally"
     rm -f $lock
     logger "$msg"
-    eeepc_notify "$msg" stop
+    eeepc_notify "$msg" gnome-session-suspend
     exit 0
 else
-    msg="Enabling suspend lock"
+    msg="Suspend is now blocked"
     touch $lock
     logger "$msg"
-    eeepc_notify "$msg" gnome-session-suspend
+    eeepc_notify "$msg" stop
     exit 0
 fi
 
