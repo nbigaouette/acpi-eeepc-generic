@@ -26,7 +26,9 @@ function suspend_check_blacklisted_processes() {
 suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
 
 if [ -e "${EEEPC_VAR}/power.lock" ]; then
-    logger "${EEEPC_VAR}/power.lock exist, canceling suspend"
+    msg="${EEEPC_VAR}/power.lock exist, canceling suspend"
+    logger "$msg"
+    eeepc_notify "$msg" stop 
 	exit 0
 fi
 
@@ -41,6 +43,11 @@ if grep -q mem /sys/power/state ; then
 	# BEGIN SUSPEND SEQUENCE
 
 	logger "Start suspend sequence"
+
+    # Turn off external monitor
+    xrandr --output LVDS --preferred --output VGA --off
+    # Save logs
+    /etc/rc.d/logsbackup stop
 
 	# get console number
 	CONSOLE_NUMBER=$(fgconsole)

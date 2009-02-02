@@ -31,6 +31,7 @@ optdepends=(
     "notification-daemon: On Screen Display (OSD) of notifications (GTK+)"
     "kdebase: On Screen Display (OSD) of notifications (KDE)"
     "lxtask: Lightweight task manager from LXDE"
+    "lxrandr: Lightweight GUI for controling screen output from LXDE"
     "pcmanfm: Lightweight file browser from LXDE"
     "lxterminal: Lightweight terminal from LXDE"
     "wicd: Network connection GUI"
@@ -61,10 +62,12 @@ source=(
     "acpi-eeepc-generic-toggle-resolution.sh"
     "acpi-eeepc-generic-toggle-touchpad.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
+    "acpi-eeepc-generic-toggle-lock-suspend.sh"
     "acpi-eeepc-generic.conf"
     "bluetooth.png"
     "eee.png"
-    "eeepc.desktop")
+    "eeepc.desktop"
+    "eeepc-suspend-lock.desktop")
 
 build() {
     #cd $srcdir/$pkgname-$pkgver
@@ -93,33 +96,11 @@ build() {
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-resolution.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-touchpad.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-wifi.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-lock-suspend.sh ${pkgdir}/etc/acpi/eeepc || return 1
 
-    install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications/eeepc.desktop || return 1
+    install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications || return 1
+    install -m0755 ${srcdir}/eeepc-suspend-lock.desktop ${pkgdir}/usr/share/applications || return 1
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
 
-md5sums=('6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '024286372c0a0e005804711b022dc4a3'
-         '024286372c0a0e005804711b022dc4a3'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '6950474780bed9dcc216e2e965227b2e'
-         'cf253e386d7e743a3d25ec4165051521'
-         '9f6b62ca1b430c547d6e6251aef2075f'
-         '6e159e68513e63a97a4f7a96aaa768b3'
-         'a1995a198c8e71b1afb0d86a8a8bc5e1'
-         'ee8f9f249302c4bb2aa7fc06114f17cf'
-         '3c06e1607db782bef91f68766ade0d24'
-         '72e73d6bce91b5daa1e364d6f34d203a'
-         'e6234d6135b02e15ebec13034175ba0c'
-         '9df840979397399e94a10a381449c959'
-         'af1fe01d3e713b6c7f755ad5052a2e3d'
-         'e7596549c7243880c3d4f580ac924eb9'
-         'b6e3ad05a0d6c9ed87bd0859267e86d8'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '6e46b54564cdd14f2588c921c0a7faf1')

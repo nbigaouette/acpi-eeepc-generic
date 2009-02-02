@@ -40,12 +40,24 @@ xrandr_vga_below_of_lvds="$xrandr --output LVDS --auto --output VGA --auto --bel
 xrandr_vga="$xrandr --output LVDS --off --output VGA --auto"
 xrandr_lvds="$xrandr --output LVDS --auto --output VGA --off"
 
-function toggle_screens {
+modes=(lvds vga )
+
+function toggle_screens() {
+    for mode in $LVDS_MODES $LVDS_MODES; do
+        if [ "$mode" = "$LVDS_CURRENT" ]; then
+            NEXT=1;
+        elif [ "$NEXT" = "1" ]; then
+            xrandr -s $mode
+            eeepc_notify "Changing resolution to \"$mode\"" video-display
+            echo $mode > $EEEPC_VAR/resolution_saved
+            exit
+        fi
+    done
 
 }
 
-
-
+echo "vga_connected = $vga_connected"
+echo "current = $current"
 
 
 
