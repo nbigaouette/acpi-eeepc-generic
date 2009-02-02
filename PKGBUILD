@@ -30,6 +30,7 @@ depends=(acpid xorg-server-utils dmidecode)
 optdepends=(
     "notification-daemon: On Screen Display (OSD) of notifications (GTK+)"
     "kdebase: On Screen Display (OSD) of notifications (KDE)"
+    "dzen2: On Screen Display (OSD) with no depedencies"
     "lxtask: Lightweight task manager from LXDE"
     "lxrandr: Lightweight GUI for controling screen output from LXDE"
     "pcmanfm: Lightweight file browser from LXDE"
