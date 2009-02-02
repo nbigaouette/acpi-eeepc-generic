@@ -72,7 +72,7 @@ function send_dzen() {
     fi
     duration=$3
     [ "x$duration" == "x" ] && duration="2000"
-    duration=$(( $duration / 1000 ))
+    duration=$(( 5 * $duration / 1000 ))
     cmd="(echo \"$1\"; sleep $duration) | /usr/bin/dzen2"
 #    cmd="/usr/bin/dzen2 --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" $duration"
     send_generic "${cmd}"
