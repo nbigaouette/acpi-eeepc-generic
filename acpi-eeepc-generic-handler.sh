@@ -93,8 +93,8 @@ case "$1" in
         lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
         case "$lidstate" in
         open)
-            # screen on
-            xset dpms force on
+            xset dpms force on  # Screen on
+            restore_brightness  # Restore brightness
         ;;
         closed)
             if [ "$COMMANDS_ON_LID_CLOSE" == "yes" ]; then
