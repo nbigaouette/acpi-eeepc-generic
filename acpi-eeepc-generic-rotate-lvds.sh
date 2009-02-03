@@ -9,14 +9,14 @@
 
 function rotate_toggle {
   CURRENT=`xrandr  | grep LVDS | awk '{print $4}'`
-  if [ "$CURRENT" = "left" ]; then
+  if [ "$CURRENT" = "right" ]; then
     ROTATION="inverted"
   elif [ "$CURRENT" = "inverted" ]; then
-    ROTATION="right"
-  elif [ "$CURRENT" = "right" ]; then
+    ROTATION="left"
+  elif [ "$CURRENT" = "left" ]; then
     ROTATION="normal"
   else
-    ROTATION="left"
+    ROTATION="right"
   fi
   if [ "$ROTATION" ]; then
     rotate_lvds "$ROTATION"

@@ -93,8 +93,8 @@ case "$1" in
         lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
         case "$lidstate" in
         open)
-            # screen on
-            xset dpms force on
+            xset dpms force on  # Screen on
+            restore_brightness  # Restore brightness
         ;;
         closed)
             if [ "$COMMANDS_ON_LID_CLOSE" == "yes" ]; then
@@ -157,13 +157,13 @@ case "$1" in
                 if [ "$brightness_direction" == "up" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_UP[@]}"
                     brightness_percentage=`brightness_get_percentage`
-                    logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Up ($brightness_percentage%)"
-                    eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
+                    [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Up ($brightness_percentage%)"
+                    [ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
                 else
                     execute_commands "${COMMANDS_BRIGHTNESS_DOWN[@]}"
                     brightness_percentage=`brightness_get_percentage`
-                    logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Down ($brightness_percentage%)"
-                    eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
+                    [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Down ($brightness_percentage%)"
+                    [ "$brightness_percentage" != "0" ] && eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
                 fi
             ;;
             $EEEPC_SCREEN_OFF) # Turn off screen
@@ -173,8 +173,8 @@ case "$1" in
             ;;
             $EEEPC_XRANDR_TOGGLE) # RandR
                 logger "acpi-eeepc-generic-handler.sh (hotkey): RandR"
-                execute_commands "${COMMANDS_XRANDR_CLONE[@]}"
-                eeepc_notify "Clone" video-display
+                execute_commands "${COMMANDS_XRANDR_TOGGLE[@]}"
+                #eeepc_notify "Clone" video-display
             ;;
             $EEEPC_XRANDR_CLONE) # RandR (clone)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): RandR (clone)"

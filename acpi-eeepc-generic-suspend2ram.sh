@@ -26,8 +26,10 @@ function suspend_check_blacklisted_processes() {
 suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
 
 if [ -e "${EEEPC_VAR}/power.lock" ]; then
-    logger "${EEEPC_VAR}/power.lock exist, canceling suspend"
-	exit 0
+    msg="Suspend lock exist, canceling suspend"
+    logger "$msg (${EEEPC_VAR}/power.lock)"
+    eeepc_notify "$msg" stop 5000
+    exit 0
 fi
 
 vga_is_on=`xrandr | grep -A 1 VGA | grep "*"`
@@ -38,51 +40,57 @@ fi
 
 if grep -q mem /sys/power/state ; then
 
-	# BEGIN SUSPEND SEQUENCE
+    # BEGIN SUSPEND SEQUENCE
 
-	logger "Start suspend sequence"
+    logger "Start suspend sequence"
 
-	# get console number
-	CONSOLE_NUMBER=$(fgconsole)
-	logger "Saving console number: $CONSOLE_NUMBER"
+    # Turn off external monitor
+    xrandr --output LVDS --preferred --output VGA --off
+    # Save logs
+    /etc/rc.d/logsbackup stop
 
- 	# save the brightness value
- 	BRN=`cat /sys/class/backlight/eeepc/actual_brightness`
- 	logger "Saving brightness value: $BRN"
+    # get console number
+    CONSOLE_NUMBER=$(fgconsole)
+    logger "Saving console number: $CONSOLE_NUMBER"
 
-	# save the FSB value and go to powersaver mode
+#  	# save the brightness value
+#  	BRN=`cat /sys/class/backlight/eeepc/actual_brightness`
+#  	logger "Saving brightness value: $BRN"
+
+    # save the FSB value and go to powersaver mode
 # 	/etc/acpi/eee/fsb.sh autosuspend
     logger "Save the FSB value and go to powersaver mode: DISABLE"
 
-	#
-	LOADEEE="no"
-	EEESTATE=$(lsmod | grep eee | awk {'print $1'})
-	if [ "X$EEESTATE" == "Xeee" ];
-	    then
-	    modprobe -r eee
-	    LOADEEE="yes"
-	    logger "Unloading eee module";
-	fi
+    #
+    LOADEEE="no"
+    EEESTATE=$(lsmod | grep eee | awk {'print $1'})
+    if [ "X$EEESTATE" == "Xeee" ];
+        then
+        modprobe -r eee
+        LOADEEE="yes"
+        logger "Unloading eee module";
+    fi
 
-	# flush the buffers to disk
-	sync
+    # flush the buffers to disk
+    sync
 
-	# change virtual terminal to not screw up X
-	chvt 1
+    # change virtual terminal to not screw up X
+    chvt 1
 
-	# put us into suspend state
-	echo -n "mem" > /sys/power/state
+    # put us into suspend state
+    echo -n "mem" > /sys/power/state
 
     logger "BEGIN WAKEUP SEQUENCE..."
 
-	#Ugly but effective way to restore screen
-	#/usr/sbin/vbetool post
-	chvt $CONSOLE_NUMBER
+    #Ugly but effective way to restore screen
+    #/usr/sbin/vbetool post
+    chvt $CONSOLE_NUMBER
 
-	# restore backlight BRN
- 	sleep 1
-    echo $BRN > /sys/class/backlight/eeepc/brightness
-    logger "Restoring brightness"
+    # restore backlight BRN
+    sleep 1
+    #echo $BRN > /sys/class/backlight/eeepc/brightness
+    #logger "Restoring brightness"
+    restore_brightness  # Restore brightness
 
 #	# restore the FSB value
 # 	/etc/acpi/eee/fsb.sh autoresume

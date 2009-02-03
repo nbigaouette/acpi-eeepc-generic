@@ -10,7 +10,7 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/wifi-saved
+EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/states/wifi
 
 if [ -e $EEEPC_RADIO_SAVED_STATE_FILE ]; then
   RADIO_SAVED_STATE=$(cat $EEEPC_RADIO_SAVED_STATE_FILE)
@@ -58,7 +58,10 @@ function debug_wifi() {
 logger "acpi-eeepc-generic-toggle-wifi.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
 
 function radio_on {
-    eeepc_notify "Turning WiFi Radio on..." gnome-dev-wavelan
+    show_notifications=1
+    [ "$2" == "0" ] && show_notifications=
+
+    [ "$show_notifications" == "1" ] && eeepc_notify "Turning WiFi Radio on..." gnome-dev-wavelan
 
     # Execute pre-up commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_WIFI_PRE_UP[@]}"
@@ -75,20 +78,23 @@ function radio_on {
         # Execute post-up commands
         execute_commands "${COMMANDS_WIFI_POST_UP[@]}"
 
-        eeepc_notify "WiFi Radio is now on" gnome-dev-wavelan
+        [ "$show_notifications" == "1" ] && eeepc_notify "WiFi Radio is now on" gnome-dev-wavelan
     ) || (
-        eeepc_notify "Could not enable WiFi radio" stop
+        [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable WiFi radio" stop
         # If module loading unsuccessful, try again
         if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
-            eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
+            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
             sleep 2
-            radio_on $(($1+1))
+            radio_on $(($1+1)) $show_notifications
         fi
     ) )
 }
 
 function radio_off {
-    eeepc_notify "Turning WiFi Radio off..." gnome-dev-wavelan
+    show_notifications=1
+    [ "$2" == "0" ] && show_notifications=0
+
+    [ "$show_notifications" == "1" ] && eeepc_notify "Turning WiFi Radio off..." gnome-dev-wavelan
 
     # Execute pre-down commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_WIFI_PRE_DOWN[@]}"
@@ -109,14 +115,14 @@ function radio_off {
         # Execute post-down commands
         execute_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
 
-        eeepc_notify "WiFi Radio is now off" gnome-dev-wavelan
+        [ "$show_notifications" == "1" ] && eeepc_notify "WiFi Radio is now off" gnome-dev-wavelan
     ) || (
         # If module unloading unsuccessful, try again
-        eeepc_notify "Could not disable WiFi radio" stop
+        [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable WiFi radio" stop
         if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
-            eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
+                [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
             sleep 2
-            radio_off $(($1+1))
+            radio_off $(($1+1)) $show_notifications
         fi
     ) )
 }
@@ -131,9 +137,9 @@ function radio_toggle {
 
 function radio_restore {
   if [ "$RADIO_SAVED_STATE" = "1" ]; then
-    radio_on 1
+    radio_on 1 0
   else
-    radio_off 1
+    radio_off 1 0
   fi
 }
 

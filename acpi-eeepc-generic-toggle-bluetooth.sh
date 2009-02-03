@@ -4,9 +4,7 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-# eeepc_notify "Bluetooth toggle not fully implemented. Please report problems" stop
-
-BT_SAVED_STATE_FILE=$EEEPC_VAR/bluetooth-saved
+BT_SAVED_STATE_FILE=$EEEPC_VAR/states/bluetooth
 
 if [ -e $BT_SAVED_STATE_FILE ]; then
   BT_SAVED_STATE=$(cat $BT_SAVED_STATE_FILE)
@@ -52,7 +50,10 @@ function debug_bluetooth() {
 }
 
 function radio_on {
-    eeepc_notify "Turning Bluetooth on..." bluetooth
+    show_notifications=1
+    [ "$2" == "0" ] && show_notifications=0
+
+    [ "$show_notifications" == "1" ] && eeepc_notify "Turning Bluetooth on..." bluetooth
 
     # Execute pre-up commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_UP[@]}"
@@ -73,20 +74,23 @@ function radio_on {
         # Execute post-up commands
         execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
 
-        eeepc_notify "Bluetooth is now on" bluetooth
+        [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now on" bluetooth
     ) || (
-        eeepc_notify "Could not enable Bluetooth" stop
+        [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable Bluetooth" stop
         # If module loading unsuccessful, try again
-        if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
-            eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" bluetooth
+        if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
+            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
             sleep 2
-            radio_on $(($1+1))
+            radio_on $(($1+1)) $show_notifications
         fi
     ) )
 }
 
 function radio_off {
-    eeepc_notify "Turning Bluetooth off..." bluetooth
+    show_notifications=1
+    [ "$2" == "0" ] && show_notifications=0
+
+    [ "$show_notifications" == "1" ] && eeepc_notify "Turning Bluetooth off..." bluetooth
 
     # Execute pre-down commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
@@ -109,14 +113,14 @@ function radio_off {
         # Execute post-down commands
         execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
 
-        eeepc_notify "Bluetooth is now off" bluetooth
+        [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now off" bluetooth
     ) || (
         # If module unloading unsuccessful, try again
-        eeepc_notify "Could not disable Bluetooth" stop
-        if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
-            eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" bluetooth
+        [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable Bluetooth" stop
+        if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
+            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
             sleep 2
-            radio_off $(($1+1))
+            radio_off $(($1+1)) $show_notifications
         fi
     ) )
 }
@@ -131,9 +135,9 @@ function radio_toggle {
 
 function radio_restore {
   if [ "$RADIO_SAVED_RADIO" = "1" ]; then
-    radio_on 1
+    radio_on 1 0
   else
-    radio_off 1
+    radio_off 1 0
   fi
 }
 
