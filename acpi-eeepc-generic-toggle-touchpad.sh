@@ -11,8 +11,11 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-if [ -e "$EEEPC_VAR/touchpad_saved" ]; then
-  TPSAVED=$(cat $EEEPC_VAR/touchpad_saved)
+# 0 means off, 1 means on
+STATE_FILE="$EEEPC_VAR/states/touchpad"
+
+if [ -e "$STATE_FILE" ]; then
+  TPSAVED=$(cat $STATE_FILE)
 fi
 
 enable=`synclient -l 2>&1`
@@ -23,9 +26,9 @@ if [ "$enable" == "Can't access shared memory area. SHMConfig disabled?" ]; then
 fi
 
 function touchpad_toggle {
-    TOUCHPAD=`synclient -l | grep TouchpadOff | awk '{print $3}'`
-    if [ "$TOUCHPAD" = "0" ]; then
-        echo 1 > $EEEPC_VAR/touchpad_saved
+    TOUCHPAD_OFF=`synclient -l | grep TouchpadOff | awk '{print $3}'`
+    if [ "$TOUCHPAD_OFF" = "0" ]; then
+        echo 0 > $STATE_FILE
         synclient TouchpadOff=1
         if [ $? ]; then
             eeepc_notify "Touchpad Disabled" mouse
@@ -33,7 +36,7 @@ function touchpad_toggle {
             eeepc_notify "Unable to disable touchpad; Ensure xorg.conf is properly configured." stop
         fi
     else
-        echo 0 > $EEEPC_VAR/touchpad_saved
+        echo 1 > $STATE_FILE
         synclient TouchpadOff=0
         if [ $? ]; then
             eeepc_notify "Touchpad Enabled" mouse
@@ -44,20 +47,20 @@ function touchpad_toggle {
 }
 
 function touchpad_restore {
-    if [ "$TPSAVED" = "1" ]; then
+    if [ "$TPSAVED" = "0" ]; then
         synclient TouchpadOff=1
-        if [ $? ]; then
-            eeepc_notify "Touchpad Disabled" mouse
-        else
-            eeepc_notify "Unable to disable touchpad; Ensure xorg.conf is properly configured." stop
-        fi
+#        if [ $? ]; then
+#            eeepc_notify "Touchpad Disabled" mouse
+#        else
+#            eeepc_notify "Unable to disable touchpad; Ensure xorg.conf is properly configured." stop
+#        fi
     else
         synclient TouchpadOff=0
-        if [ $? ]; then
-            eeepc_notify "Touchpad Enabled" mouse
-        else
-            eeepc_notify "Unable to enable touchpad; Ensure xorg.conf is properly configured." stop
-        fi
+#        if [ $? ]; then
+#            eeepc_notify "Touchpad Enabled" mouse
+#        else
+#            eeepc_notify "Unable to enable touchpad; Ensure xorg.conf is properly configured." stop
+#        fi
     fi
 }
 

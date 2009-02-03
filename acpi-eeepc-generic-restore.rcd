@@ -1,0 +1,69 @@
+#!/bin/sh
+#  EeePC Configuration restore
+#  Edited by Nicolas Bigaouette
+#  Generic WIFI toggle utility which should work across EeePC models.
+#
+#  http://code.google.com/p/acpi-eeepc-generic/
+#
+#
+
+. /etc/rc.conf
+. /etc/rc.d/functions
+
+. /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
+
+case "$1" in
+    restart|restore|reload|force-reload|start)
+
+
+    ;;
+
+    stop)
+    ;;
+    *)
+	    echo "usage: $0 {start}"  
+    ;;
+esac
+
+function restore_wifi() {
+    if [ "$RESTORE_WIFI" = "1" ]; then
+        if [ -e "$EEEPC_VAR/states/wifi" ]; then
+            stat_busy "Restoring EeePC state (wifi)..."
+            /etc/acpi/eeepc/acpi-eeepc-generic-toggle-wifi.sh restore
+            stat_done
+        fi
+    fi
+}
+
+function restore_bluetooth() {
+    if [ "$RESTORE_BLUETOOTH" = "1" ]; then
+        if [ -e "$EEEPC_VAR/states/bluetooth" ]; then
+            stat_busy "Restoring EeePC state (bluetooth)..."
+            /etc/acpi/eeepc/acpi-eeepc-generic-toggle-bluetooth.sh restore &> /dev/null
+            stat_done
+        fi
+    fi
+}
+
+function restore_brightness() {
+    if [ "$RESTORE_BRIGHTNESS" = "1" ]; then
+        if [ -e "$EEEPC_VAR/states/brightness" ]; then
+            stat_busy "Restoring EeePC state (brightness)..."
+            brightness_restore
+            stat_done
+        fi
+    fi
+}
+
+function restore_touchpad() {
+    if [ "$RESTORE_TOUCHPAD" = "1" ]; then
+        if [ -e "$EEEPC_VAR/states/touchpad" ]; then
+            stat_busy "Restoring EeePC state (touchpad)..."
+            /etc/acpi/eeepc/acpi-eeepc-generic-toggle-touchpad.sh restore
+            stat_done
+        fi
+    fi
+}
+
+exit 0
+

@@ -57,6 +57,7 @@ source=(
     "acpi-eeepc-generic-functions.sh"
     "acpi-eeepc-generic-handler.sh"
     "acpi-eeepc-generic-logsbackup.rcd"
+    "acpi-eeepc-generic-restore.rcd"
     "acpi-eeepc-generic-rotate-lvds.sh"
     "acpi-eeepc-generic-suspend2ram.sh"
     "acpi-eeepc-generic-toggle-bluetooth.sh"
@@ -87,7 +88,7 @@ build() {
         install -m0644 $f ${pkgdir}/etc/acpi/eeepc/models
     done
 
-    #install -m0755 ${srcdir}/acpi-eeepc-generic-restore.rcd ${pkgdir}/etc/rc.d/eeepc-restore || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-restore.rcd ${pkgdir}/etc/rc.d/eeepc-restore || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-logsbackup.rcd ${pkgdir}/etc/rc.d/logsbackup || return 1
 
     # Helper scripts

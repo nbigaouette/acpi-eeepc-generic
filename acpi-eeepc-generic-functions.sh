@@ -2,7 +2,9 @@
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 
-[ ! -d "$EEEPC_VAR" ] && mkdir -p $EEEPC_VAR
+[ ! -d "$EEEPC_VAR/states" ] && mkdir -p $EEEPC_VAR/states
+
+chmod a+w /var/eeepc/states/* &> /dev/null
 
 KERNEL=`uname -r`
 KERNEL=${KERNEL%%-*}
@@ -148,13 +150,34 @@ function brightness_get_percentage() {
     echo $((10000*$actual_brightness / (100*$maximum_brightness) ))
 }
 
+function brightness_set_percentage() {
+    #actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
+    maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
+    to_set=$(( $1 * $maximum_brightness / 100 ))
+    #echo "max = $maximum_brightness"
+    #echo "now = $actual_brightness"
+    #echo "1 = $1"
+    #echo "to set = $to_set"
+    echo $to_set > /sys/class/backlight/eeepc/brightness
+}
+
+function brightness_restore() {
+    to_set=`cat /var/eeepc/states/brightness`
+    echo $to_set > /sys/class/backlight/eeepc/brightness
+}
+
+function brightness_set_absolute() {
+    echo $1 > /sys/class/backlight/eeepc/brightness
+}
+
 function brightness_find_direction() {
     actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
-    previous_brightness=`cat /var/eeepc/brightness_saved`
+    previous_brightness=`cat /var/eeepc/states/brightness`
     [ "x$previous_brightness" == "x" ] && previous_brightness=$actual_brightness
-    to_return="up"
+    to_return=""
     [ $actual_brightness -lt $previous_brightness ] && to_return="down"
-    echo $actual_brightness > /var/eeepc/brightness_saved
+    [ $actual_brightness -gt $previous_brightness ] && to_return="up"
+    echo $actual_brightness > /var/eeepc/states/brightness
     echo $to_return
 }
 

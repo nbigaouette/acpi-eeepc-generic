@@ -157,13 +157,13 @@ case "$1" in
                 if [ "$brightness_direction" == "up" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_UP[@]}"
                     brightness_percentage=`brightness_get_percentage`
-                    logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Up ($brightness_percentage%)"
-                    eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
+                    [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Up ($brightness_percentage%)"
+                    [ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
                 else
                     execute_commands "${COMMANDS_BRIGHTNESS_DOWN[@]}"
                     brightness_percentage=`brightness_get_percentage`
-                    logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Down ($brightness_percentage%)"
-                    eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
+                    [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Down ($brightness_percentage%)"
+                    [ "$brightness_percentage" != "0" ] && eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
                 fi
             ;;
             $EEEPC_SCREEN_OFF) # Turn off screen
