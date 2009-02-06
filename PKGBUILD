@@ -19,7 +19,7 @@
 
 pkgname=acpi-eeepc-generic
 pkgver=0.7.0
-pkgrel=1
+pkgrel=2
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
@@ -126,7 +126,7 @@ md5sums=('6950474780bed9dcc216e2e965227b2e'
          'db58231b66e857e53cfb550916561883'
          'c3210406e19f9f74b7e1fad375e752ca'
          '1c4c84f0af10e89cae21534a7f0ec272'
-         '68ecc95641947796ca36c27080460748'
+         'e3f23d513384950829c01f374d16f0fd'
          'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
          '6e46b54564cdd14f2588c921c0a7faf1'
