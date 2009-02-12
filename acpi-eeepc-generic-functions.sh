@@ -130,16 +130,34 @@ function execute_commands() {
 
 #################################################################
 function volume_is_mute() {
-    # 0 is true, 1 is false
-    on_off=`amixer get iSpeaker | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
-    is_muted=1
-    [ "$on_off" == "[off]" ] && is_muted=0
-    return $is_muted
+    # 1 is true, 0 is false
+    on_off=`amixer get ${ALSA_MUTE_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
+    is_muted=0
+    [ "$on_off" == "[off]" ] && is_muted=1
+    echo $is_muted
 }
 
 #################################################################
 function get_volume() {
-    echo `amixer get PCM | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
+    echo `amixer get ${ALSA_MAIN_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
+}
+
+#################################################################
+function get_output_mixers() {
+    mixers=`amixer scontrols | awk '{print ""$4""}' | sed -e "s|'||g" -e "s|,0||g"`
+    i=0
+    for m in ${mixers}; do
+        # If not a capture, its a playback
+        if [ "`amixer sget $m | grep -i capture`" == "" ]; then
+            output_mixers[i]=$m
+            i=$((i+1))
+        fi
+    done
+    #echo "mixers: ${mixers}"
+    #echo "nb: ${#mixers[@]}"
+    #echo "output_mixers: ${output_mixers[@]}"
+    #echo "nb: ${#output_mixers[@]} $i"
+    echo ${output_mixers[@]}
 }
 
 #################################################################
