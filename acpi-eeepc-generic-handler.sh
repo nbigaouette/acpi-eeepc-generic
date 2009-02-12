@@ -159,7 +159,7 @@ case "$1" in
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Up ($brightness_percentage%)"
                     [ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
-                else
+                elif [ "$brightness_direction" == "down" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_DOWN[@]}"
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Down ($brightness_percentage%)"
