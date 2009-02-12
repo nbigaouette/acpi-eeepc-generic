@@ -79,6 +79,9 @@ function radio_on {
         execute_commands "${COMMANDS_WIFI_POST_UP[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "WiFi Radio is now on" gnome-dev-wavelan
+
+        # Just reset the return value to prevent confusion of next "or"
+        true
     ) || (
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable WiFi radio" stop
         # If module loading unsuccessful, try again
@@ -116,6 +119,9 @@ function radio_off {
         execute_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "WiFi Radio is now off" gnome-dev-wavelan
+
+        # Just reset the return value to prevent confusion of next "or"
+        true
     ) || (
         # If module unloading unsuccessful, try again
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable WiFi radio" stop

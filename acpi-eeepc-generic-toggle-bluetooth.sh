@@ -75,6 +75,9 @@ function radio_on {
         execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now on" bluetooth
+
+        # Just reset the return value to prevent confusion of next "or"
+        true
     ) || (
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable Bluetooth" stop
         # If module loading unsuccessful, try again
@@ -114,6 +117,9 @@ function radio_off {
         execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now off" bluetooth
+
+        # Just reset the return value to prevent confusion of next "or"
+        true
     ) || (
         # If module unloading unsuccessful, try again
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable Bluetooth" stop
