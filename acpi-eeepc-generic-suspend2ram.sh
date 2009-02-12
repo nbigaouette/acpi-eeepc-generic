@@ -46,30 +46,13 @@ if grep -q mem /sys/power/state ; then
 
     # Turn off external monitor
     xrandr --output LVDS --preferred --output VGA --off
+
     # Save logs
     /etc/rc.d/logsbackup stop
 
     # get console number
     CONSOLE_NUMBER=$(fgconsole)
     logger "Saving console number: $CONSOLE_NUMBER"
-
-#  	# save the brightness value
-#  	BRN=`cat /sys/class/backlight/eeepc/actual_brightness`
-#  	logger "Saving brightness value: $BRN"
-
-    # save the FSB value and go to powersaver mode
-# 	/etc/acpi/eee/fsb.sh autosuspend
-    logger "Save the FSB value and go to powersaver mode: DISABLE"
-
-    #
-    LOADEEE="no"
-    EEESTATE=$(lsmod | grep eee | awk {'print $1'})
-    if [ "X$EEESTATE" == "Xeee" ];
-        then
-        modprobe -r eee
-        LOADEEE="yes"
-        logger "Unloading eee module";
-    fi
 
     # flush the buffers to disk
     sync
@@ -87,13 +70,8 @@ if grep -q mem /sys/power/state ; then
     chvt $CONSOLE_NUMBER
 
     # restore backlight BRN
-    sleep 1
-    #echo $BRN > /sys/class/backlight/eeepc/brightness
-    #logger "Restoring brightness"
+    #sleep 1
     restore_brightness  # Restore brightness
-
-#	# restore the FSB value
-# 	/etc/acpi/eee/fsb.sh autoresume
 
 fi
 
