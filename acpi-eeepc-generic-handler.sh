@@ -10,7 +10,7 @@ execute_commands "@xhost +"
 
 SELECTION=$3
 if [ "$KEY_SHOW" = "1" ]; then
-eeepc_notify "You pressed: \"$SELECTION\"" keyboard
+eeepc_notify "The event of the pressed key is: \"$SELECTION\"" keyboard 20000
 fi
 
 case "$1" in
