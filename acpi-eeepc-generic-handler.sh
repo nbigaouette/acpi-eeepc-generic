@@ -5,8 +5,8 @@
 get_model
 . /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
 
-# Needed, else libnotify can't display its magic
-su $XUSER --login -c "xhost +"
+# Disable access control. Needed for GUI notification.
+execute_commands "@xhost +"
 
 SELECTION=$3
 if [ "$KEY_SHOW" = "1" ]; then
@@ -238,6 +238,7 @@ case "$1" in
     ;;
 esac
 
-#su $XUSER --login -c "xhost -"
+# Restore access control
+execute_commands "@xhost -"
 
 
