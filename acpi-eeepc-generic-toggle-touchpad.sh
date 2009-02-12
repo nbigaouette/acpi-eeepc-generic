@@ -25,7 +25,7 @@ if [ "$enable" == "Can't access shared memory area. SHMConfig disabled?" ]; then
     exit 1
 fi
 
-function touchpad_toggle {
+function touchpad_toggle() {
     if [ -S /tmp/.X11-unix/X0 ]; then
         TOUCHPAD_OFF=`synclient -l | grep TouchpadOff | awk '{print $3}'`
         if [ "$TOUCHPAD_OFF" = "0" ]; then
@@ -50,21 +50,11 @@ function touchpad_toggle {
     fi
 }
 
-function touchpad_restore {
+function touchpad_restore() {
     if [ "$TPSAVED" = "0" ]; then
         synclient TouchpadOff=1
-#        if [ $? ]; then
-#            eeepc_notify "Touchpad Disabled" mouse
-#        else
-#            eeepc_notify "Unable to disable touchpad; Ensure xorg.conf is properly configured." stop
-#        fi
     else
         synclient TouchpadOff=0
-#        if [ $? ]; then
-#            eeepc_notify "Touchpad Enabled" mouse
-#        else
-#            eeepc_notify "Unable to enable touchpad; Ensure xorg.conf is properly configured." stop
-#        fi
     fi
 }
 
