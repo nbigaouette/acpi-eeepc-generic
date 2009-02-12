@@ -18,8 +18,8 @@
 #   FSB+Fan control
 
 pkgname=acpi-eeepc-generic
-pkgver=0.7.0
-pkgrel=2
+pkgver=0.8.0b
+pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
@@ -103,31 +103,3 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
-
-md5sums=('6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '6950474780bed9dcc216e2e965227b2e'
-         '024286372c0a0e005804711b022dc4a3'
-         '024286372c0a0e005804711b022dc4a3'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '8c678b054e0f8def42ef9bf13ed8ecc0'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '6950474780bed9dcc216e2e965227b2e'
-         'cf253e386d7e743a3d25ec4165051521'
-         '830e169eae7899486a9f7f73eb7752bc'
-         '4d01030d55c56ecd733114793291b617'
-         'a1995a198c8e71b1afb0d86a8a8bc5e1'
-         '71e8bde8fb619f3dbbd0b8cce2bf0546'
-         '72bd6054c7d6ec23970df97cd262b262'
-         'bd64dbcb76572857750fce96f6cb2a2c'
-         '9cf155142398f9bb282d518d4716963c'
-         'e6234d6135b02e15ebec13034175ba0c'
-         'db58231b66e857e53cfb550916561883'
-         'c3210406e19f9f74b7e1fad375e752ca'
-         '1c4c84f0af10e89cae21534a7f0ec272'
-         'e3f23d513384950829c01f374d16f0fd'
-         'b6e3ad05a0d6c9ed87bd0859267e86d8'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '6e46b54564cdd14f2588c921c0a7faf1'
-         '3adb93ff8f99bf6ce7746acf119df0fd')
