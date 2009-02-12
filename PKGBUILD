@@ -35,6 +35,7 @@ optdepends=(
     "wicd: Network connection GUI"
     "xf86-input-synaptics: Touchpad driver"
     "gksu: Graphical su frontend to edit the configuration file"
+    "unclutter: Hide cursor when touchpad is disable"
 )
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)

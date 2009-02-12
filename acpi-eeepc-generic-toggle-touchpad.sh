@@ -32,6 +32,7 @@ function touchpad_toggle {
             echo 0 > $STATE_FILE
             synclient TouchpadOff=1
             if [ $? ]; then
+                [ -e /usr/bin/unclutter ] && unclutter -idle 0 &
                 eeepc_notify "Touchpad Disabled" mouse
             else
                 eeepc_notify "Unable to disable touchpad; Ensure xorg.conf is properly configured." stop
@@ -40,6 +41,7 @@ function touchpad_toggle {
             echo 1 > $STATE_FILE
             synclient TouchpadOff=0
             if [ $? ]; then
+                pkill unclutter
                 eeepc_notify "Touchpad Enabled" mouse
             else
                 eeepc_notify "Unable to enable touchpad; Ensure xorg.conf is properly configured." stop
