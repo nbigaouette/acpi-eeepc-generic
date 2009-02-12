@@ -128,11 +128,11 @@ case "$1" in
             ;;
             $EEEPC_USER1) # Silver function button 3 (User1)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User1)"
-                execute_commands_as_user "${COMMANDS_BUTTON_USER1[@]}"
+                execute_commands "${COMMANDS_BUTTON_USER1[@]}"
             ;;
             $EEEPC_USER2) # Silver function button 4 (User2)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User2)"
-                execute_commands_as_user "${COMMANDS_BUTTON_USER2[@]}"
+                execute_commands "${COMMANDS_BUTTON_USER2[@]}"
             ;;
 
             $EEEPC_SLEEP)
@@ -193,7 +193,7 @@ case "$1" in
             ;;
             $EEEPC_TASKMAN) # Task Manager
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Task Manager"
-                execute_commands_as_user "${COMMANDS_TASKM[@]}"
+                execute_commands "${COMMANDS_TASKM[@]}"
             ;;
             $EEEPC_VOL_MUTE) # Mute
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Mute"
