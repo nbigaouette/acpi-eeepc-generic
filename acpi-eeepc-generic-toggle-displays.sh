@@ -20,59 +20,64 @@ xrandr > $var_xrandr
 
 current=$(grep -B 1 "*" $var_xrandr | head -n 1 | awk '{print ""$1""}')
 
-vga_connected=$(grep VGA $var_xrandr | awk '{print ""$2""}')
+connected=$(grep " connected " $var_xrandr | awk '{print ""$1""}')
+disconnected=$(grep " disconnected " $var_xrandr | awk '{print ""$1""}')
+all="$connected $disconnected"
 
-if [ "x$vga_connected" == "xdisconnected" ]; then
-    msg="External monitor not connected"
-    eeepc_notify "$msg" display
-    #logger "$msg"
-    echo "$msg"
-    exit 0
+if [ "x`echo $connected | grep -i VGA`" == "x" ]; then
+    vga_connected=0
+else
+    vga_connected=1
 fi
 
-xrandr_clone="$xrandr --output LVDS --auto --output VGA --auto"
-
-xrandr_vga_right_of_lvds="$xrandr --output LVDS --auto --output VGA --auto --right-of LVDS"
-xrandr_vga_left_of_lvds="$xrandr --output LVDS --auto --output VGA --auto --left-of LVDS"
-xrandr_vga_above_of_lvds="$xrandr --output LVDS --auto --output VGA --auto --above-of LVDS"
-xrandr_vga_below_of_lvds="$xrandr --output LVDS --auto --output VGA --auto --below-of LVDS"
-
-xrandr_vga="$xrandr --output LVDS --off --output VGA --auto"
-xrandr_lvds="$xrandr --output LVDS --auto --output VGA --off"
-
-modes=(lvds vga )
-
-function toggle_screens() {
-    for mode in $LVDS_MODES $LVDS_MODES; do
-        if [ "$mode" = "$LVDS_CURRENT" ]; then
-            NEXT=1;
-        elif [ "$NEXT" = "1" ]; then
-            xrandr -s $mode
-            eeepc_notify "Changing resolution to \"$mode\"" video-display
-            echo $mode > $EEEPC_VAR/resolution_saved
-            exit
-        fi
-    done
-
-}
-
+echo "All: ${all}"
+echo "Connected: ${connected}"
+echo "Disconnected: ${disconnected}"
 echo "vga_connected = $vga_connected"
 echo "current = $current"
 
+if [ "$vga_connected" == "0" ]; then
+    msg="External monitor not connected"
+#    eeepc_notify "$msg" display
+#    logger "$msg"
+    echo "$msg"
+#    exit 0
+fi
 
+xrandr_clone="$xrandr --output LVDS --auto --output VGA --auto"
+xrandr_vga="$xrandr --output LVDS --off --output VGA --auto"
+xrandr_vga_and_lvds="$xrandr --output LVDS --auto --output VGA --auto --${COMMANDS_XRANDR_TOGGLE_VGA}-of LVDS"
+xrandr_lvds="$xrandr --output LVDS --auto --output VGA --off"
 
+modes=(
+    "${xrandr_lvds}"
+    "${xrandr_clone}"
+    "${xrandr_vga}"
+    "${xrandr_vga_and_lvds}"
+)
+modes_names=(
+    "Laptop screen only"
+    "Clone"
+    "VGA only"
+    "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
+)
 
+# Assume we are actually at modes[0] (LVDS only)
+m=0
+if [ "`echo \"${connected}\" | grep VGA`" != "" ]; then
+    # Detect if we are at modes[1] (Clone)
 
+    # Detect if we are at modes[2] (VGA only)
 
+    # Detect if we are at modes[3] (VGA + LVDS)
 
+fi
 
+# We are at mode "m", go to next mode
+m=$((m+1))
 
-
-
-
-
-
-
-
-
+eeepc_notify "Changing display mode to: ${modes_names[m]}" video-display
+cmd="${modes[m]}"
+echo "cmd = $cmd"
+#execute_commands "${cmd}"
 
