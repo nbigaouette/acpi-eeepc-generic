@@ -197,28 +197,41 @@ case "$1" in
             ;;
             $EEEPC_VOL_MUTE) # Mute
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Mute"
-                volume_level=`get_volume`
-                volume_is_mute
-                if [ $? == 1 ]; then
-                    eeepc_notify "Mute ($volume_level%)" audio-volume-muted
-                else
-                    eeepc_notify "UnMute ($volume_level%)" audio-volume-medium
-                fi
                 execute_commands "${COMMANDS_MUTE[@]}"
+                if [ "`volume_is_mute`" == "1" ]; then
+                    volume_icon="audio-volume-muted"
+                    mute_toggle=""
+                elif [ "`volume_is_mute`" == "0" ]; then
+                    volume_icon="audio-volume-medium"
+                    mute_toggle="Un"
+                fi
+                eeepc_notify "${mute_toggle}Mute (`get_volume`%)" $volume_icon
             ;;
             $EEEPC_VOL_DOWN) # Volume Down
-                execute_commands "${COMMANDS_VOLUME_DOWN[@]}"
-                sleep 0.1
-                volume_level=`get_volume`
+                if [ "`volume_is_mute`" == "1" ]; then
+                    volume_icon="audio-volume-muted"
+                elif [ "`volume_is_mute`" == "0" ]; then
+                    volume_icon="audio-volume-low"
+                fi
+                if [ "`get_volume`" != "0" ]; then
+                    execute_commands "${COMMANDS_VOLUME_DOWN[@]}"
+                    sleep 0.1
+                    eeepc_notify "Volume Down (`get_volume`%)" $volume_icon
+                fi
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Volume Down"
-                eeepc_notify "Volume Down ($volume_level%)" audio-volume-low
             ;;
             $EEEPC_VOL_UP) # Volume Up
-                execute_commands "${COMMANDS_VOLUME_UP[@]}"
-                sleep 0.1
-                volume_level=`get_volume`
+                if [ "`volume_is_mute`" == "1" ]; then
+                    volume_icon="audio-volume-muted"
+                elif [ "`volume_is_mute`" == "0" ]; then
+                    volume_icon="audio-volume-high"
+                fi
+                if [ "`get_volume`" != "100" ]; then
+                    execute_commands "${COMMANDS_VOLUME_UP[@]}"
+                    sleep 0.1
+                    eeepc_notify "Volume Up (`get_volume`%)" $volume_icon
+                fi
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Volume Up"
-                eeepc_notify "Volume Up ($volume_level%)" audio-volume-high
             ;;
 #             00000052) # battery level critical
 #             logger "Battery is critical, suspending"
