@@ -116,21 +116,15 @@ function execute_commands() {
     cmds_num=${#cmds[@]}
     for ((i=0;i<${cmds_num};i++)); do
         c=${cmds[${i}]}
-        logger "execute_commands #$(($i+1)): $c"
-        echo "execute_commands #$(($i+1)): $c"
-        ${c} &
-    done
-}
-
-#################################################################
-function execute_commands_as_user() {
-    cmds=( "$@" )
-    cmds_num=${#cmds[@]}
-    for ((i=0;i<${cmds_num};i++)); do
-        c=${cmds[${i}]}
-        logger "execute_commands_as_user #$(($i+1)): $c"
-        echo "execute_commands_as_user #$(($i+1)): $c"
-        su $user --login -c "${c} &"
+        if [ "${c:0:1}" == "@" ]; then
+            logger "execute_commands (as user $user) #$(($i+1)): $c"
+            echo "execute_commands (as user $user) #$(($i+1)): $c"
+            /bin/su $user --login -c "${c:1} &"
+        else
+            logger "execute_commands #$(($i+1)): $c"
+            echo "execute_commands #$(($i+1)): $c"
+            ${c}
+        fi
     done
 }
 
