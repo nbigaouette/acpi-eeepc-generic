@@ -13,7 +13,6 @@
 #   Suspend2disk helper script
 #   Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
 #   Volume devices autodetection (LineIn/LineOut/iSpeaker...)
-#   Some models ACPI events might be wrong or not there at all
 #   Reset values of AC after resume (see powersource.sh, called at the end of suspend2ram.sh)
 #   FSB+Fan control
 
@@ -103,3 +102,4 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
+
