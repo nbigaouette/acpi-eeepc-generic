@@ -39,6 +39,12 @@ RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
 function debug_wifi() {
+    echo "EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "Running kernel: `uname -a`"
+    if [ -e /usr/bin/pacman ]; then
+        echo "Installed kernel(s):"
+        echo "`/usr/bin/pacman -Qs kernel26`"
+    fi
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi rfkill: $RADIO_CONTROL"
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi state: $RADIO_STATE"
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi interface: $WIFI_IF"
