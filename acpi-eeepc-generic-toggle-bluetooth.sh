@@ -33,6 +33,12 @@ fi
 
 
 function debug_bluetooth() {
+    echo "EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "Running kernel: `uname -a`"
+    if [ -e /usr/bin/pacman ]; then
+        echo "Installed kernel(s):"
+        echo "`/usr/bin/pacman -Qs kernel26`"
+    fi
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): rfkill: $BLUETOOTH_RFKILL"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): State: $BLUETOOTH_STATE"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Device: $BLUETOOTH_DEVICE"
@@ -67,26 +73,47 @@ function radio_on {
     fi
 
     # Load module
-    ( /sbin/modprobe $BLUETOOTH_DRIVER 2>/dev/null && (
+    /sbin/modprobe $BLUETOOTH_DRIVER 2>/dev/null
+    success=$?
+    if [ $success ]; then
         # If successful, enable card
         echo 1 > $BT_SAVED_STATE_FILE
-        [ -e $BLUETOOTH_DEVICE ] && echo 1 > $BLUETOOTH_DEVICE
+        [ -e $BLUETOOTH_DEVICE ] && \
+            echo 1 > $BLUETOOTH_DEVICE
         # Execute post-up commands
         execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now on" bluetooth
-
-        # Just reset the return value to prevent confusion of next "or"
-        true
-    ) || (
+    else
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable Bluetooth" stop
         # If module loading unsuccessful, try again
         if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
-            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
+            [ "$show_notifications" == "1" ] && \
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
             sleep 2
             radio_on $(($1+1)) $show_notifications
         fi
-    ) )
+    fi
+#    ( /sbin/modprobe $BLUETOOTH_DRIVER 2>/dev/null && (
+#        # If successful, enable card
+#        echo 1 > $BT_SAVED_STATE_FILE
+#        [ -e $BLUETOOTH_DEVICE ] && echo 1 > $BLUETOOTH_DEVICE
+#        # Execute post-up commands
+#        execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
+
+#        [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now on" bluetooth
+
+#        # Just reset the return value to prevent confusion of next "or"
+#        true
+#    ) || (
+#        [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable Bluetooth" stop
+#        # If module loading unsuccessful, try again
+#        if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
+#            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
+#            sleep 2
+#            radio_on $(($1+1)) $show_notifications
+#        fi
+#    ) )
 }
 
 function radio_off {
@@ -99,7 +126,9 @@ function radio_off {
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
 
     # Unload module
-    ( /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null && (
+    /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null
+    success=$?
+    if [ $success ]; then
         # If successful, disable card through rkfill and save the state
         # might fail on less then 2.6.29
         [ -e "$BLUETOOTH_RFKILL" ] && echo 0 > $BLUETOOTH_RFKILL
@@ -117,18 +146,47 @@ function radio_off {
         execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now off" bluetooth
-
-        # Just reset the return value to prevent confusion of next "or"
-        true
-    ) || (
+    else
         # If module unloading unsuccessful, try again
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable Bluetooth" stop
         if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
-            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
+            [ "$show_notifications" == "1" ] && \
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
             sleep 2
             radio_off $(($1+1)) $show_notifications
         fi
-    ) )
+    fi
+
+#    ( /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null && (
+#        # If successful, disable card through rkfill and save the state
+#        # might fail on less then 2.6.29
+#        [ -e "$BLUETOOTH_RFKILL" ] && echo 0 > $BLUETOOTH_RFKILL
+#        if [ ${KERNEL_rel} -lt 29 ]; then
+#            s="rfkill switch usage might fail on kernel lower than 2.6.29"
+#            logger "$s"
+#            echo "$s"
+#        fi
+
+#        [ -e $BLUETOOTH_DEVICE ] && echo 0 > $BLUETOOTH_DEVICE
+
+#        echo 0 > $BT_SAVED_STATE_FILE
+
+#        # Execute post-down commands
+#        execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
+
+#        [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now off" bluetooth
+
+#        # Just reset the return value to prevent confusion of next "or"
+#        true
+#    ) || (
+#        # If module unloading unsuccessful, try again
+#        [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable Bluetooth" stop
+#        if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
+#            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
+#            sleep 2
+#            radio_off $(($1+1)) $show_notifications
+#        fi
+#    ) )
 }
 
 function radio_toggle {
