@@ -204,6 +204,9 @@ if [ -S /tmp/.X11-unix/X0 ]; then
     [ "x$user" == "x" ] && user=$(who | head -1 | awk '{print $1}')
     # If autodetection fails, try another way...
     user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
+    # If autodetection fails, fallback to default user
+    # set in /etc/conf.d/acpi-eeepc-generic.conf
+    [ "x$user" == "x" ] && user=$XUSER
     # If autodetection fails, try another way...
     [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
         sort | uniq | \
@@ -212,9 +215,8 @@ if [ -S /tmp/.X11-unix/X0 ]; then
             -e ntp -e nx -e policykit -e privoxy -e root \
             -e tor -e USER \
         )
-    # If autodetection fails, fallback to default user
-    # set in /etc/conf.d/acpi-eeepc-generic.conf
-    [ "x$user" == "x" ] && user=$XUSER
+    # If there is a space in $user, autodetection failed, so clear it.
+    [ "`echo $user | grep ' '`" != "x" ] && user=""
     # If user is empty, notify
     [ "x$user" == "x" ] && \
         eeepc_notify "User autodetection failed. Please edit your 
