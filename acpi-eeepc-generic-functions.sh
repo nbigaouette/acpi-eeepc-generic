@@ -34,6 +34,11 @@ if [ -S /tmp/.X11-unix/X0 ]; then
     # If autodetection fails, fallback to default user
     # set in /etc/conf.d/acpi-eeepc-generic.conf
     [ "x$user" == "x" ] && user=$XUSER
+    # If user is empty, notify
+    [ "x$user" == "x" ] && \
+        eeepc_notify "User autodetection failed. Please edit your 
+configuration file (/etc/conf.d/acpi-eeepc-generic.conf) and set 
+XUSER variable to your username" stop
     home=$(getent passwd $user | cut -d: -f6)
     XAUTHORITY=$home/.Xauthority
     [ -f $XAUTHORITY ] && export XAUTHORITY
