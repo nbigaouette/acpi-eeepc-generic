@@ -17,33 +17,6 @@ KERNEL_rel=${k%%\.*}
 k=${KERNEL#${KERNEL_maj}.${KERNEL_min}.${KERNEL_rel}}
 KERNEL_patch=${k%%\.*}
 
-# Get username
-if [ -S /tmp/.X11-unix/X0 ]; then
-    export DISPLAY=:0
-    [ "x$user" == "x" ] && user=$(who | head -1 | awk '{print $1}')
-    # If autodetection fails, try another way...
-    user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
-    # If autodetection fails, try another way...
-    [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
-        sort | uniq | \
-        grep -v \
-            -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
-            -e ntp -e nx -e policykit -e privoxy -e root \
-            -e tor -e USER \
-        )
-    # If autodetection fails, fallback to default user
-    # set in /etc/conf.d/acpi-eeepc-generic.conf
-    [ "x$user" == "x" ] && user=$XUSER
-    # If user is empty, notify
-    [ "x$user" == "x" ] && \
-        eeepc_notify "User autodetection failed. Please edit your 
-configuration file (/etc/conf.d/acpi-eeepc-generic.conf) and set 
-XUSER variable to your username" stop
-    home=$(getent passwd $user | cut -d: -f6)
-    XAUTHORITY=$home/.Xauthority
-    [ -f $XAUTHORITY ] && export XAUTHORITY
-fi
-
 #################################################################
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
@@ -223,6 +196,34 @@ function brightness_find_direction() {
     echo $actual_brightness > /var/eeepc/states/brightness
     echo $to_return
 }
+
+#################################################################
+# Get username
+if [ -S /tmp/.X11-unix/X0 ]; then
+    export DISPLAY=:0
+    [ "x$user" == "x" ] && user=$(who | head -1 | awk '{print $1}')
+    # If autodetection fails, try another way...
+    user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
+    # If autodetection fails, try another way...
+    [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
+        sort | uniq | \
+        grep -v \
+            -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
+            -e ntp -e nx -e policykit -e privoxy -e root \
+            -e tor -e USER \
+        )
+    # If autodetection fails, fallback to default user
+    # set in /etc/conf.d/acpi-eeepc-generic.conf
+    [ "x$user" == "x" ] && user=$XUSER
+    # If user is empty, notify
+    [ "x$user" == "x" ] && \
+        eeepc_notify "User autodetection failed. Please edit your 
+configuration file (/etc/conf.d/acpi-eeepc-generic.conf) and set 
+XUSER variable to your username" stop
+    home=$(getent passwd $user | cut -d: -f6)
+    XAUTHORITY=$home/.Xauthority
+    [ -f $XAUTHORITY ] && export XAUTHORITY
+fi
 
 
 #################################################################
