@@ -27,8 +27,9 @@ if [ -S /tmp/.X11-unix/X0 ]; then
     [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
         sort | uniq | \
         grep -v \
-            -e root -e hal -e dbus -e ntp -e ftp -e avahi -e policykit \
-            -e bin -e USER -e nobody -e privoxy -e tor -e nx \
+            -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
+            -e ntp -e nx -e policykit -e privoxy -e root \
+            -e tor -e USER \
         )
     # If autodetection fails, fallback to default user
     # set in /etc/conf.d/acpi-eeepc-generic.conf
