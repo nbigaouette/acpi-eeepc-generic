@@ -213,20 +213,21 @@ if [ -S /tmp/.X11-unix/X0 ]; then
         grep -v \
             -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
             -e ntp -e nx -e policykit -e privoxy -e root \
-            -e tor -e USER \
+            -e tor -e USER
         )
     # If there is a space in $user, autodetection failed, so clear it.
-    [ "`echo $user | grep ' '`" != "x" ] && user=""
+    [ "x`echo $user | grep ' '`" != "x" ] && user=""
     # If user is empty, notify
     [ "x$user" == "x" ] && \
-        eeepc_notify "User autodetection failed. Please edit your 
-configuration file (/etc/conf.d/acpi-eeepc-generic.conf) and set 
-XUSER variable to your username" stop
-    home=$(getent passwd $user | cut -d: -f6)
-    XAUTHORITY=$home/.Xauthority
-    [ -f $XAUTHORITY ] && export XAUTHORITY
+        eeepc_notify "User autodetection failed. Please edit \
+your configuration file (/etc/conf.d/acpi-eeepc-generic.conf) \
+and set XUSER variable to your username." stop 20000
+    if [ "x$user" != "x" ]; then
+        home=$(getent passwd $user | cut -d: -f6)
+        XAUTHORITY=$home/.Xauthority
+        [ -f $XAUTHORITY ] && export XAUTHORITY
+    fi
 fi
-
 
 #################################################################
 #################################################################
