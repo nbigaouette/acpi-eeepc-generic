@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+# http://code.google.com/p/acpi-eeepc-generic/
 #
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
