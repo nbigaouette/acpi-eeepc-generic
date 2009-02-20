@@ -6,6 +6,7 @@
 
 chmod a+w /var/eeepc/states/* &> /dev/null
 
+# Extract kernel version
 KERNEL=`uname -r`
 KERNEL=${KERNEL%%-*}
 KERNEL_maj=${KERNEL%%\.*}
@@ -15,20 +16,6 @@ k=${KERNEL#${KERNEL_maj}.${KERNEL_min}.}
 KERNEL_rel=${k%%\.*}
 k=${KERNEL#${KERNEL_maj}.${KERNEL_min}.${KERNEL_rel}}
 KERNEL_patch=${k%%\.*}
-
-# Get username
-if [ -S /tmp/.X11-unix/X0 ]; then
-    export DISPLAY=:0
-    user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
-    # If autodetection fails, try another way...
-    [ "x$user" == "x" ] && user=`ps aux | awk '{print ""$1""}' | sort | uniq | grep -v root | grep -v hal | grep -v ntp | grep -v dbus | grep -v bin | grep -v USER`
-    # If autodetection fails, fallback to default user
-    # set in /etc/conf.d/acpi-eeepc-generic.conf
-    [ "x$user" == "x" ] && user=$XUSER
-    home=$(getent passwd $user | cut -d: -f6)
-    XAUTHORITY=$home/.Xauthority
-    [ -f $XAUTHORITY ] && export XAUTHORITY
-fi
 
 #################################################################
 function eeepc_notify {
@@ -79,8 +66,7 @@ function send_dzen() {
     duration=$3
     [ "x$duration" == "x" ] && duration="2000"
     duration=$(( 5 * $duration / 1000 ))
-    cmd="(echo \"$1\"; sleep $duration) | /usr/bin/dzen2"
-#    cmd="/usr/bin/dzen2 --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" $duration"
+    cmd="(echo \"$1\"; sleep $duration) | /usr/bin/dzen2 &"
     send_generic "${cmd}"
 }
 
@@ -112,36 +98,48 @@ function execute_commands() {
     cmds_num=${#cmds[@]}
     for ((i=0;i<${cmds_num};i++)); do
         c=${cmds[${i}]}
-        logger "execute_commands #$(($i+1)): $c"
-        echo "execute_commands #$(($i+1)): $c"
-        ${c} &
-    done
-}
-
-#################################################################
-function execute_commands_as_user() {
-    cmds=( "$@" )
-    cmds_num=${#cmds[@]}
-    for ((i=0;i<${cmds_num};i++)); do
-        c=${cmds[${i}]}
-        logger "execute_commands_as_user #$(($i+1)): $c"
-        echo "execute_commands_as_user #$(($i+1)): $c"
-        su $user --login -c "${c} &"
+        if [ "${c:0:1}" == "@" ]; then
+            logger "execute_commands (as user $user) #$(($i+1)): $c"
+            echo "execute_commands (as user $user) #$(($i+1)): $c"
+            /bin/su $user --login -c "${c:1} &"
+        else
+            logger "execute_commands #$(($i+1)): $c"
+            echo "execute_commands #$(($i+1)): $c"
+            ${c}
+        fi
     done
 }
 
 #################################################################
 function volume_is_mute() {
-    # 0 is true, 1 is false
-    on_off=`amixer get iSpeaker | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
-    is_muted=1
-    [ "$on_off" == "[off]" ] && is_muted=0
-    return $is_muted
+    # 1 is true, 0 is false
+    on_off=`amixer get ${ALSA_MUTE_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
+    is_muted=0
+    [ "$on_off" == "[off]" ] && is_muted=1
+    echo $is_muted
 }
 
 #################################################################
 function get_volume() {
-    echo `amixer get PCM | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
+    echo `amixer get ${ALSA_MAIN_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
+}
+
+#################################################################
+function get_output_mixers() {
+    mixers=`amixer scontrols | awk '{print ""$4""}' | sed -e "s|'||g" -e "s|,0||g"`
+    i=0
+    for m in ${mixers}; do
+        # If not a capture, its a playback
+        if [ "`amixer sget $m | grep -i capture`" == "" ]; then
+            output_mixers[i]=$m
+            i=$((i+1))
+        fi
+    done
+    #echo "mixers: ${mixers}"
+    #echo "nb: ${#mixers[@]}"
+    #echo "output_mixers: ${output_mixers[@]}"
+    #echo "nb: ${#output_mixers[@]} $i"
+    echo ${output_mixers[@]}
 }
 
 #################################################################
@@ -199,6 +197,37 @@ function brightness_find_direction() {
     echo $to_return
 }
 
+#################################################################
+# Get username
+if [ -S /tmp/.X11-unix/X0 ]; then
+    export DISPLAY=:0
+    [ "x$user" == "x" ] && user=$(who | head -1 | awk '{print $1}')
+    # If autodetection fails, try another way...
+    user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
+    # If autodetection fails, fallback to default user
+    # set in /etc/conf.d/acpi-eeepc-generic.conf
+    [ "x$user" == "x" ] && user=$XUSER
+    # If autodetection fails, try another way...
+    [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
+        sort | uniq | \
+        grep -v \
+            -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
+            -e ntp -e nx -e policykit -e privoxy -e root \
+            -e tor -e USER
+        )
+    # If there is a space in $user, autodetection failed, so clear it.
+    [ "x`echo $user | grep ' '`" != "x" ] && user=""
+    # If user is empty, notify
+    [ "x$user" == "x" ] && \
+        eeepc_notify "User autodetection failed. Please edit \
+your configuration file (/etc/conf.d/acpi-eeepc-generic.conf) \
+and set XUSER variable to your username." stop 20000
+    if [ "x$user" != "x" ]; then
+        home=$(getent passwd $user | cut -d: -f6)
+        XAUTHORITY=$home/.Xauthority
+        [ -f $XAUTHORITY ] && export XAUTHORITY
+    fi
+fi
 
 #################################################################
 #################################################################

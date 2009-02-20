@@ -5,12 +5,12 @@
 get_model
 . /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
 
-# Needed, else libnotify can't display its magic
-su $XUSER --login -c "xhost +"
+# Disable access control. Needed for GUI notification.
+execute_commands "@xhost +"
 
 SELECTION=$3
 if [ "$KEY_SHOW" = "1" ]; then
-eeepc_notify "You pressed: \"$SELECTION\"" keyboard
+eeepc_notify "The event of the pressed key is: \"$SELECTION\"" keyboard 20000
 fi
 
 case "$1" in
@@ -128,11 +128,11 @@ case "$1" in
             ;;
             $EEEPC_USER1) # Silver function button 3 (User1)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User1)"
-                execute_commands_as_user "${COMMANDS_BUTTON_USER1[@]}"
+                execute_commands "${COMMANDS_BUTTON_USER1[@]}"
             ;;
             $EEEPC_USER2) # Silver function button 4 (User2)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User2)"
-                execute_commands_as_user "${COMMANDS_BUTTON_USER2[@]}"
+                execute_commands "${COMMANDS_BUTTON_USER2[@]}"
             ;;
 
             $EEEPC_SLEEP)
@@ -159,7 +159,7 @@ case "$1" in
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Up ($brightness_percentage%)"
                     [ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
-                else
+                elif [ "$brightness_direction" == "down" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_DOWN[@]}"
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Down ($brightness_percentage%)"
@@ -193,32 +193,45 @@ case "$1" in
             ;;
             $EEEPC_TASKMAN) # Task Manager
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Task Manager"
-                execute_commands_as_user "${COMMANDS_TASKM[@]}"
+                execute_commands "${COMMANDS_TASKM[@]}"
             ;;
             $EEEPC_VOL_MUTE) # Mute
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Mute"
-                volume_level=`get_volume`
-                volume_is_mute
-                if [ $? == 1 ]; then
-                    eeepc_notify "Mute ($volume_level%)" audio-volume-muted
-                else
-                    eeepc_notify "UnMute ($volume_level%)" audio-volume-medium
-                fi
                 execute_commands "${COMMANDS_MUTE[@]}"
+                if [ "`volume_is_mute`" == "1" ]; then
+                    volume_icon="audio-volume-muted"
+                    mute_toggle=""
+                elif [ "`volume_is_mute`" == "0" ]; then
+                    volume_icon="audio-volume-medium"
+                    mute_toggle="Un"
+                fi
+                eeepc_notify "${mute_toggle}Mute (`get_volume`%)" $volume_icon
             ;;
             $EEEPC_VOL_DOWN) # Volume Down
-                execute_commands "${COMMANDS_VOLUME_DOWN[@]}"
-                sleep 0.1
-                volume_level=`get_volume`
+                if [ "`volume_is_mute`" == "1" ]; then
+                    volume_icon="audio-volume-muted"
+                elif [ "`volume_is_mute`" == "0" ]; then
+                    volume_icon="audio-volume-low"
+                fi
+                if [ "`get_volume`" != "0" ]; then
+                    execute_commands "${COMMANDS_VOLUME_DOWN[@]}"
+                    sleep 0.1
+                    eeepc_notify "Volume Down (`get_volume`%)" $volume_icon
+                fi
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Volume Down"
-                eeepc_notify "Volume Down ($volume_level%)" audio-volume-low
             ;;
             $EEEPC_VOL_UP) # Volume Up
-                execute_commands "${COMMANDS_VOLUME_UP[@]}"
-                sleep 0.1
-                volume_level=`get_volume`
+                if [ "`volume_is_mute`" == "1" ]; then
+                    volume_icon="audio-volume-muted"
+                elif [ "`volume_is_mute`" == "0" ]; then
+                    volume_icon="audio-volume-high"
+                fi
+                if [ "`get_volume`" != "100" ]; then
+                    execute_commands "${COMMANDS_VOLUME_UP[@]}"
+                    sleep 0.1
+                    eeepc_notify "Volume Up (`get_volume`%)" $volume_icon
+                fi
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Volume Up"
-                eeepc_notify "Volume Up ($volume_level%)" audio-volume-high
             ;;
 #             00000052) # battery level critical
 #             logger "Battery is critical, suspending"
@@ -238,6 +251,7 @@ case "$1" in
     ;;
 esac
 
-#su $XUSER --login -c "xhost -"
+# Restore access control
+execute_commands "@xhost -"
 
 

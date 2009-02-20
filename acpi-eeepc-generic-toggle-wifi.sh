@@ -1,11 +1,6 @@
 #!/bin/bash
 #
-#  EeePC WIFI Toggle
-#  by Andrew Wyatt
-#  Edited by Nicolas Bigaouette
-#  Generic WIFI toggle utility which should work across EeePC models.
-#
-#  http://code.google.com/p/acpi-eeepc-generic/
+# http://code.google.com/p/acpi-eeepc-generic/
 #
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
@@ -39,6 +34,12 @@ RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
 function debug_wifi() {
+    echo "EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "Running kernel: `uname -a`"
+    if [ -e /usr/bin/pacman ]; then
+        echo "Installed kernel(s):"
+        echo "`/usr/bin/pacman -Qs kernel26`"
+    fi
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi rfkill: $RADIO_CONTROL"
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi state: $RADIO_STATE"
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi interface: $WIFI_IF"
@@ -55,13 +56,12 @@ function debug_wifi() {
     eeepc_notify "Can you see this?" gtk-dialog-question
 }
 
-logger "acpi-eeepc-generic-toggle-wifi.sh: Current state: $RADIO_STATE ($RADIO_CONTROL)"
-
 function radio_on {
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=
 
-    [ "$show_notifications" == "1" ] && eeepc_notify "Turning WiFi Radio on..." gnome-dev-wavelan
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "Turning WiFi Radio on..." gnome-dev-wavelan
 
     # Execute pre-up commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_WIFI_PRE_UP[@]}"
@@ -72,22 +72,25 @@ function radio_on {
     [ -e "$RADIO_CONTROL_OTHER" ]      && echo 1 > $RADIO_CONTROL_OTHER
 
     # Load module
-    ( /sbin/modprobe $WIFI_DRIVER 2>/dev/null && (
+    /sbin/modprobe $WIFI_DRIVER 2>/dev/null
+    success=$?
+    if [ $success ]; then
         # If successful, enable card
         echo 1 > $EEEPC_RADIO_SAVED_STATE_FILE
         # Execute post-up commands
         execute_commands "${COMMANDS_WIFI_POST_UP[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "WiFi Radio is now on" gnome-dev-wavelan
-    ) || (
+    else
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable WiFi radio" stop
         # If module loading unsuccessful, try again
         if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
-            [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
+            [ "$show_notifications" == "1" ] && \
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
             sleep 2
             radio_on $(($1+1)) $show_notifications
         fi
-    ) )
+    fi
 }
 
 function radio_off {
@@ -104,7 +107,9 @@ function radio_off {
     sleep 1
 
     # Unload module
-    ( /sbin/modprobe -r $WIFI_DRIVER 2>/dev/null && (
+    /sbin/modprobe -r $WIFI_DRIVER 2>/dev/null
+    success=$?
+    if [ $success ]; then
         # If successful, disable card through rkfill and save the state
         [ -e "$RADIO_CONTROL" ]            && echo 0 > $RADIO_CONTROL
         [ -e "$RADIO_CONTROL_DEPRECATED" ] && echo 0 > $RADIO_CONTROL_DEPRECATED
@@ -116,15 +121,16 @@ function radio_off {
         execute_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
 
         [ "$show_notifications" == "1" ] && eeepc_notify "WiFi Radio is now off" gnome-dev-wavelan
-    ) || (
+    else
         # If module unloading unsuccessful, try again
         [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable WiFi radio" stop
         if [ $1 -lt $WIFI_TOGGLE_MAX_TRY ]; then
-                [ "$show_notifications" == "1" ] && eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
+                [ "$show_notifications" == "1" ] && \
+                    eeepc_notify "Trying again in 2 second ($(($1+1)) / $WIFI_TOGGLE_MAX_TRY)" gnome-dev-wavelan
             sleep 2
             radio_off $(($1+1)) $show_notifications
         fi
-    ) )
+    fi
 }
 
 function radio_toggle {
