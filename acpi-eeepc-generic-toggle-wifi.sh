@@ -24,8 +24,14 @@ done
 
 # Get rfkill switch state (0 = card off, 1 = card on)
 RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
-RADIO_STATE=0
-[ -e "$RADIO_CONTROL" ] && RADIO_STATE=$(cat $RADIO_CONTROL)
+if [ -e "$RADIO_CONTROL" ]; then
+    RADIO_STATE=$(cat $RADIO_CONTROL)
+else
+    RADIO_STATE=0
+    msg="acpi-eeepc-generic-toggle-wifi.sh: Wifi rfkill switch state does not exist. Using 0 as RADIO_STATE"
+    logger $msg
+    echo $msg
+fi
 
 RADIO_CONTROL_DEPRECATED=/proc/acpi/asus/wlan
 RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
