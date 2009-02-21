@@ -34,10 +34,11 @@ RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
 function debug_wifi() {
-    echo "EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
-    echo "Running kernel: `uname -a`"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Running kernel: `uname -a`"
     if [ -e /usr/bin/pacman ]; then
-        echo "Installed kernel(s):"
+        echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Installed kernel(s):"
         echo "`/usr/bin/pacman -Qs kernel26`"
     fi
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi rfkill: $RADIO_CONTROL"
@@ -53,7 +54,7 @@ function debug_wifi() {
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_POST_DOWN:"
     print_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
 
-    eeepc_notify "Can you see this?" gtk-dialog-question
+    eeepc_notify "Can you see this?" gtk-dialog-question 10000
 }
 
 function radio_on {
