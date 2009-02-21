@@ -19,7 +19,12 @@ lsrfkill=""
 [ -e /sys/class/rfkill ] && lsrfkill=`/bin/ls /sys/class/rfkill/`
 for r in $lsrfkill; do
     name=`cat /sys/class/rfkill/$r/name`
-    [ "$name" == "eeepc-wlan" ] && rfkill=$r
+    if [ "$name" == "eeepc-wlan" ]; then
+        msg="acpi-eeepc-generic-toggle-wifi.sh: Wifi rfkill switch find ($r)"
+        logger $msg
+        echo $msg
+        rfkill=$r
+    fi
 done
 
 # Get rfkill switch state (0 = card off, 1 = card on)
