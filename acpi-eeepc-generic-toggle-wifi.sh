@@ -33,6 +33,22 @@ RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
 # Get wifi interface
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
+function radio_toggle {
+    if [ "$RADIO_STATE" = "1" ]; then
+        radio_off 1
+    else
+        radio_on 1
+    fi
+}
+
+function radio_restore {
+  if [ "$RADIO_SAVED_STATE" = "1" ]; then
+    radio_on 1 0
+  else
+    radio_off 1 0
+  fi
+}
+
 function debug_wifi() {
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
@@ -132,22 +148,6 @@ function radio_off {
             radio_off $(($1+1)) $show_notifications
         fi
     fi
-}
-
-function radio_toggle {
-    if [ "$RADIO_STATE" = "1" ]; then
-        radio_off 1
-    else
-        radio_on 1
-    fi
-}
-
-function radio_restore {
-  if [ "$RADIO_SAVED_STATE" = "1" ]; then
-    radio_on 1 0
-  else
-    radio_off 1 0
-  fi
 }
 
 case $1 in
