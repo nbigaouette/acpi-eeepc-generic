@@ -151,16 +151,16 @@ function radio_restore {
 }
 
 case $1 in
-    "restore")
+    restore)
         radio_restore
     ;;
-    "off")
+    stop|off)
         radio_off 1
     ;;
-    "on")
+    start|on)
         radio_on 1
     ;;
-    "debug")
+    debug)
         debug_wifi
     ;;
     *)
