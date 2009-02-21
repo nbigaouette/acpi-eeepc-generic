@@ -34,7 +34,7 @@ case "$1" in
 
     button/sleep)
         case "$2" in
-            SLPB)
+            SLPB|SBTN)
                 eeepc_notify "Sleep button pressed" gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
