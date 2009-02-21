@@ -36,9 +36,11 @@ function send_libnotify() {
         echo   "To use libnotify's OSD, please install 'notification-daemon'"
         return 1
     fi
+    icon=$2
     duration=$3
+    [ "x$icon" == "x" ] && icon="eee"
     [ "x$duration" == "x" ] && duration="1500"
-    cmd="/usr/bin/notify-send -i $2 -t $duration \"EeePC $EEEPC_MODEL\" \"$1\""
+    cmd="/usr/bin/notify-send -i $icon -t $duration \"EeePC $EEEPC_MODEL\" \"$1\""
     send_generic "${cmd}"
 }
 
