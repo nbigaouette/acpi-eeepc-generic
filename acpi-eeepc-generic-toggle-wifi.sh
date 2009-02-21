@@ -5,14 +5,6 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/states/wifi
-
-if [ -e $EEEPC_RADIO_SAVED_STATE_FILE ]; then
-  RADIO_SAVED_STATE=$(cat $EEEPC_RADIO_SAVED_STATE_FILE)
-else
-  RADIO_SAVED_STATE=0
-fi
-
 # Find the right rfkill switch, but default to the first one
 rfkill="rfkill0"
 lsrfkill=""
@@ -36,6 +28,15 @@ else
     msg="acpi-eeepc-generic-toggle-wifi.sh: Wifi rfkill switch state does not exist. Using 0 as RADIO_STATE"
     logger $msg
     echo $msg
+fi
+
+# If the states has been saved, read that state. Else, get the
+# actual state.
+EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/states/wifi
+if [ -e $EEEPC_RADIO_SAVED_STATE_FILE ]; then
+  RADIO_SAVED_STATE=$(cat $EEEPC_RADIO_SAVED_STATE_FILE)
+else
+  RADIO_SAVED_STATE=$RADIO_STATE
 fi
 
 RADIO_CONTROL_DEPRECATED=/proc/acpi/asus/wlan
