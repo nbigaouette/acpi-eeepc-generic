@@ -19,6 +19,8 @@ for r in $lsrfkill; do
     fi
 done
 
+RADIO_CONTROL_DEPRECATED=/proc/acpi/asus/wlan
+RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
 # Get rfkill switch state (0 = card off, 1 = card on)
 RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
 if [ -e "$RADIO_CONTROL" ]; then
@@ -38,9 +40,6 @@ if [ -e $EEEPC_RADIO_SAVED_STATE_FILE ]; then
 else
   RADIO_SAVED_STATE=$RADIO_STATE
 fi
-
-RADIO_CONTROL_DEPRECATED=/proc/acpi/asus/wlan
-RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
 
 # Get wifi interface
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')

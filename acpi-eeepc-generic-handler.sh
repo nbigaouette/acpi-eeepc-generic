@@ -50,22 +50,10 @@ case "$1" in
             AC0)
                 case "$4" in
                     $POWER_BAT) # AC off
-                        #echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
                         execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
-                        #echo $BRIGHTNESS_BATTERY > /proc/acpi/asus/brn
-                        #xbacklight -set $BRIGHTNESS_BATTERY
-                        #if [ $WIRELESS_MODULE = "iwl3945" ]; then
-                        #echo $WIRELESS_POWERSAVE > /sys/bus/pci/drivers/iwl3945/0000:01:00.0/power_level;
-                        #fi
                     ;;
                     $POWER_AC) # AC on
-                        #echo 500 > /proc/sys/vm/dirty_writeback_centisecs
                         execute_commands "${COMMANDS_AC_PLUGGED[@]}"
-                        #echo $BRIGHTNESS_AC > /proc/acpi/asus/brn
-                        #xbacklight -set $BRIGHTNESS_AC
-                        #if [ $WIRELESS_MODULE = "iwl3945" ]; then
-                        #    echo 6 > /sys/bus/pci/drivers/iwl3945/0000:01:00.0/power_level;
-                        #fi
                     ;;
                 esac
                 ;;
@@ -90,8 +78,16 @@ case "$1" in
         ;;
 
     button/lid)
-        
-        lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+        # Detect correctly lid state 
+        lidstate=""
+        # /proc/acpi is deprecated
+        [ -e /proc/acpi/button/lid/LID/state ] && \
+            lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+        [ "x$lidstate" == "x" ] && \
+            [ "x$3" != "x" ] && lidstate=$3 # Use event given (2rd argument) to acpid
+        # FIXME: It seems there is no /sys inteface to replace this
+        # old /proc/acpi interface, so the latter is not deprecated...
+
         case "$lidstate" in
         open)
             xset dpms force on  # Screen on
