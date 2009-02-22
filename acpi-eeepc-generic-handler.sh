@@ -16,7 +16,7 @@ fi
 case "$1" in
     button/power)
         case "$2" in
-            PWRF)
+            PWRF|PBTN)
                 eeepc_notify "Power button pressed" gnome-session-halt
                 execute_commands "${COMMANDS_POWER_BUTTON[@]}"
             ;;
