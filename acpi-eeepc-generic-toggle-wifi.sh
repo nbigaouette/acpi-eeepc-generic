@@ -5,39 +5,67 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/states/wifi
-
-if [ -e $EEEPC_RADIO_SAVED_STATE_FILE ]; then
-  RADIO_SAVED_STATE=$(cat $EEEPC_RADIO_SAVED_STATE_FILE)
-else
-  RADIO_SAVED_STATE=0
-fi
-
 # Find the right rfkill switch, but default to the first one
 rfkill="rfkill0"
 lsrfkill=""
 [ -e /sys/class/rfkill ] && lsrfkill=`/bin/ls /sys/class/rfkill/`
 for r in $lsrfkill; do
     name=`cat /sys/class/rfkill/$r/name`
-    [ "$name" == "eeepc-wlan" ] && rfkill=$r
+    if [ "$name" == "eeepc-wlan" ]; then
+        msg="acpi-eeepc-generic-toggle-wifi.sh: Wifi rfkill switch find ($r)"
+        logger $msg
+        echo $msg
+        rfkill=$r
+    fi
 done
-
-# Get rfkill switch state (0 = card off, 1 = card on)
-RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
-RADIO_STATE=0
-[ -e "$RADIO_CONTROL" ] && RADIO_STATE=$(cat $RADIO_CONTROL)
 
 RADIO_CONTROL_DEPRECATED=/proc/acpi/asus/wlan
 RADIO_CONTROL_OTHER=/sys/devices/platform/eeepc/wlan
+# Get rfkill switch state (0 = card off, 1 = card on)
+RADIO_CONTROL="/sys/class/rfkill/${rfkill}/state"
+if [ -e "$RADIO_CONTROL" ]; then
+    RADIO_STATE=$(cat $RADIO_CONTROL)
+else
+    RADIO_STATE=0
+    msg="acpi-eeepc-generic-toggle-wifi.sh: Wifi rfkill switch state does not exist. Using 0 as RADIO_STATE"
+    logger $msg
+    echo $msg
+fi
+
+# If the states has been saved, read that state. Else, get the
+# actual state.
+EEEPC_RADIO_SAVED_STATE_FILE=$EEEPC_VAR/states/wifi
+if [ -e $EEEPC_RADIO_SAVED_STATE_FILE ]; then
+  RADIO_SAVED_STATE=$(cat $EEEPC_RADIO_SAVED_STATE_FILE)
+else
+  RADIO_SAVED_STATE=$RADIO_STATE
+fi
 
 # Get wifi interface
 WIFI_IF=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 
+function radio_toggle {
+    if [ "$RADIO_STATE" = "1" ]; then
+        radio_off 1
+    else
+        radio_on 1
+    fi
+}
+
+function radio_restore {
+  if [ "$RADIO_SAVED_STATE" = "1" ]; then
+    radio_on 1 0
+  else
+    radio_off 1 0
+  fi
+}
+
 function debug_wifi() {
-    echo "EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
-    echo "Running kernel: `uname -a`"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Running kernel: `uname -a`"
     if [ -e /usr/bin/pacman ]; then
-        echo "Installed kernel(s):"
+        echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Installed kernel(s):"
         echo "`/usr/bin/pacman -Qs kernel26`"
     fi
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi rfkill: $RADIO_CONTROL"
@@ -53,7 +81,7 @@ function debug_wifi() {
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_POST_DOWN:"
     print_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
 
-    eeepc_notify "Can you see this?" gtk-dialog-question
+    eeepc_notify "Can you see this?" gtk-dialog-question 10000
 }
 
 function radio_on {
@@ -133,33 +161,17 @@ function radio_off {
     fi
 }
 
-function radio_toggle {
-    if [ "$RADIO_STATE" = "1" ]; then
-        radio_off 1
-    else
-        radio_on 1
-    fi
-}
-
-function radio_restore {
-  if [ "$RADIO_SAVED_STATE" = "1" ]; then
-    radio_on 1 0
-  else
-    radio_off 1 0
-  fi
-}
-
 case $1 in
-    "restore")
+    restore)
         radio_restore
     ;;
-    "off")
+    stop|off)
         radio_off 1
     ;;
-    "on")
+    start|on)
         radio_on 1
     ;;
-    "debug")
+    debug)
         debug_wifi
     ;;
     *)

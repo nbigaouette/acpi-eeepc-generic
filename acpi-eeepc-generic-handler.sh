@@ -6,7 +6,7 @@ get_model
 . /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
 
 # Disable access control. Needed for GUI notification.
-execute_commands "@xhost +"
+execute_commands "@xhost +localhost"
 
 SELECTION=$3
 if [ "$KEY_SHOW" = "1" ]; then
@@ -14,14 +14,9 @@ eeepc_notify "The event of the pressed key is: \"$SELECTION\"" keyboard 20000
 fi
 
 case "$1" in
-    test)
-        cmds=(test1 test2 "test3 test4")
-        eeepc_notify "Test event: ${cmds[@]}" keyboard
-        execute_commands "${cmds[@]}"
-    ;;
     button/power)
         case "$2" in
-            PWRF)
+            PWRF|PBTN)
                 eeepc_notify "Power button pressed" gnome-session-halt
                 execute_commands "${COMMANDS_POWER_BUTTON[@]}"
             ;;
@@ -34,7 +29,7 @@ case "$1" in
 
     button/sleep)
         case "$2" in
-            SLPB)
+            SLPB|SBTN)
                 eeepc_notify "Sleep button pressed" gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
@@ -50,22 +45,10 @@ case "$1" in
             AC0)
                 case "$4" in
                     $POWER_BAT) # AC off
-                        #echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
                         execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
-                        #echo $BRIGHTNESS_BATTERY > /proc/acpi/asus/brn
-                        #xbacklight -set $BRIGHTNESS_BATTERY
-                        #if [ $WIRELESS_MODULE = "iwl3945" ]; then
-                        #echo $WIRELESS_POWERSAVE > /sys/bus/pci/drivers/iwl3945/0000:01:00.0/power_level;
-                        #fi
                     ;;
                     $POWER_AC) # AC on
-                        #echo 500 > /proc/sys/vm/dirty_writeback_centisecs
                         execute_commands "${COMMANDS_AC_PLUGGED[@]}"
-                        #echo $BRIGHTNESS_AC > /proc/acpi/asus/brn
-                        #xbacklight -set $BRIGHTNESS_AC
-                        #if [ $WIRELESS_MODULE = "iwl3945" ]; then
-                        #    echo 6 > /sys/bus/pci/drivers/iwl3945/0000:01:00.0/power_level;
-                        #fi
                     ;;
                 esac
                 ;;
@@ -90,21 +73,37 @@ case "$1" in
         ;;
 
     button/lid)
-        lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+        # Detect correctly lid state 
+        lidstate=""
+        # /proc/acpi is deprecated
+        [ -e /proc/acpi/button/lid/LID/state ] && \
+            lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+        [ "x$lidstate" == "x" ] && \
+            [ "x$3" != "x" ] && lidstate=$3 # Use event given (2rd argument) to acpid
+        # FIXME: It seems there is no /sys inteface to replace this
+        # old /proc/acpi interface, so the latter is not deprecated...
+
         case "$lidstate" in
         open)
             xset dpms force on  # Screen on
             restore_brightness  # Restore brightness
         ;;
         closed)
+            save_brightness     # Save brightness
             if [ "$COMMANDS_ON_LID_CLOSE" == "yes" ]; then
-                ac_state=$(cat /proc/acpi/ac_adapter/AC0/state | awk '{print $2}' )
+                state_file1="/proc/acpi/ac_adapter/AC0/state"
+                state_file2="/sys/class/power_supply/AC0/online"
+                # /proc/acpi/* is deprecated
+                [ -e $state_file1 ] && ac_state=$(cat $state_file1 | awk '{print $2}' )
+                # /sys is the future
+                [ -e $state_file2 ] && ac_state=$(cat $state_file2)
+
                 case $ac_state in
-                on-line)
+                1|on-line)
                     # AC adapter plugged in
                     execute_commands "${COMMANDS_LID_CLOSE_ON_AC[@]}"
                 ;;
-                off-line)
+                0|off-line)
                     # Battery powered
                     execute_commands "${COMMANDS_LID_CLOSE_ON_BATTERY[@]}"
                 ;;
@@ -252,6 +251,5 @@ case "$1" in
 esac
 
 # Restore access control
-execute_commands "@xhost -"
-
+execute_commands "@xhost -localhost"
 
