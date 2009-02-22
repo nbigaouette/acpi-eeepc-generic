@@ -90,6 +90,7 @@ case "$1" in
         ;;
 
     button/lid)
+        
         lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
         case "$lidstate" in
         open)
@@ -97,14 +98,21 @@ case "$1" in
             restore_brightness  # Restore brightness
         ;;
         closed)
+            save_brightness     # Save brightness
             if [ "$COMMANDS_ON_LID_CLOSE" == "yes" ]; then
-                ac_state=$(cat /proc/acpi/ac_adapter/AC0/state | awk '{print $2}' )
+                state_file1="/proc/acpi/ac_adapter/AC0/state"
+                state_file2="/sys/class/power_supply/AC0/online"
+                # /proc/acpi/* is deprecated
+                [ -e $state_file1 ] && ac_state=$(cat $state_file1 | awk '{print $2}' )
+                # /sys is the future
+                [ -e $state_file2 ] && ac_state=$(cat $state_file2)
+
                 case $ac_state in
-                on-line)
+                1|on-line)
                     # AC adapter plugged in
                     execute_commands "${COMMANDS_LID_CLOSE_ON_AC[@]}"
                 ;;
-                off-line)
+                0|off-line)
                     # Battery powered
                     execute_commands "${COMMANDS_LID_CLOSE_ON_BATTERY[@]}"
                 ;;

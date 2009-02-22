@@ -177,9 +177,13 @@ function brightness_set_percentage() {
 }
 
 #################################################################
+function save_brightness() {
+    cat /sys/class/backlight/eeepc/brightness > /var/eeepc/states/brightness
+}
+
+#################################################################
 function restore_brightness() {
-    to_set=`cat /var/eeepc/states/brightness`
-    echo $to_set > /sys/class/backlight/eeepc/brightness
+    cat /var/eeepc/states/brightness > /sys/class/backlight/eeepc/brightness
 }
 
 #################################################################
