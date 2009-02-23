@@ -21,8 +21,9 @@ case "$1" in
                 execute_commands "${COMMANDS_POWER_BUTTON[@]}"
             ;;
             *)
-                eeepc_notify "Button undefined: $2 $3 $4" keyboard
-                logger "ACPI power undefined: $2 $3 $4"
+                msg="Button (button/power) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
@@ -34,8 +35,9 @@ case "$1" in
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
             *)
-                eeepc_notify "Button undefined: $2 $3 $4" keyboard
-                logger "ACPI sleep undefined: $2 $3 $4"
+                msg="Button (button/sleep) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
@@ -52,7 +54,10 @@ case "$1" in
                     ;;
                 esac
                 ;;
-            *) logger "ACPI AC undefined: $2 $3 $4"
+            *)
+                msg="ACPI AC (ac_adapter) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
@@ -67,7 +72,10 @@ case "$1" in
                     ;;
                 esac
                 ;;
-            *) logger "ACPI battery undefined: $2 $3 $4"
+            *)
+                msg="ACPI battery (battery) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
@@ -111,7 +119,9 @@ case "$1" in
             fi
         ;;
         *)
-            logger "Lid state undefined: $2 $3 $4"
+            msg="Button (button/lid) undefined: $2 $3 $4"
+            eeepc_notify $msg keyboard
+            logger $msg
         ;;
         esac
         ;;
@@ -237,7 +247,9 @@ case "$1" in
 #             $BATTERY_CRITICAL &
 #             ;;
             *)
-                logger "ACPI hotkey undefined: $2 $3 $4"
+                msg="Hotkey (hotkey) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
     ;;
@@ -245,8 +257,9 @@ case "$1" in
         logger "Processor acpi event not implemented: $1 $2 $3 $4"
     ;;
     *)
-        eeepc_notify  "ACPI group/action undefined: $1 $2 $3 $4" keyboard
-        logger "ACPI group/action undefined: $1 $2 $3 $4"
+        msg="ACPI group/action ($1) undefined: $2 $3 $4"
+        eeepc_notify $msg keyboard
+        logger $msg
     ;;
 esac
 
