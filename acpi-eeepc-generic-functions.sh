@@ -228,7 +228,7 @@ if [ -S /tmp/.X11-unix/X0 ]; then
     # If autodetection fails, try another way...
     # Get user who executed startx. Might not work if a login
     # manager (GDM,KDM,etc.) is used.
-    [ "x$user" == "x" ] && user=$(ps aux | grep 'xinit /home' | awk '{print $1}' | head -1)
+    [ "x$user" == "x" ] && user=$(ps aux | grep '[x]init /home' | awk '{print $1}' | head -1)
     # If there is a space in $user, autodetection failed, so clear it.
     [ "x`echo $user | grep ' '`" != "x" ] && user=""
 
