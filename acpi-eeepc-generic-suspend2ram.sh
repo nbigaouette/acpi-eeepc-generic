@@ -44,34 +44,35 @@ if grep -q mem /sys/power/state ; then
 
     logger "Start suspend sequence"
 
+    # Get console number
+    CONSOLE_NUMBER=$(fgconsole)
+    logger "Saving console number: $CONSOLE_NUMBER"
+
     # Turn off external monitor
     xrandr --output LVDS --preferred --output VGA --off
 
     # Save logs
     /etc/rc.d/logsbackup stop
 
-    # get console number
-    CONSOLE_NUMBER=$(fgconsole)
-    logger "Saving console number: $CONSOLE_NUMBER"
-
-    # flush the buffers to disk
+    # Flush disk buffers
     sync
 
-    # change virtual terminal to not screw up X
+    # Change virtual terminal to not screw up X
     chvt 1
 
-    # put us into suspend state
-    echo -n "mem" > /sys/power/state
+    # Suspend
+    execute_commands "${SUSPEND2RAM_COMMANDS[@]}"
 
     logger "BEGIN WAKEUP SEQUENCE..."
 
-    #Ugly but effective way to restore screen
+    # Restore screen
     #/usr/sbin/vbetool post
+
+    # Get back to screen
     chvt $CONSOLE_NUMBER
 
-    # restore backlight BRN
-    #sleep 1
-    restore_brightness  # Restore brightness
+    # Restore brightness
+    restore_brightness
 
 fi
 
