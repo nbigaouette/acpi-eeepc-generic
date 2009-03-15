@@ -81,7 +81,7 @@ case "$1" in
         ;;
 
     button/lid)
-        # Detect correctly lid state 
+        # Detect correctly lid state
         lidstate=""
         # /proc/acpi is deprecated
         [ -e /proc/acpi/button/lid/LID/state ] && \
@@ -143,6 +143,10 @@ case "$1" in
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User2)"
                 execute_commands "${COMMANDS_BUTTON_USER2[@]}"
             ;;
+            $EEEPC_USER3) # Fn+Space
+                logger "acpi-eeepc-generic-handler.sh (hotkey): Fn+Space"
+                execute_commands "${COMMANDS_BUTTON_USER3[@]}"
+            ;;
 
             $EEEPC_SLEEP)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Sleep"
@@ -160,6 +164,14 @@ case "$1" in
             $EEEPC_WIFI_DOWN) # WiFi Down
                 logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi Down"
                 execute_commands "${COMMANDS_WIFI_DOWN[@]}"
+            ;;
+            $EEEPC_TOUCHPAD_TOGGLE) # Toggle touchpad
+                logger "acpi-eeepc-generic-handler.sh (hotkey): Toggling touchpad"
+                execute_commands "${COMMANDS_TOUCHPAD_TOGGLE[@]}"
+            ;;
+            $EEEPC_RESOLUTION) # Change resolution
+                logger "acpi-eeepc-generic-handler.sh (hotkey): Changing resolution"
+                execute_commands "${COMMANDS_RESOLUTION[@]}"
             ;;
             $EEEPC_BRIGHTNESS_UP|$EEEPC_BRIGHTNESS_DOWN) # Brightness
                 brightness_direction=`brightness_find_direction`
