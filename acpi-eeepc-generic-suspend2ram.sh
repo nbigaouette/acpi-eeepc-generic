@@ -34,7 +34,9 @@ fi
 
 vga_is_on=`xrandr | grep -A 1 VGA | grep "*"`
 if [ "x$vga_is_on" != "x" ]; then
-    logger "VGA is up and running, canceling suspend"
+    msg="VGA is up and running, canceling suspend"
+    logger $msg
+    eeepc_notify "$msg" stop 5000
     exit 0
 fi
 
