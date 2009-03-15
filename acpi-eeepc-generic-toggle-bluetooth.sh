@@ -34,10 +34,11 @@ fi
 
 
 function debug_bluetooth() {
-    echo "EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
-    echo "Running kernel: `uname -a`"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Running kernel: `uname -a`"
     if [ -e /usr/bin/pacman ]; then
-        echo "Installed kernel(s):"
+        echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Installed kernel(s):"
         echo "`/usr/bin/pacman -Qs kernel26`"
     fi
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): rfkill: $BLUETOOTH_RFKILL"
