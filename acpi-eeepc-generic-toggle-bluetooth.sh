@@ -30,21 +30,20 @@ BLUETOOTH_STATE=0
 BLUETOOTH_DEVICE="/sys/devices/platform/eeepc/bt"
 if [ -e $BLUETOOTH_DEVICE ]; then
     BLUETOOTH_RADIO=$(cat $BLUETOOTH_DEVICE)
+else
+    # Some models do not have any such device, we must
+    # get the state based on what is reported in rfkill
+    BLUETOOTH_RADIO=${BLUETOOTH_STATE}
 fi
 
 
 function debug_bluetooth() {
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Running kernel: `uname -a`"
-    if [ -e /usr/bin/pacman ]; then
-        echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Installed kernel(s):"
-        echo "`/usr/bin/pacman -Qs kernel26`"
-    fi
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): rfkill: $BLUETOOTH_RFKILL"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): State: $BLUETOOTH_STATE"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Device: $BLUETOOTH_DEVICE"
+    print_generic_debug
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Device: $CAMERA_DEVICE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Driver: $CAMERA_DRIVER"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Radio: $BLUETOOTH_RADIO"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): State: $CAMERA_STATE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): rfkill: $BLUETOOTH_RFKILL"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_PRE_UP:"
     print_commands "${COMMANDS_BT_PRE_UP[@]}"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_POST_UP:"
@@ -54,7 +53,12 @@ function debug_bluetooth() {
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_POST_DOWN:"
     print_commands "${COMMANDS_BT_POST_DOWN[@]}"
 
-    eeepc_notify "Can you see this?" gtk-dialog-question
+    eeepc_notify "Bluetooth
+Device: $CAMERA_DEVICE
+Driver: $CAMERA_DRIVER
+Radio: $BLUETOOTH_RADIO
+State: $CAMERA_STATE
+rfkill: $BLUETOOTH_RFKILL" bluetooth 10000
 }
 
 function radio_on {

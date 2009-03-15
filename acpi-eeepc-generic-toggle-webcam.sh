@@ -21,13 +21,7 @@ fi
 
 
 function debug_webcam() {
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Running kernel: `uname -a`"
-    if [ -e /usr/bin/pacman ]; then
-        echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Installed kernel(s):"
-        /usr/bin/pacman -Qs kernel26
-    fi
+    print_generic_debug
     echo "DEBUG (acpi-eeepc-generic-toggle-webcam.sh): Device: $CAMERA_DEVICE"
     echo "DEBUG (acpi-eeepc-generic-toggle-webcam.sh): Driver: $CAMERA_DRIVER"
     echo "DEBUG (acpi-eeepc-generic-toggle-webcam.sh): State: $CAMERA_STATE"

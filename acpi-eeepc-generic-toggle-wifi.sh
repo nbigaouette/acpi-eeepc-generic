@@ -61,17 +61,13 @@ function radio_restore {
 }
 
 function debug_wifi() {
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Running kernel: `uname -a`"
-    if [ -e /usr/bin/pacman ]; then
-        echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Installed kernel(s):"
-        echo "`/usr/bin/pacman -Qs kernel26`"
-    fi
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi rfkill: $RADIO_CONTROL"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi state: $RADIO_STATE"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi interface: $WIFI_IF"
-    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Wifi module: $WIFI_DRIVER"
+    print_generic_debug
+    print_generic_debug
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Device: $RADIO_CONTROL_OTHER"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Driver: $WIFI_DRIVER"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): Interface: $WIFI_IF"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): State: $RADIO_STATE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): rfkill: $RADIO_CONTROL"
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_PRE_UP:"
     print_commands "${COMMANDS_WIFI_PRE_UP[@]}"
     echo "DEBUG (acpi-eeepc-generic-toggle-wifi.sh): COMMANDS_WIFI_POST_UP:"
@@ -82,6 +78,13 @@ function debug_wifi() {
     print_commands "${COMMANDS_WIFI_POST_DOWN[@]}"
 
     eeepc_notify "Can you see this?" gtk-dialog-question 10000
+
+    eeepc_notify "Wifi
+Device: $RADIO_CONTROL_OTHER
+Driver: $WIFI_DRIVER
+Interface: $WIFI_IF
+State: $RADIO_STATE
+rfkill: $RADIO_CONTROL" gnome-dev-wavelan 10000
 }
 
 function radio_on {

@@ -265,4 +265,15 @@ and set XUSER variable to your username." stop 20000
 fi
 
 #################################################################
+function print_generic_debug() {
+    echo "DEBUG: EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "DEBUG: BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
+    echo "DEBUG: Running kernel: `uname -a`"
+    if [ -e /usr/bin/pacman ]; then
+        echo "DEBUG: Installed kernel(s):"
+        /usr/bin/pacman -Qs kernel26
+    fi
+}
+
+#################################################################
 #################################################################
