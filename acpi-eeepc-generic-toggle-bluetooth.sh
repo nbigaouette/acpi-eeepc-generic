@@ -39,10 +39,10 @@ fi
 
 function debug_bluetooth() {
     print_generic_debug
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Device: $CAMERA_DEVICE"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Driver: $CAMERA_DRIVER"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Device: $BLUETOOTH_DEVICE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Driver: $BLUETOOTH_DRIVER"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Radio: $BLUETOOTH_RADIO"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): State: $CAMERA_STATE"
+    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): State: $BLUETOOTH_STATE"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): rfkill: $BLUETOOTH_RFKILL"
     echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_PRE_UP:"
     print_commands "${COMMANDS_BT_PRE_UP[@]}"
@@ -54,10 +54,10 @@ function debug_bluetooth() {
     print_commands "${COMMANDS_BT_POST_DOWN[@]}"
 
     eeepc_notify "Bluetooth
-Device: $CAMERA_DEVICE
-Driver: $CAMERA_DRIVER
+Device: $BLUETOOTH_DEVICE
+Driver: $BLUETOOTH_DRIVER
 Radio: $BLUETOOTH_RADIO
-State: $CAMERA_STATE
+State: $BLUETOOTH_STATE
 rfkill: $BLUETOOTH_RFKILL" bluetooth 10000
 }
 
