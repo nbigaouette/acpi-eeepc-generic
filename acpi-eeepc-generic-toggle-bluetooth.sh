@@ -65,6 +65,8 @@ function radio_on {
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
 
+    [ "$BLUETOOTH_STATE" == "1" ] && eeepc_notify "Bluetooth already tuned on!" bluetooth && return 0
+
     [ "$show_notifications" == "1" ] && eeepc_notify "Turning Bluetooth on..." bluetooth
 
     # Execute pre-up commands just once
@@ -105,6 +107,8 @@ function radio_on {
 function radio_off {
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
+
+    [ "$BLUETOOTH_STATE" == "0" ] && eeepc_notify "Bluetooth already tuned off!" bluetooth && return 0
 
     [ "$show_notifications" == "1" ] && eeepc_notify "Turning Bluetooth off..." bluetooth
 

@@ -91,6 +91,8 @@ function radio_on {
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=
 
+    [ "$RADIO_STATE" == "1" ] && eeepc_notify "Wifi already tuned on!" gnome-dev-wavelan && return 0
+
     [ "$show_notifications" == "1" ] && \
         eeepc_notify "Turning WiFi Radio on..." gnome-dev-wavelan
 
@@ -127,6 +129,8 @@ function radio_on {
 function radio_off {
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
+
+    [ "$RADIO_STATE" == "0" ] && eeepc_notify "Wifi already tuned off!" gnome-dev-wavelan && return 0
 
     [ "$show_notifications" == "1" ] && eeepc_notify "Turning WiFi Radio off..." gnome-dev-wavelan
 

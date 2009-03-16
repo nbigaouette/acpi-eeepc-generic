@@ -16,7 +16,7 @@ to use xrandr."
 fi
 
 var_xrandr="$EEEPC_VAR/xrandr.log"
-xrandr > $var_xrandr
+#xrandr > $var_xrandr
 
 current=$(grep -B 1 "*" $var_xrandr | head -n 1 | awk '{print ""$1""}')
 
@@ -62,9 +62,17 @@ modes_names=(
     "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
 )
 
+
 # Assume we are actually at modes[0] (LVDS only)
 m=0
-if [ "`echo \"${connected}\" | grep VGA`" != "" ]; then
+if [[ "`echo \"${connected}\" | grep VGA`" != "" ]]; then
+    echo "VGA connected. Trying to detect which configuration..."
+
+    vga_nb_modes=$((`sed -n '/VGA/,/LVDS/p' $var_xrandr | wc -l` - 2))
+    lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
+    echo "vga_nb_modes = $vga_nb_modes"
+    echo "lvds_nb_modes = $lvds_nb_modes"
+
     # Detect if we are at modes[1] (Clone)
 
     # Detect if we are at modes[2] (VGA only)
@@ -73,10 +81,12 @@ if [ "`echo \"${connected}\" | grep VGA`" != "" ]; then
 
 fi
 
+echo "Actual mode is ${modes_names[m]}"
+
 # We are at mode "m", go to next mode
 m=$((m+1))
 
-eeepc_notify "Changing display mode to: ${modes_names[m]}" video-display
+#eeepc_notify "Changing display mode to: ${modes_names[m]}" video-display
 cmd="${modes[m]}"
 echo "cmd = $cmd"
 #execute_commands "${cmd}"
