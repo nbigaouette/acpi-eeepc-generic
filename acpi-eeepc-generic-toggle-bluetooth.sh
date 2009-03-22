@@ -62,22 +62,34 @@ rfkill state: $RFKILL_STATE" bluetooth 10000
 }
 
 function radio_on {
+    # First argument ($1):  Number of times the funciton has been called
+    # Second argument ($2): Should we show notifications?
+
+    # Check if 2nd argument to given to function is "0" and disable
+    # notifications,
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
 
-    [ "$RFKILL_STATE" == "1" ] && eeepc_notify "Bluetooth already tuned on!" bluetooth && return 0
+    [ "$RFKILL_STATE" == "1" ] && \
+        eeepc_notify "Bluetooth already turned on!" bluetooth && \
+            return 0
 
-    [ "$show_notifications" == "1" ] && eeepc_notify "Turning Bluetooth on..." bluetooth
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "Turning Bluetooth on..." bluetooth
 
     # Execute pre-up commands just once
-    [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_UP[@]}"
+    [ $1 -eq 1 ] && \
+        execute_commands "${COMMANDS_BLUETOOTH_PRE_UP[@]}"
 
-    # Enable radio, might fail on less then 2.6.29
-    [ -e "$RFKILL_SWITCH" ] && echo 1 > $RFKILL_SWITCH
-    if [ ${KERNEL_rel} -lt 29 ]; then
-        s="rfkill switch usage might fail on kernel lower than 2.6.29"
-        logger "$s"
-        echo "$s"
+    # Enable rfkill switch (which might fail on less then 2.6.29)
+    if [ -e "$RFKILL_SWITCH" ]; then
+        echo 1 > $RFKILL_SWITCH
+
+        if [ ${KERNEL_rel} -lt 29 ]; then
+            s="rfkill switch usage might fail on kernel lower than 2.6.29"
+            logger "$s"
+            echo "$s"
+        fi
     fi
 
     # Load module
@@ -85,16 +97,24 @@ function radio_on {
     success=$?
     if [ $success ]; then
         # If successful, enable card
-        echo 1 > $SAVED_STATE_FILE
         [ -e $SYS_DEVICE ] && \
             echo 1 > $SYS_DEVICE
+
+        # Save the card state
+        echo 1 > $SAVED_STATE_FILE
+
         # Execute post-up commands
         execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
 
-        [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now on" bluetooth
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "Bluetooth is now on" bluetooth
     else
-        [ "$show_notifications" == "1" ] && eeepc_notify "Could not enable Bluetooth" stop
-        # If module loading unsuccessful, try again
+        # If module loading was not successful...
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "Could not enable Bluetooth" stop
+
+        # Try again
         if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
             [ "$show_notifications" == "1" ] && \
                 eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
@@ -105,12 +125,20 @@ function radio_on {
 }
 
 function radio_off {
+    # First argument ($1):  Number of times the funciton has been called
+    # Second argument ($2): Should we show notifications?
+
+    # Check if 2nd argument to given to function is "0" and disable
+    # notifications,
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
 
-    [ "$RFKILL_STATE" == "0" ] && eeepc_notify "Bluetooth already tuned off!" bluetooth && return 0
+    [ "$RFKILL_STATE" == "0" ] && \
+        eeepc_notify "Bluetooth already turned off!" bluetooth && \
+            return 0
 
-    [ "$show_notifications" == "1" ] && eeepc_notify "Turning Bluetooth off..." bluetooth
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "Turning Bluetooth off..." bluetooth
 
     # Execute pre-down commands just once
     [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
@@ -119,26 +147,38 @@ function radio_off {
     /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null
     success=$?
     if [ $success ]; then
-        # If successful, disable card through rkfill and save the state
-        # might fail on less then 2.6.29
-        [ -e "$RFKILL_SWITCH" ] && echo 0 > $RFKILL_SWITCH
-        if [ ${KERNEL_rel} -lt 29 ]; then
-            s="rfkill switch usage might fail on kernel lower than 2.6.29"
-            logger "$s"
-            echo "$s"
+        # If successful...
+        if [ -e "$RFKILL_SWITCH" ]; then
+            # ...and rfkill switch exists
+
+            # Disable the card via rfkill switch
+            echo 0 > $RFKILL_SWITCH
+
+            if [ ${KERNEL_rel} -lt 29 ]; then
+                s="rfkill switch usage might fail on kernel lower than 2.6.29"
+                logger "$s"
+                echo "$s"
+            fi
         fi
 
-        [ -e $SYS_DEVICE ] && echo 0 > $SYS_DEVICE
+        # If /sys device exists, disable it too
+        [ -e $SYS_DEVICE ] && \
+            echo 0 > $SYS_DEVICE
 
+        # Save the card states
         echo 0 > $SAVED_STATE_FILE
 
         # Execute post-down commands
         execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
 
-        [ "$show_notifications" == "1" ] && eeepc_notify "Bluetooth is now off" bluetooth
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "Bluetooth is now off" bluetooth
     else
         # If module unloading unsuccessful, try again
-        [ "$show_notifications" == "1" ] && eeepc_notify "Could not disable Bluetooth" stop
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "Could not disable Bluetooth" stop
+
         if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
             [ "$show_notifications" == "1" ] && \
                 eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
