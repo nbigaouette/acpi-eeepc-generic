@@ -39,18 +39,18 @@ fi
 
 function debug_bluetooth() {
     print_generic_debug
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Device: $SYS_DEVICE"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Driver: $BLUETOOTH_DRIVER"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): Radio: $SYS_STATE"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): State: $RFKILL_STATE"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): rfkill: $RFKILL_SWITCH"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_PRE_UP:"
+    echo "DEBUG ($0): Device: $SYS_DEVICE"
+    echo "DEBUG ($0): Driver: $BLUETOOTH_DRIVER"
+    echo "DEBUG ($0): Radio: $SYS_STATE"
+    echo "DEBUG ($0): State: $RFKILL_STATE"
+    echo "DEBUG ($0): rfkill: $RFKILL_SWITCH"
+    echo "DEBUG ($0): COMMANDS_BT_PRE_UP:"
     print_commands "${COMMANDS_BT_PRE_UP[@]}"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_POST_UP:"
+    echo "DEBUG ($0): COMMANDS_BT_POST_UP:"
     print_commands "${COMMANDS_BT_POST_UP[@]}"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_PRE_DOWN:"
+    echo "DEBUG ($0): COMMANDS_BT_PRE_DOWN:"
     print_commands "${COMMANDS_BT_PRE_DOWN[@]}"
-    echo "DEBUG (acpi-eeepc-generic-toggle-bluetooth.sh): COMMANDS_BT_POST_DOWN:"
+    echo "DEBUG ($0): COMMANDS_BT_POST_DOWN:"
     print_commands "${COMMANDS_BT_POST_DOWN[@]}"
 
     eeepc_notify "Bluetooth
