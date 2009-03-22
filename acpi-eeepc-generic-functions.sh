@@ -17,6 +17,10 @@ KERNEL_rel=${k%%\.*}
 k=${KERNEL#${KERNEL_maj}.${KERNEL_min}.${KERNEL_rel}}
 KERNEL_patch=${k%%\.*}
 
+# Some paths
+rfkills_path="/sys/class/rfkill"
+sys_path="/sys/devices/platform/eeepc"
+
 #################################################################
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then

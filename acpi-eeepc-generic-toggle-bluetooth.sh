@@ -7,43 +7,79 @@
 
 SAVED_STATE_FILE=$EEEPC_VAR/states/bluetooth
 
+### Load saved state from file ##################################
 if [ -e $SAVED_STATE_FILE ]; then
-  SAVED_STATE=$(cat $SAVED_STATE_FILE)
+    SAVED_STATE=$(cat $SAVED_STATE_FILE)
 else
-  SAVED_STATE=0
+    SAVED_STATE=0
 fi
 
-# Find the right rfkill switch, but default to the second one
-rfkill="rfkill1"
-lsrfkill=""
-[ -e /sys/class/rfkill ] && lsrfkill=`/bin/ls /sys/class/rfkill/`
-for r in $lsrfkill; do
-    name=`cat /sys/class/rfkill/$r/name`
-    [ "$name" == "eeepc-bluetooth" ] && rfkill=$r
-done
-RFKILL_SWITCH="/sys/class/rfkill/${rfkill}/state"
-
-# Get rfkill switch state (0 = card off, 1 = card on)
-RFKILL_STATE=0
-[ -e "$RFKILL_SWITCH" ] && RFKILL_STATE=$(cat $RFKILL_SWITCH)
-
-SYS_DEVICE="/sys/devices/platform/eeepc/bt"
-if [ -e $SYS_DEVICE ]; then
-    SYS_STATE=$(cat $SYS_DEVICE)
+### Check rfkill switch #########################################
+if [ -e ${rfkills_path} ]; then
+    # Default to the second one
+    rfkill="rfkill1"
+    for r in `/bin/ls ${rfkills_path}/`; do
+        name=`cat ${rfkills_path}/$r/name`
+        [ "$name" == "eeepc-bluetooth" ] && rfkill=$r
+    done
+    RFKILL_IS_PRESENT="yes"
+    RFKILL_SWITCH="${rfkills_path}/${rfkill}/state"
+    # Get rfkill switch state (0 = card off, 1 = card on)
+    RFKILL_STATE=$(cat ${RFKILL_SWITCH})
 else
-    # Some models do not have any such device, we must
-    # get the state based on what is reported in rfkill
-    SYS_STATE=${RFKILL_STATE}
+    # rfkill disabled/not present
+    RFKILL_IS_PRESENT="no"
+    RFKILL_SWITCH=""
+    RFKILL_STATE=0
 fi
 
+### Check /sys interface ########################################
+SYS_DEVICE="${sys_path}/bt"
+if [ -e ${SYS_DEVICE} ]; then
+    SYS_IS_PRESENT="yes"
+    # Get sys state (0 = card off, 1 = card on)
+    SYS_STATE=$(cat ${SYS_DEVICE})
+else
+    # Some models do not have any such device (1000HE)
+    SYS_IS_PRESENT="no"
+    SYS_STATE=""
+fi
 
+### Detect if card is enabled or disabled #######################
+if [[ "${SYS_IS_PRESENT}" == "yes" && "${RFKILL_IS_PRESENT}" == "yes" ]]; then
+    # Both are present, no problem!
+
+    # States of both should match. Else we have a problem...
+    if   [[ "${SYS_STATE}" == "1" && "${RFKILL_STATE}" == "1" ]]; then
+        IS_ENABLED="yes"
+    elif [[ "${SYS_STATE}" == "0" && "${RFKILL_STATE}" == "0" ]]; then
+        IS_ENABLED="no"
+    else
+        msg="ERROR in $0: /sys interface state (${SYS_STATE}) and rfkill switch state (${RFKILL_STATE}) do not match!"
+        logger "$msg"
+        eeepc_notify "$msg" stop
+        exit 1
+    fi
+else
+    # One of the two is not present. Just get the state of the other
+    if   [[ "${SYS_IS_PRESENT}"    == "yes" && "${SYS_STATE}"    == "1" ]]; then
+        IS_ENABLED="yes"
+    elif [[ "${RFKILL_IS_PRESENT}" == "yes" && "${RFKILL_STATE}" == "1" ]]; then
+        IS_ENABLED="yes"
+    else
+        IS_ENABLED="no"
+    fi
+fi
+
+#################################################################
 function debug_bluetooth() {
     print_generic_debug
-    echo "DEBUG ($0): Device: $SYS_DEVICE"
-    echo "DEBUG ($0): Driver: $BLUETOOTH_DRIVER"
-    echo "DEBUG ($0): Radio: $SYS_STATE"
-    echo "DEBUG ($0): State: $RFKILL_STATE"
-    echo "DEBUG ($0): rfkill: $RFKILL_SWITCH"
+    echo "DEBUG ($0): Driver:        ${BLUETOOTH_DRIVER}"
+    echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
+    echo "DEBUG ($0): /sys device:   ${SYS_DEVICE}"
+    echo "DEBUG ($0): /sys state:    ${SYS_STATE}"
+    echo "DEBUG ($0): rfkill switch: ${RFKILL_SWITCH}"
+    echo "DEBUG ($0): rfkill state:  ${RFKILL_STATE}"
     echo "DEBUG ($0): COMMANDS_BT_PRE_UP:"
     print_commands "${COMMANDS_BT_PRE_UP[@]}"
     echo "DEBUG ($0): COMMANDS_BT_POST_UP:"
@@ -54,13 +90,15 @@ function debug_bluetooth() {
     print_commands "${COMMANDS_BT_POST_DOWN[@]}"
 
     eeepc_notify "Bluetooth
-Driver: $BLUETOOTH_DRIVER
-/sys device: $SYS_DEVICE
-/sys state: $SYS_STATE
-rfkill switch: $RFKILL_SWITCH
-rfkill state: $RFKILL_STATE" bluetooth 10000
+Driver: ${BLUETOOTH_DRIVER}
+is enabled:    ${IS_ENABLED}
+/sys device: ${SYS_DEVICE}
+/sys state: ${SYS_STATE}
+rfkill switch: ${RFKILL_SWITCH}
+rfkill state: ${RFKILL_STATE}" bluetooth 10000
 }
 
+#################################################################
 function radio_on {
     # First argument ($1):  Number of times the funciton has been called
     # Second argument ($2): Should we show notifications?
@@ -70,7 +108,7 @@ function radio_on {
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
 
-    [ "$RFKILL_STATE" == "1" ] && \
+    [ "${IS_ENABLED}" == "yes" ] && \
         eeepc_notify "Bluetooth already turned on!" bluetooth && \
             return 0
 
@@ -82,8 +120,8 @@ function radio_on {
         execute_commands "${COMMANDS_BLUETOOTH_PRE_UP[@]}"
 
     # Enable rfkill switch (which might fail on less then 2.6.29)
-    if [ -e "$RFKILL_SWITCH" ]; then
-        echo 1 > $RFKILL_SWITCH
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+        echo 1 > ${RFKILL_SWITCH}
 
         if [ ${KERNEL_rel} -lt 29 ]; then
             s="rfkill switch usage might fail on kernel lower than 2.6.29"
@@ -93,12 +131,12 @@ function radio_on {
     fi
 
     # Load module
-    /sbin/modprobe $BLUETOOTH_DRIVER 2>/dev/null
+    /sbin/modprobe ${BLUETOOTH_DRIVER} 2>/dev/null
     success=$?
     if [ $success ]; then
         # If successful, enable card
-        [ -e $SYS_DEVICE ] && \
-            echo 1 > $SYS_DEVICE
+        [ "${SYS_IS_PRESENT}" == "yes" ] && \
+            echo 1 > ${SYS_DEVICE}
 
         # Save the card state
         echo 1 > $SAVED_STATE_FILE
@@ -124,6 +162,7 @@ function radio_on {
     fi
 }
 
+#################################################################
 function radio_off {
     # First argument ($1):  Number of times the funciton has been called
     # Second argument ($2): Should we show notifications?
@@ -133,7 +172,7 @@ function radio_off {
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
 
-    [ "$RFKILL_STATE" == "0" ] && \
+    [ "${IS_ENABLED}" == "no" ] && \
         eeepc_notify "Bluetooth already turned off!" bluetooth && \
             return 0
 
@@ -141,18 +180,19 @@ function radio_off {
         eeepc_notify "Turning Bluetooth off..." bluetooth
 
     # Execute pre-down commands just once
-    [ $1 -eq 1 ] && execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
+    [ $1 -eq 1 ] && \
+        execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
 
     # Unload module
-    /sbin/modprobe -r $BLUETOOTH_DRIVER 2>/dev/null
+    /sbin/modprobe -r ${BLUETOOTH_DRIVER} 2>/dev/null
     success=$?
     if [ $success ]; then
         # If successful...
-        if [ -e "$RFKILL_SWITCH" ]; then
+        if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
             # ...and rfkill switch exists
 
             # Disable the card via rfkill switch
-            echo 0 > $RFKILL_SWITCH
+            echo 0 > ${RFKILL_SWITCH}
 
             if [ ${KERNEL_rel} -lt 29 ]; then
                 s="rfkill switch usage might fail on kernel lower than 2.6.29"
@@ -162,8 +202,8 @@ function radio_off {
         fi
 
         # If /sys device exists, disable it too
-        [ -e $SYS_DEVICE ] && \
-            echo 0 > $SYS_DEVICE
+        [ "${SYS_IS_PRESENT}" == "yes" ] && \
+            echo 0 > ${SYS_DEVICE}
 
         # Save the card states
         echo 0 > $SAVED_STATE_FILE
@@ -188,14 +228,16 @@ function radio_off {
     fi
 }
 
+#################################################################
 function radio_toggle {
-    if [ "$SYS_STATE" = "1" ]; then
+    if [ "${SYS_STATE}" = "1" ]; then
         radio_off 1
     else
         radio_on 1
     fi
 }
 
+#################################################################
 function radio_restore {
   if [ "$RADIO_SAVED_RADIO" = "1" ]; then
     radio_on 1 0
@@ -204,6 +246,7 @@ function radio_restore {
   fi
 }
 
+#################################################################
 case $1 in
     "debug")
         debug_bluetooth
@@ -221,4 +264,3 @@ case $1 in
     radio_toggle
   ;;
 esac
-
