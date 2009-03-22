@@ -5,7 +5,13 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-SAVED_STATE_FILE=$EEEPC_VAR/states/bluetooth
+DRIVER=$BLUETOOTH_DRIVER
+NAME="Bluetooth"
+NAME_SMALL="bluetooth"
+ICON=${NAME_SMALL}
+
+
+SAVED_STATE_FILE=$EEEPC_VAR/states/${NAME_SMALL}
 
 ### Load saved state from file ##################################
 if [ -e $SAVED_STATE_FILE ]; then
@@ -20,7 +26,7 @@ if [ -e ${rfkills_path} ]; then
     rfkill="rfkill1"
     for r in `/bin/ls ${rfkills_path}/`; do
         name=`cat ${rfkills_path}/$r/name`
-        [ "$name" == "eeepc-bluetooth" ] && rfkill=$r
+        [ "$name" == "eeepc-${NAME_SMALL}" ] && rfkill=$r
     done
     RFKILL_IS_PRESENT="yes"
     RFKILL_SWITCH="${rfkills_path}/${rfkill}/state"
@@ -74,7 +80,7 @@ fi
 #################################################################
 function debug_bluetooth() {
     print_generic_debug
-    echo "DEBUG ($0): Driver:        ${BLUETOOTH_DRIVER}"
+    echo "DEBUG ($0): Driver:        ${DRIVER}"
     echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
     echo "DEBUG ($0): /sys device:   ${SYS_DEVICE}"
     echo "DEBUG ($0): /sys state:    ${SYS_STATE}"
@@ -89,13 +95,13 @@ function debug_bluetooth() {
     echo "DEBUG ($0): COMMANDS_BT_POST_DOWN:"
     print_commands "${COMMANDS_BT_POST_DOWN[@]}"
 
-    eeepc_notify "Bluetooth
-Driver: ${BLUETOOTH_DRIVER}
+    eeepc_notify "${NAME}
+Driver: ${DRIVER}
 is enabled:    ${IS_ENABLED}
 /sys device: ${SYS_DEVICE}
 /sys state: ${SYS_STATE}
 rfkill switch: ${RFKILL_SWITCH}
-rfkill state: ${RFKILL_STATE}" bluetooth 10000
+rfkill state: ${RFKILL_STATE}" ${NAME_SMALL} 10000
 }
 
 #################################################################
@@ -109,11 +115,11 @@ function radio_on {
     [ "$2" == "0" ] && show_notifications=0
 
     [ "${IS_ENABLED}" == "yes" ] && \
-        eeepc_notify "Bluetooth already turned on!" bluetooth && \
+        eeepc_notify "${NAME} already turned on!" ${ICON} && \
             return 0
 
     [ "$show_notifications" == "1" ] && \
-        eeepc_notify "Turning Bluetooth on..." bluetooth
+        eeepc_notify "Turning ${NAME} on..." ${ICON}
 
     # Execute pre-up commands just once
     [ $1 -eq 1 ] && \
@@ -131,7 +137,7 @@ function radio_on {
     fi
 
     # Load module
-    /sbin/modprobe ${BLUETOOTH_DRIVER} 2>/dev/null
+    /sbin/modprobe ${DRIVER} 2>/dev/null
     success=$?
     if [ $success ]; then
         # If successful, enable card
@@ -145,17 +151,17 @@ function radio_on {
         execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
 
         [ "$show_notifications" == "1" ] && \
-            eeepc_notify "Bluetooth is now on" bluetooth
+            eeepc_notify "${NAME} is now on" ${ICON}
     else
         # If module loading was not successful...
 
         [ "$show_notifications" == "1" ] && \
-            eeepc_notify "Could not enable Bluetooth" stop
+            eeepc_notify "Could not enable ${NAME}" stop
 
         # Try again
         if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
             [ "$show_notifications" == "1" ] && \
-                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" ${ICON}
             sleep 2
             radio_on $(($1+1)) $show_notifications
         fi
@@ -173,18 +179,18 @@ function radio_off {
     [ "$2" == "0" ] && show_notifications=0
 
     [ "${IS_ENABLED}" == "no" ] && \
-        eeepc_notify "Bluetooth already turned off!" bluetooth && \
+        eeepc_notify "${NAME} already turned off!" ${ICON} && \
             return 0
 
     [ "$show_notifications" == "1" ] && \
-        eeepc_notify "Turning Bluetooth off..." bluetooth
+        eeepc_notify "Turning ${NAME} off..." ${ICON}
 
     # Execute pre-down commands just once
     [ $1 -eq 1 ] && \
         execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
 
     # Unload module
-    /sbin/modprobe -r ${BLUETOOTH_DRIVER} 2>/dev/null
+    /sbin/modprobe -r ${DRIVER} 2>/dev/null
     success=$?
     if [ $success ]; then
         # If successful...
@@ -212,16 +218,16 @@ function radio_off {
         execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
 
         [ "$show_notifications" == "1" ] && \
-            eeepc_notify "Bluetooth is now off" bluetooth
+            eeepc_notify "${NAME} is now off" ${ICON}
     else
         # If module unloading unsuccessful, try again
 
         [ "$show_notifications" == "1" ] && \
-            eeepc_notify "Could not disable Bluetooth" stop
+            eeepc_notify "Could not disable ${NAME}" stop
 
         if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
             [ "$show_notifications" == "1" ] && \
-                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" bluetooth
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" ${ICON}
             sleep 2
             radio_off $(($1+1)) $show_notifications
         fi
