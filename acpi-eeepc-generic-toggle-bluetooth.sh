@@ -54,11 +54,11 @@ function debug_bluetooth() {
     print_commands "${COMMANDS_BT_POST_DOWN[@]}"
 
     eeepc_notify "Bluetooth
-Device: $SYS_DEVICE
 Driver: $BLUETOOTH_DRIVER
-Radio: $SYS_STATE
-State: $RFKILL_STATE
-rfkill: $RFKILL_SWITCH" bluetooth 10000
+/sys device: $SYS_DEVICE
+/sys state: $SYS_STATE
+rfkill switch: $RFKILL_SWITCH
+rfkill state: $RFKILL_STATE" bluetooth 10000
 }
 
 function radio_on {
