@@ -251,11 +251,11 @@ function device_toggle {
 
 #################################################################
 function device_restore {
-  if [ "$RADIO_SAVED_RADIO" = "1" ]; then
-    device_on 1 0
-  else
-    device_off 1 0
-  fi
+    if [ "$RADIO_SAVED_RADIO" = "1" ]; then
+        device_on 1 0
+    else
+        device_off 1 0
+    fi
 }
 
 #################################################################
@@ -274,7 +274,7 @@ case $1 in
     ;;
     *)
         device_toggle
-  ;;
+    ;;
 esac
 
 ### End of file #################################################
