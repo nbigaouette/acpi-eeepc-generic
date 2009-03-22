@@ -241,7 +241,7 @@ is enabled:    ${IS_ENABLED}
 /sys device: ${SYS_DEVICE}
 /sys state: ${SYS_STATE}
 rfkill switch: ${RFKILL_SWITCH}
-rfkill state: ${RFKILL_STATE}" ${NAME_SMALL} 10000
+rfkill state: ${RFKILL_STATE}" ${ICON} 10000
 }
 
 ### Toggle the device on and off ################################
