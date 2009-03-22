@@ -111,7 +111,7 @@ rfkill state: ${RFKILL_STATE}" ${NAME_SMALL} 10000
 }
 
 #################################################################
-function radio_on {
+function device_on {
     # First argument ($1):  Number of times the funciton has been called
     # Second argument ($2): Should we show notifications?
 
@@ -169,13 +169,13 @@ function radio_on {
             [ "$show_notifications" == "1" ] && \
                 eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
             sleep 2
-            radio_on $(($1+1)) $show_notifications
+            device_on $(($1+1)) $show_notifications
         fi
     fi
 }
 
 #################################################################
-function radio_off {
+function device_off {
     # First argument ($1):  Number of times the funciton has been called
     # Second argument ($2): Should we show notifications?
 
@@ -235,26 +235,26 @@ function radio_off {
             [ "$show_notifications" == "1" ] && \
                 eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
             sleep 2
-            radio_off $(($1+1)) $show_notifications
+            device_off $(($1+1)) $show_notifications
         fi
     fi
 }
 
 #################################################################
-function radio_toggle {
+function device_toggle {
     if [ "${SYS_STATE}" = "1" ]; then
-        radio_off 1
+        device_off 1
     else
-        radio_on 1
+        device_on 1
     fi
 }
 
 #################################################################
-function radio_restore {
+function device_restore {
   if [ "$RADIO_SAVED_RADIO" = "1" ]; then
-    radio_on 1 0
+    device_on 1 0
   else
-    radio_off 1 0
+    device_off 1 0
   fi
 }
 
@@ -264,16 +264,16 @@ case $1 in
         debug
     ;;
     "restore")
-        radio_restore
+        device_restore
     ;;
     "off")
-        radio_off 1
+        device_off 1
     ;;
     "on")
-        radio_on 1
+        device_on 1
     ;;
     *)
-        radio_toggle
+        device_toggle
   ;;
 esac
 
