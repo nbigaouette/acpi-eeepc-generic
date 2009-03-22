@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# http://code.google.com/p/acpi-eeepc-generic/
+#
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 
@@ -6,7 +9,7 @@
 
 chmod a+w /var/eeepc/states/* &> /dev/null
 
-# Extract kernel version
+### Extract kernel version
 KERNEL=`uname -r`
 KERNEL=${KERNEL%%-*}
 KERNEL_maj=${KERNEL%%\.*}
@@ -17,11 +20,11 @@ KERNEL_rel=${k%%\.*}
 k=${KERNEL#${KERNEL_maj}.${KERNEL_min}.${KERNEL_rel}}
 KERNEL_patch=${k%%\.*}
 
-# Some paths
+### Some paths
 rfkills_path="/sys/class/rfkill"
 sys_path="/sys/devices/platform/eeepc"
 
-#################################################################
+### Generic notification function ###############################
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
         send_libnotify "$1" "$2" "$3"
@@ -33,7 +36,7 @@ function eeepc_notify {
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }
 
-#################################################################
+### libnotify ###################################################
 function send_libnotify() {
     if [ ! -e /usr/bin/notify-send ]; then
         logger "To use libnotify's OSD, please install 'notification-daemon'"
@@ -48,7 +51,7 @@ function send_libnotify() {
     send_generic "${cmd}"
 }
 
-#################################################################
+### kdialog #####################################################
 function send_kdialog() {
     if [ ! -e /usr/bin/kdialog ]; then
         logger "To use kdialog's OSD, please install 'kdebase'"
@@ -62,7 +65,7 @@ function send_kdialog() {
     send_generic "${cmd}"
 }
 
-#################################################################
+### dzen ########################################################
 function send_dzen() {
     if [ ! -e /usr/bin/dzen2 ]; then
         logger "To use dzen's OSD, please install 'dzen2'"
@@ -76,7 +79,7 @@ function send_dzen() {
     send_generic "${cmd}"
 }
 
-#################################################################
+### Make sure GUI is run as user ################################
 function send_generic() {
     if [ "x$UID" == "x0" ]; then
         /bin/su $user --login -c "${@}"
@@ -85,7 +88,7 @@ function send_generic() {
     fi
 }
 
-#################################################################
+### Print all commands in an array ##############################
 function print_commands() {
     cmds=( "$@" )
     cmds_num=${#cmds[@]}
@@ -96,7 +99,7 @@ function print_commands() {
     done
 }
 
-#################################################################
+### Execute all commands in an array ############################
 function execute_commands() {
     [ "x$EEEPC_CONF_DONE" == "xno" ] && eeepc_notify "PLEASE EDIT YOUR CONFIGURATION FILE:
 /etc/conf.d/acpi-eeepc-generic.conf" stop 20000
@@ -116,7 +119,7 @@ function execute_commands() {
     done
 }
 
-#################################################################
+### Verify if volume if muted ###################################
 function volume_is_mute() {
     # 1 is true, 0 is false
     on_off=`amixer get ${ALSA_MUTE_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
@@ -125,12 +128,12 @@ function volume_is_mute() {
     echo $is_muted
 }
 
-#################################################################
+### Return the volume level #####################################
 function get_volume() {
     echo `amixer get ${ALSA_MAIN_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
 }
 
-#################################################################
+### Return the mixer ############################################
 function get_output_mixers() {
     mixers=`amixer scontrols | awk '{print ""$4""}' | sed -e "s|'||g" -e "s|,0||g"`
     i=0
@@ -148,7 +151,7 @@ function get_output_mixers() {
     echo ${output_mixers[@]}
 }
 
-#################################################################
+### Get the model name ##########################################
 function get_model() {
     if [ -z "${EEEPC_MODEL}" ]; then
         echo "EEEPC_MODEL=\"$(dmidecode -s system-product-name | sed 's/[ \t]*$//')\"" >> /etc/conf.d/acpi-eeepc-generic.conf
@@ -161,14 +164,14 @@ function get_model() {
     fi
 }
 
-#################################################################
+### Return brightness level percentage ##########################
 function brightness_get_percentage() {
     actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
     maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
     echo $((10000*$actual_brightness / (100*$maximum_brightness) ))
 }
 
-#################################################################
+### Set the brightness level percentage #########################
 function brightness_set_percentage() {
     #actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
     maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
@@ -180,22 +183,22 @@ function brightness_set_percentage() {
     echo $to_set > /sys/class/backlight/eeepc/brightness
 }
 
-#################################################################
+### Save brightness #############################################
 function save_brightness() {
     cat /sys/class/backlight/eeepc/brightness > /var/eeepc/states/brightness
 }
 
-#################################################################
+### Restore brightness ##########################################
 function restore_brightness() {
     cat /var/eeepc/states/brightness > /sys/class/backlight/eeepc/brightness
 }
 
-#################################################################
+### Set brightness (absolute value) #############################
 function brightness_set_absolute() {
     echo $1 > /sys/class/backlight/eeepc/brightness
 }
 
-#################################################################
+### Get direction of brightness change ##########################
 function brightness_find_direction() {
     actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
     previous_brightness=`cat /var/eeepc/states/brightness`
@@ -207,8 +210,7 @@ function brightness_find_direction() {
     echo $to_return
 }
 
-#################################################################
-# Get username
+### Get username ################################################
 if [ -S /tmp/.X11-unix/X0 ]; then
     export DISPLAY=:0
 
@@ -268,7 +270,7 @@ and set XUSER variable to your username." stop 20000
     fi
 fi
 
-#################################################################
+### Print generic debug information #############################
 function print_generic_debug() {
     echo "DEBUG: EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
     echo "DEBUG: BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
@@ -302,71 +304,7 @@ rfkill switch: ${RFKILL_SWITCH}
 rfkill state: ${RFKILL_STATE}" ${NAME_SMALL} 10000
 }
 
-#################################################################
-function device_on {
-    # First argument ($1):  Number of times the funciton has been called
-    # Second argument ($2): Should we show notifications?
-
-    # Check if 2nd argument to given to function is "0" and disable
-    # notifications,
-    show_notifications=1
-    [ "$2" == "0" ] && show_notifications=0
-
-    [ "${IS_ENABLED}" == "yes" ] && \
-        eeepc_notify "${NAME} already turned on!" ${ICON} && \
-            return 0
-
-    [ "$show_notifications" == "1" ] && \
-        eeepc_notify "Turning ${NAME} on..." ${ICON}
-
-    # Execute pre-up commands just once
-    [ $1 -eq 1 ] && \
-        execute_commands "${COMMANDS_PRE_UP[@]}"
-
-    # Enable rfkill switch (which might fail on less then 2.6.29)
-    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
-        echo 1 > ${RFKILL_SWITCH}
-
-        if [ ${KERNEL_rel} -lt 29 ]; then
-            s="rfkill switch usage might fail on kernel lower than 2.6.29"
-            logger "$s"
-            echo "$s"
-        fi
-    fi
-
-    # Load module
-    /sbin/modprobe ${DRIVER} 2>/dev/null
-    success=$?
-    if [ $success ]; then
-        # If successful, enable card
-        [ "${SYS_IS_PRESENT}" == "yes" ] && \
-            echo 1 > ${SYS_DEVICE}
-
-        # Save the card state
-        echo 1 > $SAVED_STATE_FILE
-
-        # Execute post-up commands
-        execute_commands "${COMMANDS_POST_UP[@]}"
-
-        [ "$show_notifications" == "1" ] && \
-            eeepc_notify "${NAME} is now on" ${ICON}
-    else
-        # If module loading was not successful...
-
-        [ "$show_notifications" == "1" ] && \
-            eeepc_notify "Could not enable ${NAME}" stop
-
-        # Try again
-        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
-            [ "$show_notifications" == "1" ] && \
-                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
-            sleep 2
-            device_on $(($1+1)) $show_notifications
-        fi
-    fi
-}
-
-#################################################################
+### Toggle the device on and off ################################
 function device_toggle {
     if [ "${SYS_STATE}" = "1" ]; then
         device_off 1
@@ -375,7 +313,7 @@ function device_toggle {
     fi
 }
 
-#################################################################
+### Restore a device ############################################
 function device_restore {
     if [ "$RADIO_SAVED_RADIO" = "1" ]; then
         device_on 1 0
@@ -457,7 +395,71 @@ function load_saved_state() {
     fi
 }
 
-#################################################################
+### Turn of device ##############################################
+function device_on {
+    # First argument ($1):  Number of times the funciton has been called
+    # Second argument ($2): Should we show notifications?
+
+    # Check if 2nd argument to given to function is "0" and disable
+    # notifications,
+    show_notifications=1
+    [ "$2" == "0" ] && show_notifications=0
+
+    [ "${IS_ENABLED}" == "yes" ] && \
+        eeepc_notify "${NAME} already turned on!" ${ICON} && \
+            return 0
+
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "Turning ${NAME} on..." ${ICON}
+
+    # Execute pre-up commands just once
+    [ $1 -eq 1 ] && \
+        execute_commands "${COMMANDS_PRE_UP[@]}"
+
+    # Enable rfkill switch (which might fail on less then 2.6.29)
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+        echo 1 > ${RFKILL_SWITCH}
+
+        if [ ${KERNEL_rel} -lt 29 ]; then
+            s="rfkill switch usage might fail on kernel lower than 2.6.29"
+            logger "$s"
+            echo "$s"
+        fi
+    fi
+
+    # Load module
+    /sbin/modprobe ${DRIVER} 2>/dev/null
+    success=$?
+    if [ $success ]; then
+        # If successful, enable card
+        [ "${SYS_IS_PRESENT}" == "yes" ] && \
+            echo 1 > ${SYS_DEVICE}
+
+        # Save the card state
+        echo 1 > $SAVED_STATE_FILE
+
+        # Execute post-up commands
+        execute_commands "${COMMANDS_POST_UP[@]}"
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "${NAME} is now on" ${ICON}
+    else
+        # If module loading was not successful...
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "Could not enable ${NAME}" stop
+
+        # Try again
+        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
+            [ "$show_notifications" == "1" ] && \
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
+            sleep 2
+            device_on $(($1+1)) $show_notifications
+        fi
+    fi
+}
+
+### Turn off device #############################################
 function device_off {
     # First argument ($1):  Number of times the funciton has been called
     # Second argument ($2): Should we show notifications?
@@ -522,9 +524,6 @@ function device_off {
         fi
     fi
 }
-
-
-
 
 ### End of file #################################################
 
