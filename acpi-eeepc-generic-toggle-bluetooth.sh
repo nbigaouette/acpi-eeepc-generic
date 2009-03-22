@@ -5,15 +5,20 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
+
+### Information for bluetooth ###################################
 DRIVER=$BLUETOOTH_DRIVER
 NAME="Bluetooth"
 NAME_SMALL="bluetooth"
 ICON=${NAME_SMALL}
+COMMANDS_PRE_UP="${COMMANDS_BT_PRE_UP[@]}"
+COMMANDS_PRE_DOWN="${COMMANDS_BT_PRE_DOWN[@]}"
+COMMANDS_POST_UP="${COMMANDS_BT_POST_UP[@]}"
+COMMANDS_POST_DOWN="${COMMANDS_BT_POST_DOWN[@]}"
 
-
-SAVED_STATE_FILE=$EEEPC_VAR/states/${NAME_SMALL}
 
 ### Load saved state from file ##################################
+SAVED_STATE_FILE=$EEEPC_VAR/states/${NAME_SMALL}
 if [ -e $SAVED_STATE_FILE ]; then
     SAVED_STATE=$(cat $SAVED_STATE_FILE)
 else
@@ -78,7 +83,7 @@ else
 fi
 
 #################################################################
-function debug_bluetooth() {
+function debug() {
     print_generic_debug
     echo "DEBUG ($0): Driver:        ${DRIVER}"
     echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
@@ -86,14 +91,14 @@ function debug_bluetooth() {
     echo "DEBUG ($0): /sys state:    ${SYS_STATE}"
     echo "DEBUG ($0): rfkill switch: ${RFKILL_SWITCH}"
     echo "DEBUG ($0): rfkill state:  ${RFKILL_STATE}"
-    echo "DEBUG ($0): COMMANDS_BT_PRE_UP:"
-    print_commands "${COMMANDS_BT_PRE_UP[@]}"
-    echo "DEBUG ($0): COMMANDS_BT_POST_UP:"
-    print_commands "${COMMANDS_BT_POST_UP[@]}"
-    echo "DEBUG ($0): COMMANDS_BT_PRE_DOWN:"
-    print_commands "${COMMANDS_BT_PRE_DOWN[@]}"
-    echo "DEBUG ($0): COMMANDS_BT_POST_DOWN:"
-    print_commands "${COMMANDS_BT_POST_DOWN[@]}"
+    echo "DEBUG ($0): COMMANDS_PRE_UP:"
+    print_commands "${COMMANDS_PRE_UP[@]}"
+    echo "DEBUG ($0): COMMANDS_POST_UP:"
+    print_commands "${COMMANDS_POST_UP[@]}"
+    echo "DEBUG ($0): COMMANDS_PRE_DOWN:"
+    print_commands "${COMMANDS_PRE_DOWN[@]}"
+    echo "DEBUG ($0): COMMANDS_POST_DOWN:"
+    print_commands "${COMMANDS_POST_DOWN[@]}"
 
     eeepc_notify "${NAME}
 Driver: ${DRIVER}
@@ -123,7 +128,7 @@ function radio_on {
 
     # Execute pre-up commands just once
     [ $1 -eq 1 ] && \
-        execute_commands "${COMMANDS_BLUETOOTH_PRE_UP[@]}"
+        execute_commands "${COMMANDS_PRE_UP[@]}"
 
     # Enable rfkill switch (which might fail on less then 2.6.29)
     if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
@@ -148,7 +153,7 @@ function radio_on {
         echo 1 > $SAVED_STATE_FILE
 
         # Execute post-up commands
-        execute_commands "${COMMANDS_BLUETOOTH_POST_UP[@]}"
+        execute_commands "${COMMANDS_POST_UP[@]}"
 
         [ "$show_notifications" == "1" ] && \
             eeepc_notify "${NAME} is now on" ${ICON}
@@ -187,7 +192,7 @@ function radio_off {
 
     # Execute pre-down commands just once
     [ $1 -eq 1 ] && \
-        execute_commands "${COMMANDS_BLUETOOTH_PRE_DOWN[@]}"
+        execute_commands "${COMMANDS_PRE_DOWN[@]}"
 
     # Unload module
     /sbin/modprobe -r ${DRIVER} 2>/dev/null
@@ -215,7 +220,7 @@ function radio_off {
         echo 0 > $SAVED_STATE_FILE
 
         # Execute post-down commands
-        execute_commands "${COMMANDS_BLUETOOTH_POST_DOWN[@]}"
+        execute_commands "${COMMANDS_POST_DOWN[@]}"
 
         [ "$show_notifications" == "1" ] && \
             eeepc_notify "${NAME} is now off" ${ICON}
@@ -255,7 +260,7 @@ function radio_restore {
 #################################################################
 case $1 in
     "debug")
-        debug_bluetooth
+        debug
     ;;
     "restore")
         radio_restore
