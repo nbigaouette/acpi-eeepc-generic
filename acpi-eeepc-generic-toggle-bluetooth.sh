@@ -272,8 +272,8 @@ case $1 in
     "on")
         radio_on 1
     ;;
-  *)
-    radio_toggle
+    *)
+        radio_toggle
   ;;
 esac
 
