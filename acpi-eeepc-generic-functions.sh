@@ -222,10 +222,25 @@ function print_generic_debug() {
 
     echo "DEBUG ($0): Driver:        ${DRIVER}"
     echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
+
+    if [ "x${INTERFACE}" != "x" ]; then
+    echo "DEBUG ($0): interface:     ${INTERFACE}"
+    fi
+
+    if [ "${SYS_IS_PRESENT}" == "yes" ]; then
     echo "DEBUG ($0): /sys device:   ${SYS_DEVICE}"
     echo "DEBUG ($0): /sys state:    ${SYS_STATE}"
+    else
+    echo "DEBUG ($0): /sys device is not present"
+    fi
+    
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
     echo "DEBUG ($0): rfkill switch: ${RFKILL_SWITCH}"
     echo "DEBUG ($0): rfkill state:  ${RFKILL_STATE}"
+    else
+    echo "DEBUG ($0): rfkill switch is not present"
+    fi
+
     echo "DEBUG ($0): COMMANDS_PRE_UP:"
     print_commands "${COMMANDS_PRE_UP[@]}"
     echo "DEBUG ($0): COMMANDS_POST_UP:"
@@ -234,14 +249,32 @@ function print_generic_debug() {
     print_commands "${COMMANDS_PRE_DOWN[@]}"
     echo "DEBUG ($0): COMMANDS_POST_DOWN:"
     print_commands "${COMMANDS_POST_DOWN[@]}"
+    
+    if [ "x${INTERFACE}" != "x" ]; then
+        interface_notify_msg="
+interface: ${INTERFACE}"
+    fi
+
+    if [ "${SYS_IS_PRESENT}" == "yes" ]; then
+    SYS_MESSAGE="/sys device: ${SYS_DEVICE}
+/sys state: ${SYS_STATE}"
+    else
+    SYS_MESSAGE="/sys device is not present"
+    fi
+
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+    RFKILL_MESSAGE="rfkill switch: ${RFKILL_SWITCH}
+rfkill state:  ${RFKILL_STATE}"
+    else
+    RFKILL_MESSAGE="rfkill switch is not present"
+    fi
+    
 
     eeepc_notify "${NAME}
 Driver: ${DRIVER}
-is enabled:    ${IS_ENABLED}
-/sys device: ${SYS_DEVICE}
-/sys state: ${SYS_STATE}
-rfkill switch: ${RFKILL_SWITCH}
-rfkill state: ${RFKILL_STATE}" ${ICON} 10000
+is enabled: ${IS_ENABLED} ${interface_notify_msg}
+${SYS_MESSAGE}
+${RFKILL_MESSAGE}" ${ICON} 10000
 }
 
 ### Toggle the device on and off ################################
@@ -367,6 +400,12 @@ function device_on {
         fi
     fi
 
+    if [ "x$INTERFACE" != "x" ]; then
+        # Put interface up and wait 1 second
+        ${INTERFACE_UP}
+        sleep 1
+    fi
+
     # Load module
     /sbin/modprobe ${DRIVER} 2>/dev/null
     success=$?
@@ -419,6 +458,12 @@ function device_off {
     # Execute pre-down commands just once
     [ $1 -eq 1 ] && \
         execute_commands "${COMMANDS_PRE_DOWN[@]}"
+
+    if [ "x$INTERFACE" != "x" ]; then
+        # Put interface down and wait 1 second
+        ${INTERFACE_DOWN}
+        sleep 1
+    fi
 
     # Unload module
     /sbin/modprobe -r ${DRIVER} 2>/dev/null
