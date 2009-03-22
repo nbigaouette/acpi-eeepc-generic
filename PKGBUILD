@@ -1,20 +1,4 @@
-# Maintainer: Nicolas Bigaouette <nbigaouette@gmail.com>
-# Greatly inspired by:
-#   EeePC ACPI Utilities : http://eeepc-acpi-util.sourceforge.net
-#   Other Eee acpi packages from AUR: http://aur.archlinux.org/packages.php?K=eee
-
-# TODO
-#   XRandR toggle between (see acpi-eeepc900, display.sh):
-#       -LVDS only
-#       -VGA only
-#       -VGA clone of LVDS
-#       -VGA left/right/below/top of LVDS
-#   XOSD for really basic osd
-#   Suspend2disk helper script
-#   Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
-#   Volume devices autodetection (LineIn/LineOut/iSpeaker...)
-#   Reset values of AC after resume (see powersource.sh, called at the end of suspend2ram.sh)
-#   FSB+Fan control
+# Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
 pkgver=0.9b
