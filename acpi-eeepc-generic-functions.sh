@@ -210,66 +210,6 @@ function brightness_find_direction() {
     echo $to_return
 }
 
-### Get username ################################################
-if [ -S /tmp/.X11-unix/X0 ]; then
-    export DISPLAY=:0
-
-    # Detect logged in user by using "who"
-    user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
-    # If there is a space in $user, autodetection failed, so clear it.
-    [ "x`echo $user | grep ' '`" != "x" ] && user=""
-
-    # If autodetection fails, try another way...
-    # Take first reported by "who"
-    #[ "x$user" == "x" ] && user=$(who | head -1 | awk '{print $1}')
-    # If there is a space in $user, autodetection failed, so clear it.
-    #[ "x`echo $user | grep ' '`" != "x" ] && user=""
-
-    # If autodetection fails, try another way...
-    # Take users reported by "who" and return uniq values
-    [ "x$user" == "x" ] && user=$(who | awk '{print $1}' | uniq)
-    # If there is a space in $user, autodetection failed, so clear it.
-    [ "x`echo $user | grep ' '`" != "x" ] && user=""
-
-    # If autodetection fails, try another way...
-    # Get user who executed startx. Might not work if a login
-    # manager (GDM,KDM,etc.) is used.
-    [ "x$user" == "x" ] && user=$(ps aux | grep '[x]init /home' | awk '{print $1}' | head -1)
-    # If there is a space in $user, autodetection failed, so clear it.
-    [ "x`echo $user | grep ' '`" != "x" ] && user=""
-
-    # If autodetection fails, fallback to default user
-    # set in /etc/conf.d/acpi-eeepc-generic.conf
-    [ "x$user" == "x" ] && user=$XUSER
-
-    # As a last resort, check all processes and their owning user,
-    # filtering known users.
-    [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
-        sort | uniq | \
-        grep -v \
-            -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
-            -e ntp -e nx -e policykit -e privoxy -e root \
-            -e tor -e USER
-        )
-    # If there is a space in $user, autodetection failed, so clear it.
-    [ "x`echo $user | grep ' '`" != "x" ] && user=""
-
-    # If user is _still_ empty, notify the user to set XUSER in
-    # configuration file.
-    [ "x$user" == "x" ] && \
-        eeepc_notify "User autodetection failed. Please edit \
-your configuration file (/etc/conf.d/acpi-eeepc-generic.conf) \
-and set XUSER variable to your username." stop 20000
-
-    # If user is detected correctly (not empty), set variables
-    # accordingly.
-    if [ "x$user" != "x" ]; then
-        home=$(getent passwd $user | cut -d: -f6)
-        XAUTHORITY=$home/.Xauthority
-        [ -f $XAUTHORITY ] && export XAUTHORITY
-    fi
-fi
-
 ### Print generic debug information #############################
 function print_generic_debug() {
     echo "DEBUG: EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
@@ -524,6 +464,66 @@ function device_off {
         fi
     fi
 }
+
+### Get username ################################################
+if [ -S /tmp/.X11-unix/X0 ]; then
+    export DISPLAY=:0
+
+    # Detect logged in user by using "who"
+    user=$(who | sed -n '/ (:0[\.0]*)$\| :0 /{s/ .*//p;q}')
+    # If there is a space in $user, autodetection failed, so clear it.
+    [ "x`echo $user | grep ' '`" != "x" ] && user=""
+
+    # If autodetection fails, try another way...
+    # Take first reported by "who"
+    #[ "x$user" == "x" ] && user=$(who | head -1 | awk '{print $1}')
+    # If there is a space in $user, autodetection failed, so clear it.
+    #[ "x`echo $user | grep ' '`" != "x" ] && user=""
+
+    # If autodetection fails, try another way...
+    # Take users reported by "who" and return uniq values
+    [ "x$user" == "x" ] && user=$(who | awk '{print $1}' | uniq)
+    # If there is a space in $user, autodetection failed, so clear it.
+    [ "x`echo $user | grep ' '`" != "x" ] && user=""
+
+    # If autodetection fails, try another way...
+    # Get user who executed startx. Might not work if a login
+    # manager (GDM,KDM,etc.) is used.
+    [ "x$user" == "x" ] && user=$(ps aux | grep '[x]init /home' | awk '{print $1}' | head -1)
+    # If there is a space in $user, autodetection failed, so clear it.
+    [ "x`echo $user | grep ' '`" != "x" ] && user=""
+
+    # If autodetection fails, fallback to default user
+    # set in /etc/conf.d/acpi-eeepc-generic.conf
+    [ "x$user" == "x" ] && user=$XUSER
+
+    # As a last resort, check all processes and their owning user,
+    # filtering known users.
+    [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
+        sort | uniq | \
+        grep -v \
+            -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
+            -e ntp -e nx -e policykit -e privoxy -e root \
+            -e tor -e USER
+        )
+    # If there is a space in $user, autodetection failed, so clear it.
+    [ "x`echo $user | grep ' '`" != "x" ] && user=""
+
+    # If user is _still_ empty, notify the user to set XUSER in
+    # configuration file.
+    [ "x$user" == "x" ] && \
+        eeepc_notify "User autodetection failed. Please edit \
+your configuration file (/etc/conf.d/acpi-eeepc-generic.conf) \
+and set XUSER variable to your username." stop 20000
+
+    # If user is detected correctly (not empty), set variables
+    # accordingly.
+    if [ "x$user" != "x" ]; then
+        home=$(getent passwd $user | cut -d: -f6)
+        XAUTHORITY=$home/.Xauthority
+        [ -f $XAUTHORITY ] && export XAUTHORITY
+    fi
+fi
 
 ### End of file #################################################
 
