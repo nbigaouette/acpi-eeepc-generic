@@ -277,6 +277,29 @@ function print_generic_debug() {
         echo "DEBUG: Installed kernel(s):"
         /usr/bin/pacman -Qs kernel26
     fi
+
+    echo "DEBUG ($0): Driver:        ${DRIVER}"
+    echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
+    echo "DEBUG ($0): /sys device:   ${SYS_DEVICE}"
+    echo "DEBUG ($0): /sys state:    ${SYS_STATE}"
+    echo "DEBUG ($0): rfkill switch: ${RFKILL_SWITCH}"
+    echo "DEBUG ($0): rfkill state:  ${RFKILL_STATE}"
+    echo "DEBUG ($0): COMMANDS_PRE_UP:"
+    print_commands "${COMMANDS_PRE_UP[@]}"
+    echo "DEBUG ($0): COMMANDS_POST_UP:"
+    print_commands "${COMMANDS_POST_UP[@]}"
+    echo "DEBUG ($0): COMMANDS_PRE_DOWN:"
+    print_commands "${COMMANDS_PRE_DOWN[@]}"
+    echo "DEBUG ($0): COMMANDS_POST_DOWN:"
+    print_commands "${COMMANDS_POST_DOWN[@]}"
+
+    eeepc_notify "${NAME}
+Driver: ${DRIVER}
+is enabled:    ${IS_ENABLED}
+/sys device: ${SYS_DEVICE}
+/sys state: ${SYS_STATE}
+rfkill switch: ${RFKILL_SWITCH}
+rfkill state: ${RFKILL_STATE}" ${NAME_SMALL} 10000
 }
 
 #################################################################
