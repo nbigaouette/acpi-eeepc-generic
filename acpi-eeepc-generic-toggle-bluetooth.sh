@@ -11,11 +11,12 @@ DRIVER=$BLUETOOTH_DRIVER
 NAME="Bluetooth"
 NAME_SMALL="bluetooth"
 ICON=${NAME_SMALL}
+SYS_NAME="bt"
 COMMANDS_PRE_UP="${COMMANDS_BT_PRE_UP[@]}"
 COMMANDS_PRE_DOWN="${COMMANDS_BT_PRE_DOWN[@]}"
 COMMANDS_POST_UP="${COMMANDS_BT_POST_UP[@]}"
 COMMANDS_POST_DOWN="${COMMANDS_BT_POST_DOWN[@]}"
-
+TOGGLE_MAX_TRY=${BLUETOOTH_TOGGLE_MAX_TRY}
 
 ### Load saved state from file ##################################
 SAVED_STATE_FILE=$EEEPC_VAR/states/${NAME_SMALL}
@@ -45,7 +46,7 @@ else
 fi
 
 ### Check /sys interface ########################################
-SYS_DEVICE="${sys_path}/bt"
+SYS_DEVICE="${sys_path}/${SYS_NAME}"
 if [ -e ${SYS_DEVICE} ]; then
     SYS_IS_PRESENT="yes"
     # Get sys state (0 = card off, 1 = card on)
@@ -164,9 +165,9 @@ function radio_on {
             eeepc_notify "Could not enable ${NAME}" stop
 
         # Try again
-        if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
+        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
             [ "$show_notifications" == "1" ] && \
-                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" ${ICON}
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
             sleep 2
             radio_on $(($1+1)) $show_notifications
         fi
@@ -230,9 +231,9 @@ function radio_off {
         [ "$show_notifications" == "1" ] && \
             eeepc_notify "Could not disable ${NAME}" stop
 
-        if [ $1 -lt $BLUETOOTH_TOGGLE_MAX_TRY ]; then
+        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
             [ "$show_notifications" == "1" ] && \
-                eeepc_notify "Trying again in 2 second ($(($1+1)) / $BLUETOOTH_TOGGLE_MAX_TRY)" ${ICON}
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
             sleep 2
             radio_off $(($1+1)) $show_notifications
         fi
