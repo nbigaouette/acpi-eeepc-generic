@@ -46,20 +46,6 @@ else
     vga_connected="yes"
 fi
 
-#echo "All: ${all}"
-#echo "Connected: ${connected}"
-#echo "Disconnected: ${disconnected}"
-#echo "vga_connected = $vga_connected"
-#echo "current = $current"
-
-if [ "$vga_connected" == "no" ]; then
-    msg="External monitor not connected"
-#    eeepc_notify "$msg" display
-#    logger "$msg"
-    echo "$msg"
-#    exit 0
-fi
-
 xrandr_clone="$xrandr --output LVDS --auto --output VGA --auto"
 xrandr_vga="$xrandr --output LVDS --off --output VGA --auto"
 xrandr_vga_and_lvds="$xrandr --output LVDS --auto --output VGA --auto --${COMMANDS_XRANDR_TOGGLE_VGA}-of LVDS"
@@ -78,31 +64,27 @@ modes_names=(
     "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
 )
 
+# Get the number of modes of LVDS
+lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
+# What is the actual LVDS mode?
+actual_mode_lvds=`sed -n '/LVDS/,//p' $var_xrandr | grep "*" | awk '{print ""$1""}'`
+# Get the position of LVDS
+position_lvds=(`grep LVDS /var/eeepc/xrandr.log | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
 
 # Assume we are actually at modes[0] (LVDS only)
 m=0
-if [[ "`echo \"${connected}\" | grep VGA`" != "" ]]; then
+if [[ "$vga_connected" = "yes" ]]; then
     #echo "VGA connected. Trying to detect which configuration..."
 
+    # Get the number of modes of VGA
     vga_nb_modes=$((`sed -n '/VGA/,/LVDS/p' $var_xrandr | wc -l` - 2))
-    lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
-
+    # What is the actual VGA mode?
     actual_mode_vga=`sed -n '/VGA/,/LVDS/p' $var_xrandr | grep "*" | awk '{print ""$1""}'`
-    actual_mode_lvds=`sed -n '/LVDS/,//p' $var_xrandr | grep "*" | awk '{print ""$1""}'`
-
-    position_lvds=(`grep LVDS /var/eeepc/xrandr.log | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
+    # Get the position of VGA
     position_vga=(`grep VGA /var/eeepc/xrandr.log | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
 
     # Check VGA only if it is activated
     if [ "${position_vga}" != "(normal" ]; then
-
-        #echo "vga_nb_modes = $vga_nb_modes"
-        #echo "lvds_nb_modes = $lvds_nb_modes"
-        #echo "actual_mode_vga = $actual_mode_vga"
-        #echo "actual_mode_lvds = $actual_mode_lvds"
-
-        #echo "position_lvds = ${position_lvds[*]}"
-        #echo "position_vga = ${position_vga[*]}"
 
         # Detect if we are at modes[1] (Clone)
         if   [[ \
@@ -161,11 +143,33 @@ function display_toggle() {
         else
             # If VGA is not connected, don't do anything
             eeepc_notify "VGA not connected: not going to '${modes_names[m]}' mode" video-display
+            return
         fi
     fi
 
 }
 
+
+#################################################################
+function display_debug() {
+    echo "All: ${all}"
+    echo "Connected: ${connected}"
+    echo "Disconnected: ${disconnected}"
+    echo "vga_connected = $vga_connected"
+    echo "current = $current"
+
+    echo "vga_nb_modes = $vga_nb_modes"
+    echo "lvds_nb_modes = $lvds_nb_modes"
+    echo "actual_mode_vga = $actual_mode_vga"
+    echo "actual_mode_lvds = $actual_mode_lvds"
+
+    echo "position_lvds = ${position_lvds[*]}"
+    echo "position_vga = ${position_vga[*]}"
+
+    xrandr
+
+    exit
+}
 
 #################################################################
 case $1 in
@@ -180,6 +184,9 @@ case $1 in
     ;;
     vga_and_lvds|both|Both|BOTH)
         display_toggle 3
+    ;;
+    debug|Debug|DEBUG)
+        display_debug
     ;;
     *)
         display_toggle
