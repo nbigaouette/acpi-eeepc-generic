@@ -1,4 +1,5 @@
 
+Resolution script independant of current screen
 Translations
 XRandR toggle between (see acpi-eeepc900, display.sh):
     -LVDS only

@@ -132,14 +132,14 @@ function display_toggle() {
         # whatever the state of the VGA is.
         eeepc_notify "Changing display mode to: ${modes_names[m]}" video-display
         #echo "1. xrandr_cmd = $xrandr_cmd"
-        #execute_commands "${xrandr_cmd}"
+        execute_commands "${xrandr_cmd}"
     else
         # Else, we check if VGA is connected: it does not make sense
         # to activate it if it's not present!
         if [ "$vga_connected" == "yes" ]; then
             eeepc_notify "Changing display mode to '${modes_names[m]}' mode" video-display
             #echo "2. xrandr_cmd = $xrandr_cmd"
-            #execute_commands "${xrandr_cmd}"
+            execute_commands "${xrandr_cmd}"
         else
             # If VGA is not connected, don't do anything
             eeepc_notify "VGA not connected: not going to '${modes_names[m]}' mode" video-display
