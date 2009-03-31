@@ -2,17 +2,17 @@
 # Copyright 2009 Nicolas Bigaouette
 # This file is part of acpi-eeepc-generic.
 # http://code.google.com/p/acpi-eeepc-generic/
-# 
+#
 # acpi-eeepc-generic is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # acpi-eeepc-generic is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
 #
@@ -57,6 +57,7 @@ xrandr_clone_name="Clone"
 xrandr_vga_name="VGA only"
 xrandr_vga_and_lvds_name="VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
 
+# Available modes and their name
 modes=(
     "${xrandr_lvds}"            "${xrandr_lvds_name}"
     "${xrandr_clone}"           "${xrandr_clone_name}"
@@ -102,28 +103,23 @@ if [[ "$vga_connected" = "yes" ]]; then
     # If the position is detected (and awk/sed of previous line does not 
     # return a bogus value of '(normal'), detect which mode we actually use.
     if [ "${position_vga}" != "(normal" ]; then
-        # Detect if we are at modes[1] (Clone)
+        # Detect if we are at mode clone
         if   [[ \
                 "${position_lvds[0]}" == "0" && \
                 "${position_lvds[1]}" == "0" && \
                 "${position_vga[0]}"  == "0" && \
                 "${position_vga[1]}"  == "0" ]]; then
-            #m=1
             m=`get_mode_index "${xrandr_clone_name}"`
-        # Detect if we are at modes[2] (VGA only)
+        # Detect if we are at mode VGA only
         elif [ "${position_lvds}" == "(normal" ]; then
-            #m=2
             m=`get_mode_index "${xrandr_vga_name}"`
-        # Detect if we are at modes[3] (VGA + LVDS)
+        # Detect if we are at mode VGA + LVDS
         else
-            #m=3
             m=`get_mode_index "${xrandr_vga_and_lvds_name}"`
         fi
         m=$(($m/2))
     fi
 fi
-
-echo "Detected m = $m"
 
 #################################################################
 function display_toggle() {
@@ -143,7 +139,8 @@ function display_toggle() {
             mc=0
         fi
     else
-        m=$1
+        echo "Called with: $1"
+        m=$((`get_mode_index "$1"`/2))
         mc=$(($m*2))
     fi
     mn=$(($mc + 1))
@@ -156,7 +153,6 @@ function display_toggle() {
     fi
 
     xrandr_cmd="${modes[$mc]}"
-    echo "xrandr_cmd = ${xrandr_cmd}"
 
     # If next mode is 0 (LVDS only), we really want to go there,
     # whatever the state of the VGA is.
@@ -180,6 +176,11 @@ function display_toggle() {
 
 #################################################################
 function display_debug() {
+    echo "Modes (${#modes[*]}):"
+    for ((i=0 ; i < ${#modes[*]} ; i=i+2)); do
+        echo "${modes[i+1]}: ${modes[i]}"
+    done
+
     echo "All: ${all}"
     echo "Connected: ${connected}"
     echo "Disconnected: ${disconnected}"
@@ -202,16 +203,16 @@ function display_debug() {
 #################################################################
 case $1 in
     lvds|Lvds|LVDS)
-        display_toggle 0
+        display_toggle "${xrandr_lvds_name}"
     ;;
     clone|Clone|CLONE)
-        display_toggle 1
+        display_toggle "${xrandr_clone_name}"
     ;;
     vga|Vga|VGA)
-        display_toggle 2
+        display_toggle "${xrandr_vga_name}"
     ;;
     vga_and_lvds|both|Both|BOTH)
-        display_toggle 3
+        display_toggle "${xrandr_vga_and_lvds_name}"
     ;;
     debug|Debug|DEBUG)
         display_debug
