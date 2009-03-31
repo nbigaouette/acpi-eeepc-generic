@@ -73,6 +73,8 @@ position_lvds=(`grep LVDS $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-
 
 # Assume we are actually at modes[0] (LVDS only)
 m=0
+
+# If VGA is connected, check its mode, its parameters, etc.
 if [[ "$vga_connected" = "yes" ]]; then
     #echo "VGA connected. Trying to detect which configuration..."
 
@@ -83,9 +85,9 @@ if [[ "$vga_connected" = "yes" ]]; then
     # Get the position of VGA
     position_vga=(`grep VGA $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
 
-    # Check VGA only if it is activated
+    # If the position is detected (and awk/sed of previous line does not 
+    # return a bogus value of '(normal'), detect which mode we actually use.
     if [ "${position_vga}" != "(normal" ]; then
-
         # Detect if we are at modes[1] (Clone)
         if   [[ \
                 "${position_lvds[0]}" == "0" && \
@@ -100,7 +102,6 @@ if [[ "$vga_connected" = "yes" ]]; then
         else
             m=3
         fi
-
     fi
 fi
 
@@ -127,18 +128,16 @@ function display_toggle() {
 
     xrandr_cmd="${modes[m]}"
 
+    # If next mode is 0 (LVDS only), we really want to go there,
+    # whatever the state of the VGA is.
     if [ "$m" == "0" ]; then
-        # If next mode is 0 (LVDS only), we really want to go there,
-        # whatever the state of the VGA is.
         eeepc_notify "Changing display mode to: ${modes_names[m]}" video-display
-        #echo "1. xrandr_cmd = $xrandr_cmd"
         execute_commands "${xrandr_cmd}"
     else
         # Else, we check if VGA is connected: it does not make sense
-        # to activate it if it's not present!
+        # to activate it if it's not present.
         if [ "$vga_connected" == "yes" ]; then
             eeepc_notify "Changing display mode to '${modes_names[m]}' mode" video-display
-            #echo "2. xrandr_cmd = $xrandr_cmd"
             execute_commands "${xrandr_cmd}"
         else
             # If VGA is not connected, don't do anything
@@ -148,7 +147,6 @@ function display_toggle() {
     fi
 
 }
-
 
 #################################################################
 function display_debug() {
@@ -193,7 +191,4 @@ case $1 in
     ;;
 esac
 
-
 ### End of file #################################################
-
-
