@@ -46,6 +46,7 @@ else
     vga_connected="yes"
 fi
 
+# Define XRandR commands for each modes
 xrandr_clone="$xrandr --output LVDS --auto --output VGA --auto"
 xrandr_vga="$xrandr --output LVDS --off --output VGA --auto"
 xrandr_vga_and_lvds="$xrandr --output LVDS --auto --output VGA --auto --${COMMANDS_XRANDR_TOGGLE_VGA}-of LVDS"
