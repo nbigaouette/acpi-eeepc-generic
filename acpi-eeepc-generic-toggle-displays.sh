@@ -47,23 +47,22 @@ else
 fi
 
 # Define XRandR commands for each modes
+xrandr_lvds="$xrandr --output LVDS --auto --output VGA --off"
 xrandr_clone="$xrandr --output LVDS --auto --output VGA --auto"
 xrandr_vga="$xrandr --output LVDS --off --output VGA --auto"
 xrandr_vga_and_lvds="$xrandr --output LVDS --auto --output VGA --auto --${COMMANDS_XRANDR_TOGGLE_VGA}-of LVDS"
-xrandr_lvds="$xrandr --output LVDS --auto --output VGA --off"
+
+xrandr_lvds_name="Laptop screen only"
+xrandr_clone_name="Clone"
+xrandr_vga_name="VGA only"
+xrandr_vga_and_lvds_name="VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
 
 modes=(
-   "${xrandr_lvds}"            "Laptop screen only"
-   "${xrandr_clone}"           "Clone"
-   "${xrandr_vga}"             "VGA only"
-   "${xrandr_vga_and_lvds}"    "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
+    "${xrandr_lvds}"            "${xrandr_lvds_name}"
+    "${xrandr_clone}"           "${xrandr_clone_name}"
+    "${xrandr_vga}"             "${xrandr_vga_name}"
+    "${xrandr_vga_and_lvds}"    "${xrandr_vga_and_lvds_name}"
 )
-# modes=(
-#     " "   "Laptop screen only"
-#     " "   "Clone"
-#     " "   "VGA only"
-#     " "   "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
-# )
 
 # Get the number of modes of LVDS
 lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
@@ -71,6 +70,20 @@ lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
 actual_mode_lvds=`sed -n '/LVDS/,//p' $var_xrandr | grep "*" | awk '{print ""$1""}'`
 # Get the position of LVDS
 position_lvds=(`grep LVDS $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
+
+#################################################################
+function get_mode_index() {
+    detected_name="$1"
+    detected_i=0
+    for ((i=0 ; i < ${#modes[*]} ; i++)); do
+        if [[ "${modes[i]}" == "${detected_name}" ]]; then
+            detected_i=i
+            break
+        fi
+    done
+    # Name is detected. But we want the index of the mode command.
+    echo $(($detected_i - 1))
+}
 
 # Assume we are actually at modes[0] (LVDS only)
 m=0
@@ -95,16 +108,22 @@ if [[ "$vga_connected" = "yes" ]]; then
                 "${position_lvds[1]}" == "0" && \
                 "${position_vga[0]}"  == "0" && \
                 "${position_vga[1]}"  == "0" ]]; then
-            m=1
+            #m=1
+            m=`get_mode_index "${xrandr_clone_name}"`
         # Detect if we are at modes[2] (VGA only)
         elif [ "${position_lvds}" == "(normal" ]; then
-            m=2
+            #m=2
+            m=`get_mode_index "${xrandr_vga_name}"`
         # Detect if we are at modes[3] (VGA + LVDS)
         else
-            m=3
+            #m=3
+            m=`get_mode_index "${xrandr_vga_and_lvds_name}"`
         fi
+        m=$(($m/2))
     fi
 fi
+
+echo "Detected m = $m"
 
 #################################################################
 function display_toggle() {
