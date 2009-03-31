@@ -69,7 +69,7 @@ lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
 # What is the actual LVDS mode?
 actual_mode_lvds=`sed -n '/LVDS/,//p' $var_xrandr | grep "*" | awk '{print ""$1""}'`
 # Get the position of LVDS
-position_lvds=(`grep LVDS /var/eeepc/xrandr.log | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
+position_lvds=(`grep LVDS $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
 
 # Assume we are actually at modes[0] (LVDS only)
 m=0
@@ -81,7 +81,7 @@ if [[ "$vga_connected" = "yes" ]]; then
     # What is the actual VGA mode?
     actual_mode_vga=`sed -n '/VGA/,/LVDS/p' $var_xrandr | grep "*" | awk '{print ""$1""}'`
     # Get the position of VGA
-    position_vga=(`grep VGA /var/eeepc/xrandr.log | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
+    position_vga=(`grep VGA $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
 
     # Check VGA only if it is activated
     if [ "${position_vga}" != "(normal" ]; then
