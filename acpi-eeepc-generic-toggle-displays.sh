@@ -113,7 +113,7 @@ function display_toggle() {
         # We are at mode "m", go to next mode
         m=$((m+1))
         # Check for round-up
-        [ "$m" == "4" ] && m=0
+        [ "$m" == "${#modes[*]}" ] && m=0
     else
         m=$1
     fi
