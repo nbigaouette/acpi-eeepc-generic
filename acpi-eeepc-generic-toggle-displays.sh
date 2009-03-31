@@ -53,17 +53,17 @@ xrandr_vga_and_lvds="$xrandr --output LVDS --auto --output VGA --auto --${COMMAN
 xrandr_lvds="$xrandr --output LVDS --auto --output VGA --off"
 
 modes=(
-    "${xrandr_lvds}"
-    "${xrandr_clone}"
-    "${xrandr_vga}"
-    "${xrandr_vga_and_lvds}"
+   "${xrandr_lvds}"            "Laptop screen only"
+   "${xrandr_clone}"           "Clone"
+   "${xrandr_vga}"             "VGA only"
+   "${xrandr_vga_and_lvds}"    "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
 )
-modes_names=(
-    "Laptop screen only"
-    "Clone"
-    "VGA only"
-    "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
-)
+# modes=(
+#     " "   "Laptop screen only"
+#     " "   "Clone"
+#     " "   "VGA only"
+#     " "   "VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
+# )
 
 # Get the number of modes of LVDS
 lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
@@ -108,41 +108,51 @@ fi
 
 #################################################################
 function display_toggle() {
-    prev_m=$m
-    echo "Actual mode is ${modes_names[m]} (m=${prev_m})"
+    mc=$(($m*2))            # Index of mode's command
+    mn=$(($m*2 + 1))        # Index of mode's name
+    prev_mc=$(($m*2))       # Index of (previous) mode's command
+    prev_mn=$(($m*2 + 1))   # Index of (previous) mode's name
+    echo "Actual mode is ${modes[$mn]} (m=$m)"
 
     if [ "$1" == "" ]; then
         # We are at mode "m", go to next mode
-        m=$((m+1))
+        m=$(($m + 1))
+        mc=$((mc + 2))
         # Check for round-up
-        [ "$m" == "${#modes[*]}" ] && m=0
+        if [ "$mc" == "${#modes[*]}" ]; then
+            m=0
+            mc=0
+        fi
     else
         m=$1
+        mc=$(($m*2))
     fi
+    mn=$(($mc + 1))
 
-    echo "Next mode will be ${modes_names[m]} (m=$m)"
+    echo "Next mode will be ${modes[$mn]} (m=$m)"
 
-    if [ "${prev_m}" == "${m}" ]; then
-        eeepc_notify "Display already in '${modes_names[m]}' mode" video-display
+    if [ "${prev_mc}" == "${mc}" ]; then
+        eeepc_notify "Display already in '${modes[$mn]}' mode" video-display
         return
     fi
 
-    xrandr_cmd="${modes[m]}"
+    xrandr_cmd="${modes[$mc]}"
+    echo "xrandr_cmd = ${xrandr_cmd}"
 
     # If next mode is 0 (LVDS only), we really want to go there,
     # whatever the state of the VGA is.
     if [ "$m" == "0" ]; then
-        eeepc_notify "Changing display mode to: ${modes_names[m]}" video-display
+        eeepc_notify "Changing display mode to: ${modes[$mn]}" video-display
         execute_commands "${xrandr_cmd}"
     else
         # Else, we check if VGA is connected: it does not make sense
         # to activate it if it's not present.
         if [ "$vga_connected" == "yes" ]; then
-            eeepc_notify "Changing display mode to '${modes_names[m]}' mode" video-display
+            eeepc_notify "Changing display mode to '${modes[$mn]}' mode" video-display
             execute_commands "${xrandr_cmd}"
         else
             # If VGA is not connected, don't do anything
-            eeepc_notify "VGA not connected: not going to '${modes_names[m]}' mode" video-display
+            eeepc_notify "VGA not connected: not going to '${modes[$mn]}' mode" video-display
             return
         fi
     fi
