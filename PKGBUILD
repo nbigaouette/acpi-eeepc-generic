@@ -1,7 +1,7 @@
 # Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
-pkgver=0.9b
+pkgver=0.9
 pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
@@ -43,6 +43,7 @@ source=(
     "acpi-eeepc-generic-rotate-lvds.sh"
     "acpi-eeepc-generic-suspend2ram.sh"
     "acpi-eeepc-generic-toggle-bluetooth.sh"
+    "acpi-eeepc-generic-toggle-displays.sh"
     "acpi-eeepc-generic-toggle-resolution.sh"
     "acpi-eeepc-generic-toggle-touchpad.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
@@ -52,6 +53,35 @@ source=(
     "eee.png"
     "eeepc.desktop"
     "eeepc-suspend-lock.desktop")
+
+md5sums=('9fd828b507cbbfdc40850fecd448914c'
+         '3607b58247289e7e285f144f0dff7f1c'
+         '2b33f070e672ce5bdede76074521e776'
+         '63f6abb8d7ccd54e188d89c99266eba3'
+         '63f6abb8d7ccd54e188d89c99266eba3'
+         'c7e0dd3e2bdafbd9cf267c6e353faecd'
+         '5548f94516f446011044f27ea99554c1'
+         '296086c1a8b8bc4c434f868d531a5504'
+         'c7e0dd3e2bdafbd9cf267c6e353faecd'
+         '2b33f070e672ce5bdede76074521e776'
+         'cf253e386d7e743a3d25ec4165051521'
+         'f667c93c252b1eca2c97dc20b6dcae9f'
+         '7953862b64016fcce80d929a590b1fd1'
+         '91f27d2a66b8907f86b14d4ac9a48e2f'
+         'd325ea0d15191184528d1cf3f7c3b209'
+         'cdfd2a0ddba5ad21ce4f08f1722fa784'
+         '0ae1d0a8d21212b5858a9180647d9c50'
+         '1729ea983c458f165329f8d5e7733ae3'
+         'a783d48c0176f0da33ea1795e53ba492'
+         '12c506d5a4ae304833f22f04b5d5c1f0'
+         'b1f127a9b7808b22a1985a5b0301340b'
+         '4260565a4272cf56c1932db11c3956cf'
+         'd231ec9fd49a1a9413265ea52526d621'
+         '169e6415c67f06cac96f4a9391d58407'
+         'b6e3ad05a0d6c9ed87bd0859267e86d8'
+         '4d9af939dbd59121cd4bb191d340eb1c'
+         '6e46b54564cdd14f2588c921c0a7faf1'
+         '3adb93ff8f99bf6ce7746acf119df0fd')
 
 build() {
     #cd $srcdir/$pkgname-$pkgver
@@ -77,6 +107,7 @@ build() {
     install -m0755 ${srcdir}/acpi-eeepc-generic-rotate-lvds.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-suspend2ram.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-bluetooth.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-displays.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-resolution.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-touchpad.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-wifi.sh ${pkgdir}/etc/acpi/eeepc || return 1
