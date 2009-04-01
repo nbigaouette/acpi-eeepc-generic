@@ -2,7 +2,7 @@
 
 pkgname=acpi-eeepc-generic
 pkgver=0.9.0
-pkgrel=1
+pkgrel=2
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
@@ -45,15 +45,16 @@ source=(
     "acpi-eeepc-generic-suspend2ram.sh"
     "acpi-eeepc-generic-toggle-bluetooth.sh"
     "acpi-eeepc-generic-toggle-displays.sh"
+    "acpi-eeepc-generic-toggle-lock-suspend.sh"
     "acpi-eeepc-generic-toggle-resolution.sh"
     "acpi-eeepc-generic-toggle-touchpad.sh"
+    "acpi-eeepc-generic-toggle-webcam.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
-    "acpi-eeepc-generic-toggle-lock-suspend.sh"
     "acpi-eeepc-generic.conf"
     "bluetooth.png"
     "eee.png"
-    "eeepc.desktop"
-    "eeepc-suspend-lock.desktop")
+    "eeepc-suspend-lock.desktop"
+    "eeepc.desktop")
 
 md5sums=('9fd828b507cbbfdc40850fecd448914c'
          '3607b58247289e7e285f144f0dff7f1c'
@@ -75,15 +76,16 @@ md5sums=('9fd828b507cbbfdc40850fecd448914c'
          '0ae1d0a8d21212b5858a9180647d9c50'
          '1729ea983c458f165329f8d5e7733ae3'
          'a783d48c0176f0da33ea1795e53ba492'
+         'd231ec9fd49a1a9413265ea52526d621'
          '12c506d5a4ae304833f22f04b5d5c1f0'
          'b1f127a9b7808b22a1985a5b0301340b'
+         '5aa7e10926da5e5ad7cf41d345191354'
          '4260565a4272cf56c1932db11c3956cf'
-         'd231ec9fd49a1a9413265ea52526d621'
          '169e6415c67f06cac96f4a9391d58407'
          'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
-         '6e46b54564cdd14f2588c921c0a7faf1'
-         '3adb93ff8f99bf6ce7746acf119df0fd')
+         '3adb93ff8f99bf6ce7746acf119df0fd'
+         '6e46b54564cdd14f2588c921c0a7faf1')
 
 build() {
     #cd $srcdir/$pkgname-$pkgver
@@ -108,16 +110,12 @@ build() {
     # Helper scripts
     install -m0755 ${srcdir}/acpi-eeepc-generic-rotate-lvds.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-suspend2ram.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-bluetooth.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-displays.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-resolution.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-touchpad.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-wifi.sh ${pkgdir}/etc/acpi/eeepc || return 1
-    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-lock-suspend.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    for f in ${srcdir}/acpi-eeepc-generic-toggle-*.sh; do
+        install -m0755 $f ${pkgdir}/etc/acpi/eeepc
+    done
 
     install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications || return 1
     install -m0755 ${srcdir}/eeepc-suspend-lock.desktop ${pkgdir}/usr/share/applications || return 1
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
-
