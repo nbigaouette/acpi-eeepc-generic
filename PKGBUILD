@@ -1,7 +1,7 @@
 # Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
-pkgver=0.9
+pkgver=0.9.0
 pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
@@ -28,6 +28,7 @@ source=(
     "acpi-eeepc-1000-events.conf"
     "acpi-eeepc-1000H-events.conf"
     "acpi-eeepc-1000HD-events.conf"
+    "acpi-eeepc-1000HE-events.conf"
     "acpi-eeepc-700-events.conf"
     "acpi-eeepc-701-events.conf"
     "acpi-eeepc-900-events.conf"
@@ -57,6 +58,7 @@ source=(
 md5sums=('9fd828b507cbbfdc40850fecd448914c'
          '3607b58247289e7e285f144f0dff7f1c'
          '2b33f070e672ce5bdede76074521e776'
+         'c75965cdca5431e06df962f3a60acc73'
          '63f6abb8d7ccd54e188d89c99266eba3'
          '63f6abb8d7ccd54e188d89c99266eba3'
          'c7e0dd3e2bdafbd9cf267c6e353faecd'
@@ -118,3 +120,4 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
+
