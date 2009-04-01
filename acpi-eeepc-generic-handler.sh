@@ -1,4 +1,20 @@
 #!/bin/sh
+# Copyright 2009 Nicolas Bigaouette
+# This file is part of acpi-eeepc-generic.
+# http://code.google.com/p/acpi-eeepc-generic/
+# 
+# acpi-eeepc-generic is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# acpi-eeepc-generic is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
 
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
@@ -21,8 +37,9 @@ case "$1" in
                 execute_commands "${COMMANDS_POWER_BUTTON[@]}"
             ;;
             *)
-                eeepc_notify "Button undefined: $2 $3 $4" keyboard
-                logger "ACPI power undefined: $2 $3 $4"
+                msg="Button (button/power) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
@@ -34,8 +51,9 @@ case "$1" in
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
             *)
-                eeepc_notify "Button undefined: $2 $3 $4" keyboard
-                logger "ACPI sleep undefined: $2 $3 $4"
+                msg="Button (button/sleep) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
@@ -52,7 +70,10 @@ case "$1" in
                     ;;
                 esac
                 ;;
-            *) logger "ACPI AC undefined: $2 $3 $4"
+            *)
+                msg="ACPI AC (ac_adapter) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
@@ -67,13 +88,16 @@ case "$1" in
                     ;;
                 esac
                 ;;
-            *) logger "ACPI battery undefined: $2 $3 $4"
+            *)
+                msg="ACPI battery (battery) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
         ;;
 
     button/lid)
-        # Detect correctly lid state 
+        # Detect correctly lid state
         lidstate=""
         # /proc/acpi is deprecated
         [ -e /proc/acpi/button/lid/LID/state ] && \
@@ -111,7 +135,9 @@ case "$1" in
             fi
         ;;
         *)
-            logger "Lid state undefined: $2 $3 $4"
+            msg="Button (button/lid) undefined: $2 $3 $4"
+            eeepc_notify $msg keyboard
+            logger $msg
         ;;
         esac
         ;;
@@ -133,6 +159,10 @@ case "$1" in
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User2)"
                 execute_commands "${COMMANDS_BUTTON_USER2[@]}"
             ;;
+            $EEEPC_USER3) # Fn+Space
+                logger "acpi-eeepc-generic-handler.sh (hotkey): Fn+Space"
+                execute_commands "${COMMANDS_BUTTON_USER3[@]}"
+            ;;
 
             $EEEPC_SLEEP)
                 logger "acpi-eeepc-generic-handler.sh (hotkey): Sleep"
@@ -150,6 +180,14 @@ case "$1" in
             $EEEPC_WIFI_DOWN) # WiFi Down
                 logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi Down"
                 execute_commands "${COMMANDS_WIFI_DOWN[@]}"
+            ;;
+            $EEEPC_TOUCHPAD_TOGGLE) # Toggle touchpad
+                logger "acpi-eeepc-generic-handler.sh (hotkey): Toggling touchpad"
+                execute_commands "${COMMANDS_TOUCHPAD_TOGGLE[@]}"
+            ;;
+            $EEEPC_RESOLUTION) # Change resolution
+                logger "acpi-eeepc-generic-handler.sh (hotkey): Changing resolution"
+                execute_commands "${COMMANDS_RESOLUTION[@]}"
             ;;
             $EEEPC_BRIGHTNESS_UP|$EEEPC_BRIGHTNESS_DOWN) # Brightness
                 brightness_direction=`brightness_find_direction`
@@ -237,7 +275,9 @@ case "$1" in
 #             $BATTERY_CRITICAL &
 #             ;;
             *)
-                logger "ACPI hotkey undefined: $2 $3 $4"
+                msg="Hotkey (hotkey) undefined: $2 $3 $4"
+                eeepc_notify $msg keyboard
+                logger $msg
             ;;
         esac
     ;;
@@ -245,8 +285,9 @@ case "$1" in
         logger "Processor acpi event not implemented: $1 $2 $3 $4"
     ;;
     *)
-        eeepc_notify  "ACPI group/action undefined: $1 $2 $3 $4" keyboard
-        logger "ACPI group/action undefined: $1 $2 $3 $4"
+        msg="ACPI group/action ($1) undefined: $2 $3 $4"
+        eeepc_notify $msg keyboard
+        logger $msg
     ;;
 esac
 

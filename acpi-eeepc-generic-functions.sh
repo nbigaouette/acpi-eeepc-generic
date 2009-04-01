@@ -1,4 +1,22 @@
 #!/bin/bash
+#
+# Copyright 2009 Nicolas Bigaouette
+# This file is part of acpi-eeepc-generic.
+# http://code.google.com/p/acpi-eeepc-generic/
+#
+# acpi-eeepc-generic is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# acpi-eeepc-generic is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
+
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 
@@ -6,7 +24,7 @@
 
 chmod a+w /var/eeepc/states/* &> /dev/null
 
-# Extract kernel version
+### Extract kernel version
 KERNEL=`uname -r`
 KERNEL=${KERNEL%%-*}
 KERNEL_maj=${KERNEL%%\.*}
@@ -17,7 +35,11 @@ KERNEL_rel=${k%%\.*}
 k=${KERNEL#${KERNEL_maj}.${KERNEL_min}.${KERNEL_rel}}
 KERNEL_patch=${k%%\.*}
 
-#################################################################
+### Some paths
+rfkills_path="/sys/class/rfkill"
+sys_path="/sys/devices/platform/eeepc"
+
+### Generic notification function ###############################
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
         send_libnotify "$1" "$2" "$3"
@@ -29,7 +51,7 @@ function eeepc_notify {
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }
 
-#################################################################
+### libnotify ###################################################
 function send_libnotify() {
     if [ ! -e /usr/bin/notify-send ]; then
         logger "To use libnotify's OSD, please install 'notification-daemon'"
@@ -39,12 +61,12 @@ function send_libnotify() {
     icon=$2
     duration=$3
     [ "x$icon" == "x" ] && icon="eee"
-    [ "x$duration" == "x" ] && duration="1500"
+    [ "x$duration" == "x" ] && duration="2500"
     cmd="/usr/bin/notify-send -i $icon -t $duration \"EeePC $EEEPC_MODEL\" \"$1\""
     send_generic "${cmd}"
 }
 
-#################################################################
+### kdialog #####################################################
 function send_kdialog() {
     if [ ! -e /usr/bin/kdialog ]; then
         logger "To use kdialog's OSD, please install 'kdebase'"
@@ -58,7 +80,7 @@ function send_kdialog() {
     send_generic "${cmd}"
 }
 
-#################################################################
+### dzen ########################################################
 function send_dzen() {
     if [ ! -e /usr/bin/dzen2 ]; then
         logger "To use dzen's OSD, please install 'dzen2'"
@@ -72,7 +94,7 @@ function send_dzen() {
     send_generic "${cmd}"
 }
 
-#################################################################
+### Make sure GUI is run as user ################################
 function send_generic() {
     if [ "x$UID" == "x0" ]; then
         /bin/su $user --login -c "${@}"
@@ -81,7 +103,7 @@ function send_generic() {
     fi
 }
 
-#################################################################
+### Print all commands in an array ##############################
 function print_commands() {
     cmds=( "$@" )
     cmds_num=${#cmds[@]}
@@ -92,7 +114,7 @@ function print_commands() {
     done
 }
 
-#################################################################
+### Execute all commands in an array ############################
 function execute_commands() {
     [ "x$EEEPC_CONF_DONE" == "xno" ] && eeepc_notify "PLEASE EDIT YOUR CONFIGURATION FILE:
 /etc/conf.d/acpi-eeepc-generic.conf" stop 20000
@@ -107,12 +129,12 @@ function execute_commands() {
         else
             logger "execute_commands #$(($i+1)): $c"
             echo "execute_commands #$(($i+1)): $c"
-            ${c}
+            eval ${c}
         fi
     done
 }
 
-#################################################################
+### Verify if volume if muted ###################################
 function volume_is_mute() {
     # 1 is true, 0 is false
     on_off=`amixer get ${ALSA_MUTE_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
@@ -121,12 +143,12 @@ function volume_is_mute() {
     echo $is_muted
 }
 
-#################################################################
+### Return the volume level #####################################
 function get_volume() {
     echo `amixer get ${ALSA_MAIN_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
 }
 
-#################################################################
+### Return the mixer ############################################
 function get_output_mixers() {
     mixers=`amixer scontrols | awk '{print ""$4""}' | sed -e "s|'||g" -e "s|,0||g"`
     i=0
@@ -144,7 +166,7 @@ function get_output_mixers() {
     echo ${output_mixers[@]}
 }
 
-#################################################################
+### Get the model name ##########################################
 function get_model() {
     if [ -z "${EEEPC_MODEL}" ]; then
         echo "EEEPC_MODEL=\"$(dmidecode -s system-product-name | sed 's/[ \t]*$//')\"" >> /etc/conf.d/acpi-eeepc-generic.conf
@@ -157,14 +179,14 @@ function get_model() {
     fi
 }
 
-#################################################################
+### Return brightness level percentage ##########################
 function brightness_get_percentage() {
     actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
     maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
     echo $((10000*$actual_brightness / (100*$maximum_brightness) ))
 }
 
-#################################################################
+### Set the brightness level percentage #########################
 function brightness_set_percentage() {
     #actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
     maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
@@ -176,22 +198,22 @@ function brightness_set_percentage() {
     echo $to_set > /sys/class/backlight/eeepc/brightness
 }
 
-#################################################################
+### Save brightness #############################################
 function save_brightness() {
     cat /sys/class/backlight/eeepc/brightness > /var/eeepc/states/brightness
 }
 
-#################################################################
+### Restore brightness ##########################################
 function restore_brightness() {
     cat /var/eeepc/states/brightness > /sys/class/backlight/eeepc/brightness
 }
 
-#################################################################
+### Set brightness (absolute value) #############################
 function brightness_set_absolute() {
     echo $1 > /sys/class/backlight/eeepc/brightness
 }
 
-#################################################################
+### Get direction of brightness change ##########################
 function brightness_find_direction() {
     actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
     previous_brightness=`cat /var/eeepc/states/brightness`
@@ -203,8 +225,307 @@ function brightness_find_direction() {
     echo $to_return
 }
 
-#################################################################
-# Get username
+### Print generic debug information #############################
+function print_generic_debug() {
+    echo "DEBUG: EeePC model: $EEEPC_MODEL ($EEEPC_CPU)"
+    echo "DEBUG: BIOS version: `dmidecode | grep -A 5 BIOS | grep Version | awk '{print ""$2""}'`"
+    echo "DEBUG: Running kernel: `uname -a`"
+    if [ -e /usr/bin/pacman ]; then
+        echo "DEBUG: Installed kernel(s):"
+        /usr/bin/pacman -Qs kernel26
+    fi
+
+    echo "DEBUG ($0): Driver:        ${DRIVER}"
+    echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
+
+    if [ "x${INTERFACE}" != "x" ]; then
+    echo "DEBUG ($0): interface:     ${INTERFACE}"
+    fi
+
+    if [ "${SYS_IS_PRESENT}" == "yes" ]; then
+    echo "DEBUG ($0): /sys device:   ${SYS_DEVICE}"
+    echo "DEBUG ($0): /sys state:    ${SYS_STATE}"
+    else
+    echo "DEBUG ($0): /sys device is not present"
+    fi
+    
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+    echo "DEBUG ($0): rfkill switch: ${RFKILL_SWITCH}"
+    echo "DEBUG ($0): rfkill state:  ${RFKILL_STATE}"
+    else
+    echo "DEBUG ($0): rfkill switch is not present"
+    fi
+
+    echo "DEBUG ($0): COMMANDS_PRE_UP:"
+    print_commands "${COMMANDS_PRE_UP[@]}"
+    echo "DEBUG ($0): COMMANDS_POST_UP:"
+    print_commands "${COMMANDS_POST_UP[@]}"
+    echo "DEBUG ($0): COMMANDS_PRE_DOWN:"
+    print_commands "${COMMANDS_PRE_DOWN[@]}"
+    echo "DEBUG ($0): COMMANDS_POST_DOWN:"
+    print_commands "${COMMANDS_POST_DOWN[@]}"
+    
+    if [ "x${INTERFACE}" != "x" ]; then
+        interface_notify_msg="
+interface: ${INTERFACE}"
+    fi
+
+    if [ "${SYS_IS_PRESENT}" == "yes" ]; then
+    SYS_MESSAGE="/sys device: ${SYS_DEVICE}
+/sys state: ${SYS_STATE}"
+    else
+    SYS_MESSAGE="/sys device is not present"
+    fi
+
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+    RFKILL_MESSAGE="rfkill switch: ${RFKILL_SWITCH}
+rfkill state:  ${RFKILL_STATE}"
+    else
+    RFKILL_MESSAGE="rfkill switch is not present"
+    fi
+    
+
+    eeepc_notify "${NAME}
+Driver: ${DRIVER}
+is enabled: ${IS_ENABLED} ${interface_notify_msg}
+${SYS_MESSAGE}
+${RFKILL_MESSAGE}" ${ICON} 10000
+}
+
+### Toggle the device on and off ################################
+function device_toggle {
+    if [ "${SYS_STATE}" = "1" ]; then
+        device_off 1
+    else
+        device_on 1
+    fi
+}
+
+### Restore a device ############################################
+function device_restore {
+    if [ "$RADIO_SAVED_RADIO" = "1" ]; then
+        device_on 1 0
+    else
+        device_off 1 0
+    fi
+}
+
+### Check /sys interface ########################################
+function check_sys_interface() {
+    SYS_DEVICE="${sys_path}/${SYS_NAME}"
+    if [ -e ${SYS_DEVICE} ]; then
+        SYS_IS_PRESENT="yes"
+        # Get sys state (0 = card off, 1 = card on)
+        SYS_STATE=$(cat ${SYS_DEVICE})
+    else
+        # Some models do not have any such device (1000HE)
+        SYS_IS_PRESENT="no"
+        SYS_STATE=""
+    fi
+}
+
+### Check rfkill switch #########################################
+function check_rfkill_switch() {
+    if [ -e ${rfkills_path} ]; then
+        # Default to the second one
+        rfkill="rfkill1"
+        for r in `/bin/ls ${rfkills_path}/`; do
+            name=`cat ${rfkills_path}/$r/name`
+            [ "$name" == "eeepc-${NAME_SMALL}" ] && rfkill=$r
+        done
+        RFKILL_IS_PRESENT="yes"
+        RFKILL_SWITCH="${rfkills_path}/${rfkill}/state"
+        # Get rfkill switch state (0 = card off, 1 = card on)
+        RFKILL_STATE=$(cat ${RFKILL_SWITCH})
+    else
+        # rfkill disabled/not present
+        RFKILL_IS_PRESENT="no"
+        RFKILL_SWITCH=""
+        RFKILL_STATE=0
+    fi
+}
+
+### Detect if card is enabled or disabled #######################
+function detect_if_enabled() {
+    if [[ "${SYS_IS_PRESENT}" == "yes" && "${RFKILL_IS_PRESENT}" == "yes" ]]; then
+        # Both are present, no problem!
+
+        # States of both should match. Else we have a problem...
+        if   [[ "${SYS_STATE}" == "1" && "${RFKILL_STATE}" == "1" ]]; then
+            IS_ENABLED="yes"
+        elif [[ "${SYS_STATE}" == "0" && "${RFKILL_STATE}" == "0" ]]; then
+            IS_ENABLED="no"
+        else
+            msg="ERROR in $0: /sys interface state (${SYS_STATE}) and rfkill switch state (${RFKILL_STATE}) do not match!"
+            logger "$msg"
+            eeepc_notify "$msg" stop
+            exit 1
+        fi
+    else
+        # One of the two is not present. Just get the state of the other
+        if   [[ "${SYS_IS_PRESENT}"    == "yes" && "${SYS_STATE}"    == "1" ]]; then
+            IS_ENABLED="yes"
+        elif [[ "${RFKILL_IS_PRESENT}" == "yes" && "${RFKILL_STATE}" == "1" ]]; then
+            IS_ENABLED="yes"
+        else
+            IS_ENABLED="no"
+        fi
+    fi
+}
+
+### Load saved state from file ##################################
+function load_saved_state() {
+    SAVED_STATE_FILE=$EEEPC_VAR/states/${NAME_SMALL}
+    if [ -e $SAVED_STATE_FILE ]; then
+        SAVED_STATE=$(cat $SAVED_STATE_FILE)
+    else
+        SAVED_STATE=0
+    fi
+}
+
+### Turn of device ##############################################
+function device_on {
+    # First argument ($1):  Number of times the funciton has been called
+    # Second argument ($2): Should we show notifications?
+
+    # Check if 2nd argument to given to function is "0" and disable
+    # notifications,
+    show_notifications=1
+    [ "$2" == "0" ] && show_notifications=0
+
+    [ "${IS_ENABLED}" == "yes" ] && \
+        eeepc_notify "${NAME} already turned on!" ${ICON} && \
+            return 0
+
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "Turning ${NAME} on..." ${ICON}
+
+    # Execute pre-up commands just once
+    [ $1 -eq 1 ] && \
+        execute_commands "${COMMANDS_PRE_UP[@]}"
+
+    # Enable rfkill switch (which might fail on less then 2.6.29)
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+        echo 1 > ${RFKILL_SWITCH}
+
+        if [ ${KERNEL_rel} -lt 29 ]; then
+            s="rfkill switch usage might fail on kernel lower than 2.6.29"
+            logger "$s"
+            echo "$s"
+        fi
+    fi
+
+    if [ "x$INTERFACE" != "x" ]; then
+        # Put interface up and wait 1 second
+        ${INTERFACE_UP}
+        sleep 1
+    fi
+
+    # Load module
+    /sbin/modprobe ${DRIVER} 2>/dev/null
+    success=$?
+    if [ $success ]; then
+        # If successful, enable card
+        [ "${SYS_IS_PRESENT}" == "yes" ] && \
+            echo 1 > ${SYS_DEVICE}
+
+        # Save the card state
+        echo 1 > $SAVED_STATE_FILE
+
+        # Execute post-up commands
+        execute_commands "${COMMANDS_POST_UP[@]}"
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "${NAME} is now on" ${ICON}
+    else
+        # If module loading was not successful...
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "Could not enable ${NAME}" stop
+
+        # Try again
+        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
+            [ "$show_notifications" == "1" ] && \
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
+            sleep 2
+            device_on $(($1+1)) $show_notifications
+        fi
+    fi
+}
+
+### Turn off device #############################################
+function device_off {
+    # First argument ($1):  Number of times the funciton has been called
+    # Second argument ($2): Should we show notifications?
+
+    # Check if 2nd argument to given to function is "0" and disable
+    # notifications,
+    show_notifications=1
+    [ "$2" == "0" ] && show_notifications=0
+
+    [ "${IS_ENABLED}" == "no" ] && \
+        eeepc_notify "${NAME} already turned off!" ${ICON} && \
+            return 0
+
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "Turning ${NAME} off..." ${ICON}
+
+    # Execute pre-down commands just once
+    [ $1 -eq 1 ] && \
+        execute_commands "${COMMANDS_PRE_DOWN[@]}"
+
+    if [ "x$INTERFACE" != "x" ]; then
+        # Put interface down and wait 1 second
+        ${INTERFACE_DOWN}
+        sleep 1
+    fi
+
+    # Unload module
+    /sbin/modprobe -r ${DRIVER} 2>/dev/null
+    success=$?
+    if [ $success ]; then
+        # If successful...
+        if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+            # ...and rfkill switch exists
+
+            # Disable the card via rfkill switch
+            echo 0 > ${RFKILL_SWITCH}
+
+            if [ ${KERNEL_rel} -lt 29 ]; then
+                s="rfkill switch usage might fail on kernel lower than 2.6.29"
+                logger "$s"
+                echo "$s"
+            fi
+        fi
+
+        # If /sys device exists, disable it too
+        [ "${SYS_IS_PRESENT}" == "yes" ] && \
+            echo 0 > ${SYS_DEVICE}
+
+        # Save the card states
+        echo 0 > $SAVED_STATE_FILE
+
+        # Execute post-down commands
+        execute_commands "${COMMANDS_POST_DOWN[@]}"
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "${NAME} is now off" ${ICON}
+    else
+        # If module unloading unsuccessful, try again
+
+        [ "$show_notifications" == "1" ] && \
+            eeepc_notify "Could not disable ${NAME}" stop
+
+        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
+            [ "$show_notifications" == "1" ] && \
+                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
+            sleep 2
+            device_off $(($1+1)) $show_notifications
+        fi
+    fi
+}
+
+### Get username ################################################
 if [ -S /tmp/.X11-unix/X0 ]; then
     export DISPLAY=:0
 
@@ -228,7 +549,7 @@ if [ -S /tmp/.X11-unix/X0 ]; then
     # If autodetection fails, try another way...
     # Get user who executed startx. Might not work if a login
     # manager (GDM,KDM,etc.) is used.
-    [ "x$user" == "x" ] && user=$(ps aux | grep 'xinit /home' | awk '{print $1}' | head -1)
+    [ "x$user" == "x" ] && user=$(ps aux | grep '[x]init /home' | awk '{print $1}' | head -1)
     # If there is a space in $user, autodetection failed, so clear it.
     [ "x`echo $user | grep ' '`" != "x" ] && user=""
 
@@ -264,5 +585,5 @@ and set XUSER variable to your username." stop 20000
     fi
 fi
 
-#################################################################
-#################################################################
+### End of file #################################################
+

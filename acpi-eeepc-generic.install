@@ -1,6 +1,8 @@
 post_install() {
-    # This is easy to automate. Do it!
-    sed -i 's/^[^#]/#&/' /etc/acpi/events/anything
+
+    # Disable "acpid" events handling
+    [ -e /etc/acpi/events/anything ] && \
+        sed -i 's/^[^#]/#&/' /etc/acpi/events/anything
 
     # Make sure the right modules are loaded
     modprobe eeepc_laptop &> /dev/null

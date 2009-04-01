@@ -16,17 +16,43 @@
 # You should have received a copy of the GNU General Public License
 # along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
 
-now=`date +"%Y%m%d_%Hh%m"`
+. /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
-case "$1" in
-    stop)
-        mkdir -p /logs_backup/$now
-        cp -Rp /var/log/* /logs_backup/$now/
+
+### Information for bluetooth ###################################
+DRIVER=$CAMERA_DRIVER
+NAME="Camera"
+NAME_SMALL="camera"
+ICON="camera-web"
+SYS_NAME="camera"
+
+### Load saved state from file ##################################
+load_saved_state
+
+### Check /sys interface
+check_sys_interface
+
+### Detect if card is enabled or disabled #######################
+detect_if_enabled
+
+#################################################################
+case $1 in
+    "debug")
+        print_generic_debug
     ;;
-    start)
+    "restore")
+        device_restore
+    ;;
+    "off")
+        device_off 1
+    ;;
+    "on")
+        device_on 1
     ;;
     *)
-        echo 'Usage: /etc/init.d/console-setup {start||stop}'
-        exit 1
-   ;;
+        device_toggle
+    ;;
 esac
+
+### End of file #################################################
+

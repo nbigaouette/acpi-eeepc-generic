@@ -1,28 +1,12 @@
-# Maintainer: Nicolas Bigaouette <nbigaouette@gmail.com>
-# Greatly inspired by:
-#   EeePC ACPI Utilities : http://eeepc-acpi-util.sourceforge.net
-#   Other Eee acpi packages from AUR: http://aur.archlinux.org/packages.php?K=eee
-
-# TODO
-#   XRandR toggle between (see acpi-eeepc900, display.sh):
-#       -LVDS only
-#       -VGA only
-#       -VGA clone of LVDS
-#       -VGA left/right/below/top of LVDS
-#   XOSD for really basic osd
-#   Suspend2disk helper script
-#   Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
-#   Volume devices autodetection (LineIn/LineOut/iSpeaker...)
-#   Reset values of AC after resume (see powersource.sh, called at the end of suspend2ram.sh)
-#   FSB+Fan control
+# Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
-pkgver=0.8.2
+pkgver=0.9
 pkgrel=1
-pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD)"
+pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
-license=(GPL2)
+license=(GPL3)
 depends=(acpid xorg-server-utils dmidecode)
 optdepends=(
     "notification-daemon: On Screen Display (OSD) of notifications (GTK+)"
@@ -59,6 +43,7 @@ source=(
     "acpi-eeepc-generic-rotate-lvds.sh"
     "acpi-eeepc-generic-suspend2ram.sh"
     "acpi-eeepc-generic-toggle-bluetooth.sh"
+    "acpi-eeepc-generic-toggle-displays.sh"
     "acpi-eeepc-generic-toggle-resolution.sh"
     "acpi-eeepc-generic-toggle-touchpad.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
@@ -68,6 +53,35 @@ source=(
     "eee.png"
     "eeepc.desktop"
     "eeepc-suspend-lock.desktop")
+
+md5sums=('9fd828b507cbbfdc40850fecd448914c'
+         '3607b58247289e7e285f144f0dff7f1c'
+         '2b33f070e672ce5bdede76074521e776'
+         '63f6abb8d7ccd54e188d89c99266eba3'
+         '63f6abb8d7ccd54e188d89c99266eba3'
+         'c7e0dd3e2bdafbd9cf267c6e353faecd'
+         '5548f94516f446011044f27ea99554c1'
+         '296086c1a8b8bc4c434f868d531a5504'
+         'c7e0dd3e2bdafbd9cf267c6e353faecd'
+         '2b33f070e672ce5bdede76074521e776'
+         'cf253e386d7e743a3d25ec4165051521'
+         'f667c93c252b1eca2c97dc20b6dcae9f'
+         '7953862b64016fcce80d929a590b1fd1'
+         '91f27d2a66b8907f86b14d4ac9a48e2f'
+         'd325ea0d15191184528d1cf3f7c3b209'
+         'cdfd2a0ddba5ad21ce4f08f1722fa784'
+         '0ae1d0a8d21212b5858a9180647d9c50'
+         '1729ea983c458f165329f8d5e7733ae3'
+         'a783d48c0176f0da33ea1795e53ba492'
+         '12c506d5a4ae304833f22f04b5d5c1f0'
+         'b1f127a9b7808b22a1985a5b0301340b'
+         '4260565a4272cf56c1932db11c3956cf'
+         'd231ec9fd49a1a9413265ea52526d621'
+         '169e6415c67f06cac96f4a9391d58407'
+         'b6e3ad05a0d6c9ed87bd0859267e86d8'
+         '4d9af939dbd59121cd4bb191d340eb1c'
+         '6e46b54564cdd14f2588c921c0a7faf1'
+         '3adb93ff8f99bf6ce7746acf119df0fd')
 
 build() {
     #cd $srcdir/$pkgname-$pkgver
@@ -93,6 +107,7 @@ build() {
     install -m0755 ${srcdir}/acpi-eeepc-generic-rotate-lvds.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-suspend2ram.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-bluetooth.sh ${pkgdir}/etc/acpi/eeepc || return 1
+    install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-displays.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-resolution.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-touchpad.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-toggle-wifi.sh ${pkgdir}/etc/acpi/eeepc || return 1
@@ -103,31 +118,3 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
-
-md5sums=('6950474780bed9dcc216e2e965227b2e'
-         'd89960a1574e79a435992654d83a29ea'
-         '6950474780bed9dcc216e2e965227b2e'
-         '024286372c0a0e005804711b022dc4a3'
-         '024286372c0a0e005804711b022dc4a3'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '0c0381077c38383d0918e6584b89af6e'
-         'f97b4acf354909e0900ae2ba7de77940'
-         '36ac41aec1b63e66fcb8ecab72a7af0e'
-         '6950474780bed9dcc216e2e965227b2e'
-         'cf253e386d7e743a3d25ec4165051521'
-         '6adf767a6425d9f2356632d6ec38bde4'
-         'c382617da1a5274b0bce86f3aff6149f'
-         'a1995a198c8e71b1afb0d86a8a8bc5e1'
-         '71e8bde8fb619f3dbbd0b8cce2bf0546'
-         '72bd6054c7d6ec23970df97cd262b262'
-         'e67ae91b8c8694d72a2f50ce59b805f8'
-         '6c5f0a191f985edddec6134422c771ca'
-         'e6234d6135b02e15ebec13034175ba0c'
-         '8f359559f4690196de453663abb3e9a7'
-         '3c7d526b09545f353f3cca1a4fb01dd5'
-         '1c4c84f0af10e89cae21534a7f0ec272'
-         'c989367dbd84dcf8aa9ce9366a4b9aa0'
-         'b6e3ad05a0d6c9ed87bd0859267e86d8'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '6e46b54564cdd14f2588c921c0a7faf1'
-         '3adb93ff8f99bf6ce7746acf119df0fd')
