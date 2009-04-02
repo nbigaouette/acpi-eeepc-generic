@@ -248,7 +248,7 @@ function print_generic_debug() {
     else
     echo "DEBUG ($0): /sys device is not present"
     fi
-    
+
     if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
     echo "DEBUG ($0): rfkill switch: ${RFKILL_SWITCH}"
     echo "DEBUG ($0): rfkill state:  ${RFKILL_STATE}"
@@ -264,7 +264,7 @@ function print_generic_debug() {
     print_commands "${COMMANDS_PRE_DOWN[@]}"
     echo "DEBUG ($0): COMMANDS_POST_DOWN:"
     print_commands "${COMMANDS_POST_DOWN[@]}"
-    
+
     if [ "x${INTERFACE}" != "x" ]; then
         interface_notify_msg="
 interface: ${INTERFACE}"
@@ -283,7 +283,7 @@ rfkill state:  ${RFKILL_STATE}"
     else
     RFKILL_MESSAGE="rfkill switch is not present"
     fi
-    
+
 
     eeepc_notify "${NAME}
 Driver: ${DRIVER}
@@ -294,7 +294,7 @@ ${RFKILL_MESSAGE}" ${ICON} 10000
 
 ### Toggle the device on and off ################################
 function device_toggle {
-    if [ "${SYS_STATE}" = "1" ]; then
+    if [ "${IS_ENABLED}" == "yes" ]; then
         device_off 1
     else
         device_on 1
@@ -303,7 +303,7 @@ function device_toggle {
 
 ### Restore a device ############################################
 function device_restore {
-    if [ "$RADIO_SAVED_RADIO" = "1" ]; then
+    if [ "$RADIO_SAVED_RADIO" == "1" ]; then
         device_on 1 0
     else
         device_off 1 0
