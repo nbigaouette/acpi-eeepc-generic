@@ -2,7 +2,7 @@
 
 pkgname=acpi-eeepc-generic
 pkgver=0.9.1
-pkgrel=2
+pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
@@ -62,13 +62,13 @@ md5sums=('9fd828b507cbbfdc40850fecd448914c'
          'c75965cdca5431e06df962f3a60acc73'
          '63f6abb8d7ccd54e188d89c99266eba3'
          '63f6abb8d7ccd54e188d89c99266eba3'
-         'c7e0dd3e2bdafbd9cf267c6e353faecd'
+         'af6da4a81108bd43e816f2a99f22cd71'
          '5548f94516f446011044f27ea99554c1'
          '296086c1a8b8bc4c434f868d531a5504'
          'c7e0dd3e2bdafbd9cf267c6e353faecd'
          '2b33f070e672ce5bdede76074521e776'
          'cf253e386d7e743a3d25ec4165051521'
-         'f667c93c252b1eca2c97dc20b6dcae9f'
+         '8066e3379e05f184d02213b4badce0d0'
          '7953862b64016fcce80d929a590b1fd1'
          '91f27d2a66b8907f86b14d4ac9a48e2f'
          'd325ea0d15191184528d1cf3f7c3b209'
@@ -119,3 +119,4 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
+
