@@ -20,9 +20,9 @@
 
 . /etc/conf.d/acpi-eeepc-generic.conf
 
-[ ! -d "$EEEPC_VAR/states" ] && mkdir -p $EEEPC_VAR/states
+[ ! -d "${EEEPC_VAR}/states" ] && mkdir -p ${EEEPC_VAR}/states
 
-chmod a+w /var/eeepc/states/* &> /dev/null
+chmod a+w ${EEEPC_VAR}/states/* &> /dev/null
 
 ### Extract kernel version
 KERNEL=`uname -r`
@@ -200,12 +200,12 @@ function brightness_set_percentage() {
 
 ### Save brightness #############################################
 function save_brightness() {
-    cat /sys/class/backlight/eeepc/brightness > /var/eeepc/states/brightness
+    cat /sys/class/backlight/eeepc/brightness > ${EEEPC_VAR}/states/brightness
 }
 
 ### Restore brightness ##########################################
 function restore_brightness() {
-    cat /var/eeepc/states/brightness > /sys/class/backlight/eeepc/brightness
+    cat ${EEEPC_VAR}/states/brightness > /sys/class/backlight/eeepc/brightness
 }
 
 ### Set brightness (absolute value) #############################
@@ -216,12 +216,12 @@ function brightness_set_absolute() {
 ### Get direction of brightness change ##########################
 function brightness_find_direction() {
     actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
-    previous_brightness=`cat /var/eeepc/states/brightness`
+    previous_brightness=`cat ${EEEPC_VAR}/states/brightness`
     [ "x$previous_brightness" == "x" ] && previous_brightness=$actual_brightness
     to_return=""
     [ $actual_brightness -lt $previous_brightness ] && to_return="down"
     [ $actual_brightness -gt $previous_brightness ] && to_return="up"
-    echo $actual_brightness > /var/eeepc/states/brightness
+    echo $actual_brightness > ${EEEPC_VAR}/states/brightness
     echo $to_return
 }
 
@@ -375,7 +375,7 @@ function detect_if_enabled() {
 
 ### Load saved state from file ##################################
 function load_saved_state() {
-    SAVED_STATE_FILE=$EEEPC_VAR/states/${NAME_SMALL}
+    SAVED_STATE_FILE=${EEEPC_VAR}/states/${NAME_SMALL}
     if [ -e $SAVED_STATE_FILE ]; then
         SAVED_STATE=$(cat $SAVED_STATE_FILE)
     else
