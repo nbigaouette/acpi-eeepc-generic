@@ -20,7 +20,7 @@
 
 
 ### Information for bluetooth ###################################
-DRIVER=$CAMERA_DRIVER
+DRIVERS=("${CAMERA_DRIVERS[@]}")
 NAME="Camera"
 NAME_SMALL="camera"
 ICON="camera-web"

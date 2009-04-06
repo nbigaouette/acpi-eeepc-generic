@@ -20,7 +20,7 @@
 
 
 ### Information for bluetooth ###################################
-DRIVER=$BLUETOOTH_DRIVER
+DRIVERS=("${BLUETOOTH_DRIVERS[@]}")
 NAME="Bluetooth"
 NAME_SMALL="bluetooth"
 ICON=${NAME_SMALL}
@@ -29,7 +29,6 @@ COMMANDS_PRE_UP="${COMMANDS_BT_PRE_UP[@]}"
 COMMANDS_PRE_DOWN="${COMMANDS_BT_PRE_DOWN[@]}"
 COMMANDS_POST_UP="${COMMANDS_BT_POST_UP[@]}"
 COMMANDS_POST_DOWN="${COMMANDS_BT_POST_DOWN[@]}"
-TOGGLE_MAX_TRY=${BLUETOOTH_TOGGLE_MAX_TRY}
 
 ### Load saved state from file ##################################
 load_saved_state

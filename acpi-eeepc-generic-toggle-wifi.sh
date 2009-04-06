@@ -20,7 +20,7 @@
 
 
 ### Information for bluetooth ###################################
-DRIVERS="${WIFI_DRIVERS[@]}"
+DRIVERS=("${WIFI_DRIVERS[@]}")
 NAME="Wifi"
 NAME_SMALL="wlan"
 ICON="gnome-dev-wavelan"
@@ -29,7 +29,6 @@ COMMANDS_PRE_UP="${COMMANDS_WIFI_PRE_UP[@]}"
 COMMANDS_PRE_DOWN="${COMMANDS_WIFI_PRE_DOWN[@]}"
 COMMANDS_POST_UP="${COMMANDS_WIFI_POST_UP[@]}"
 COMMANDS_POST_DOWN="${COMMANDS_WIFI_POST_DOWN[@]}"
-TOGGLE_MAX_TRY=${WIFI_TOGGLE_MAX_TRY}
 
 # Get wifi interface
 INTERFACE=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')

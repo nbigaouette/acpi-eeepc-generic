@@ -39,6 +39,9 @@ KERNEL_patch=${k%%\.*}
 rfkills_path="/sys/class/rfkill"
 sys_path="/sys/devices/platform/eeepc"
 
+### Maximum try for toggling. Should not be even needed
+TOGGLE_MAX_TRY=3
+
 ### Generic notification function ###############################
 function eeepc_notify {
     if [ "$NOTIFY" == "libnotify" ]; then
@@ -259,7 +262,12 @@ function print_generic_debug() {
         /usr/bin/pacman -Qs kernel26
     fi
 
-    echo "DEBUG ($0): Driver(s):     ${DRIVERS[@]}"
+    if [ ${#DRIVERS[@]} -gt 1 ]; then
+        plural="s"
+    else
+        plural=""
+    fi
+    echo "DEBUG ($0): Driver${plural}:     ${DRIVERS[@]} (${#DRIVERS[@]})"
     echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
 
     if [ "x${INTERFACE}" != "x" ]; then
@@ -308,9 +316,8 @@ rfkill state:  ${RFKILL_STATE}"
     RFKILL_MESSAGE="rfkill switch is not present"
     fi
 
-
     eeepc_notify "${NAME}
-Driver(s): ${DRIVERS[@]}
+Driver${plural}: ${DRIVERS[@]}
 is enabled: ${IS_ENABLED} ${interface_notify_msg}
 ${SYS_MESSAGE}
 ${RFKILL_MESSAGE}" ${ICON} 10000
