@@ -64,7 +64,7 @@ function send_libnotify() {
     icon=$2
     duration=$3
     [ "x$icon" == "x" ] && icon="eee"
-    [ "x$duration" == "x" ] && duration="2500"
+    [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
     cmd="/usr/bin/notify-send -i $icon -t $duration \"EeePC $EEEPC_MODEL\" \"$1\""
     send_generic "${cmd}"
 }
@@ -77,7 +77,7 @@ function send_kdialog() {
         return 1
     fi
     duration=$3
-    [ "x$duration" == "x" ] && duration="2000"
+    [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
     duration=$(( $duration / 1000 ))
     cmd="/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" $duration"
     send_generic "${cmd}"
@@ -91,7 +91,7 @@ function send_dzen() {
         return 1
     fi
     duration=$3
-    [ "x$duration" == "x" ] && duration="2000"
+    [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
     duration=$(( 5 * $duration / 1000 ))
     cmd="(echo \"$1\"; sleep $duration) | /usr/bin/dzen2 &"
     send_generic "${cmd}"
@@ -102,7 +102,8 @@ function send_generic() {
     if [ "x$UID" == "x0" ]; then
         /bin/su $user --login -c "${@}"
     else
-        bash -c "${@}"
+        #bash -c "${@}"
+        eval "${@}"
     fi
 }
 
