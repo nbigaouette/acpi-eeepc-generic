@@ -134,6 +134,28 @@ function execute_commands() {
     done
 }
 
+### Load modules ################################################
+function load_modules() {
+    modules=( "$@" )
+    modules_num=${#modules[@]}
+    for ((i=0;i<${modules_num};i++)); do
+        m=${modules[${i}]}
+        /sbin/modprobe ${m}
+        sleep 1
+    done
+}
+
+### Unload modules ##############################################
+function unload_modules() {
+    modules=( "$@" )
+    modules_num=${#modules[@]}
+    for ((i=0;i<${modules_num};i++)); do
+        m=${modules[${i}]}
+        /sbin/modprobe -r ${m}
+        sleep 1
+    done
+}
+
 ### Verify if volume if muted ###################################
 function volume_is_mute() {
     # 1 is true, 0 is false
@@ -235,7 +257,7 @@ function print_generic_debug() {
         /usr/bin/pacman -Qs kernel26
     fi
 
-    echo "DEBUG ($0): Driver:        ${DRIVER}"
+    echo "DEBUG ($0): Driver(s):     ${DRIVERS[@]}"
     echo "DEBUG ($0): is enabled:    ${IS_ENABLED}"
 
     if [ "x${INTERFACE}" != "x" ]; then
@@ -286,7 +308,7 @@ rfkill state:  ${RFKILL_STATE}"
 
 
     eeepc_notify "${NAME}
-Driver: ${DRIVER}
+Driver(s): ${DRIVERS[@]}
 is enabled: ${IS_ENABLED} ${interface_notify_msg}
 ${SYS_MESSAGE}
 ${RFKILL_MESSAGE}" ${ICON} 10000
