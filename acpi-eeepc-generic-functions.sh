@@ -417,7 +417,7 @@ function device_on {
 
     if [ "x$INTERFACE" != "x" ]; then
         # Put interface up and wait 1 second
-        ${INTERFACE_UP}
+        eval ${INTERFACE_UP}
         sleep 1
     fi
 
@@ -476,7 +476,7 @@ function device_off {
 
     if [ "x$INTERFACE" != "x" ]; then
         # Put interface down and wait 1 second
-        ${INTERFACE_DOWN}
+        eval ${INTERFACE_DOWN}
         sleep 1
     fi
 
