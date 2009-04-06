@@ -49,7 +49,7 @@ case "$1" in
         fi
 
         if [ "$RESTORE_WIFI" = "1" ]; then
-            if [ -e "$EEEPC_VAR/states/wifi" ]; then
+            if [ -e "$EEEPC_VAR/states/wlan" ]; then
                 stat_busy "Restoring EeePC state (wifi)..."
                 /etc/acpi/eeepc/acpi-eeepc-generic-toggle-wifi.sh restore
                 stat_done
