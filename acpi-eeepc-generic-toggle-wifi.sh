@@ -50,6 +50,14 @@ check_sys_interface
 ### Detect if card is enabled or disabled #######################
 detect_if_enabled
 
+function quirks_madwifi_post_up() {
+    /sbin/modprobe pciehp pciehp_force=1
+}
+function quirks_madwifi_post_down() {
+    /sbin/modprobe -r pciehp
+}
+
+
 #################################################################
 case $1 in
     "debug")
@@ -57,12 +65,21 @@ case $1 in
     ;;
     "restore")
         device_restore
+        if [ "$WIFI_MADWIFI" == "yes" ]; then
+            if [ "${SAVED_STATE}" == "1" ]; then
+                quirks_madwifi_post_up
+            else
+                quirks_madwifi_post_down
+            fi
+        fi
     ;;
     "off")
         device_off 1
+        [ "$WIFI_MADWIFI" == "yes" ] && quirks_madwifi_post_down
     ;;
     "on")
         device_on 1
+        [ "$WIFI_MADWIFI" == "yes" ] && quirks_madwifi_post_up
     ;;
     *)
         device_toggle
