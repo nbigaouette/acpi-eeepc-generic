@@ -302,8 +302,8 @@ function device_toggle {
 }
 
 ### Restore a device ############################################
-function device_restore {
-    if [ "$RADIO_SAVED_RADIO" == "1" ]; then
+function device_restore() {
+    if [ "${SAVED_STATE}" == "1" ]; then
         device_on 1 0
     else
         device_off 1 0
