@@ -150,8 +150,10 @@ function unload_modules() {
     modules=( "$@" )
     modules_num=${#modules[@]}
     for ((i=0;i<${modules_num};i++)); do
-        m=${modules[${i}]}
-        /sbin/modprobe -r ${m}
+        m="${modules[${i}]}"
+        # Only the first word is the module, the rest might are options,
+        # which are irrevelant in unloading the module.
+        /sbin/modprobe -r ${m%% *}
         sleep 1
     done
 }
@@ -443,8 +445,9 @@ function device_on {
         sleep 1
     fi
 
-    # Load module
-    /sbin/modprobe ${DRIVER} 2>/dev/null
+    # Load module(s)
+    load_modules "${DRIVERS[@]}"
+
     success=$?
     if [ $success ]; then
         # If successful, enable card
@@ -503,7 +506,8 @@ function device_off {
     fi
 
     # Unload module
-    /sbin/modprobe -r ${DRIVER} 2>/dev/null
+    unload_modules "${DRIVERS[@]}"
+
     success=$?
     if [ $success ]; then
         # If successful...

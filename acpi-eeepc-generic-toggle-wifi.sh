@@ -20,7 +20,7 @@
 
 
 ### Information for bluetooth ###################################
-DRIVERS="${WIFI_DRIVERS}"
+DRIVERS="${WIFI_DRIVERS[@]}"
 NAME="Wifi"
 NAME_SMALL="wlan"
 ICON="gnome-dev-wavelan"
