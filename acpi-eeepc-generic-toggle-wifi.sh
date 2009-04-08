@@ -36,6 +36,13 @@ INTERFACE=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 INTERFACE_UP="/sbin/ifconfig $INTERFACE up 2>/dev/null"
 INTERFACE_DOWN="/sbin/ifconfig $INTERFACE down 2>/dev/null"
 
+### Detect if using madwifi #####################################
+madwifi_modules=(`lsmod | grep -e "wlan" -e "ath_" -e "wlan_" | awk '{print ""$1""}'`)
+if [[ "${madwifi_modules[*]}" != "" ]]; then
+    WIFI_MADWIFI="yes"
+else
+    WIFI_MADWIFI="no"
+fi
 
 ### Load saved state from file ##################################
 load_saved_state
@@ -59,11 +66,12 @@ function quirks_madwifi_post_down() {
     # present in memory. Add them to a removal list if they are
     # still present. We also, want to remove "pciehp" _after_
     # rfkill switch has been turned off.
-    modules_still_in_memory=( \
-        `lsmod | grep -e wlan | awk '{print ""$1""}'` \
-        pciehp \
-    )
-    unload_modules "${modules_still_in_memory[@]}"
+    #modules_still_in_memory=( \
+    #    `lsmod | grep -e wlan | awk '{print ""$1""}'` \
+    #    pciehp \
+    #)
+    #unload_modules "${modules_still_in_memory[@]}"
+    unload_modules ("${madwifi_modules[@]}" "pciehp")
 }
 
 
