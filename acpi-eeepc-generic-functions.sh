@@ -145,7 +145,7 @@ function load_modules() {
     for ((i=0;i<${modules_num};i++)); do
         m=${modules[${i}]}
         /sbin/modprobe ${m}
-        sleep 1
+        #sleep 1
     done
 }
 
@@ -158,7 +158,7 @@ function unload_modules() {
         # Only the first word is the module, the rest might are options,
         # which are irrevelant in unloading the module.
         /sbin/modprobe -r ${m%% *}
-        sleep 1
+        #sleep 1
     done
 }
 
