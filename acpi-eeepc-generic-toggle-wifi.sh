@@ -50,10 +50,20 @@ check_sys_interface
 detect_if_enabled
 
 function quirks_madwifi_post_up() {
-    /sbin/modprobe pciehp pciehp_force=1
+    # The module "pciehp" needs to be loaded _after_ rfkill
+    # switch has been turned on.
+    load_modules "pciehp pciehp_force=1"
 }
 function quirks_madwifi_post_down() {
-    /sbin/modprobe -r pciehp
+    # Sometimes, "wlan_scan_sta" and "wlan" modules are still
+    # present in memory. Add them to a removal list if they are
+    # still present. We also, want to remove "pciehp" _after_
+    # rfkill switch has been turned off.
+    modules_still_in_memory=( \
+        `lsmod | grep -e wlan | awk '{print ""$1""}'` \
+        pciehp \
+    )
+    unload_modules "${modules_still_in_memory[@]}"
 }
 
 
