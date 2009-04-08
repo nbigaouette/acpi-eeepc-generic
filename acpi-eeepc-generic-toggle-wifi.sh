@@ -43,6 +43,7 @@ if [[ "${madwifi_modules[*]}" != "" ]]; then
 else
     WIFI_MADWIFI="no"
 fi
+DRIVERS=("${madwifi_modules[@]}")
 
 ### Load saved state from file ##################################
 load_saved_state
