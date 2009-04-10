@@ -78,7 +78,7 @@ function send_kdialog() {
     fi
     duration=$3
     [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
-    duration=$(( $duration / 1000 ))
+    duration=$(( $duration / 1000 )) # kdialog duration is in second
     cmd="/usr/bin/kdialog --passivepopup \"$1\" --title \"EeePC $EEEPC_MODEL\" $duration"
     send_generic "${cmd}"
 }
@@ -92,7 +92,7 @@ function send_dzen() {
     fi
     duration=$3
     [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
-    duration=$(( 5 * $duration / 1000 ))
+    duration=$(( $duration / 1000 )) # Dzen2 duration is in second
     cmd="(echo \"$1\"; sleep $duration) | /usr/bin/dzen2 &"
     send_generic "${cmd}"
 }
