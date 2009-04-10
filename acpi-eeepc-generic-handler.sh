@@ -37,7 +37,7 @@ case "$1" in
                 execute_commands "${COMMANDS_POWER_BUTTON[@]}"
             ;;
             *)
-                msg="Button (button/power) undefined: $2 $3 $4"
+                msg="acpi-eeepc-generic-handler: undefined 'button/power' event: $2 $3 $4"
                 eeepc_notify "$msg" keyboard
             ;;
         esac
@@ -50,7 +50,7 @@ case "$1" in
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
             *)
-                msg="Button (button/sleep) undefined: $2 $3 $4"
+                msg="acpi-eeepc-generic-handler: undefined 'button/sleep' event: $2 $3 $4"
                 eeepc_notify "$msg" keyboard
             ;;
         esac
@@ -69,7 +69,7 @@ case "$1" in
                 esac
                 ;;
             *)
-                msg="ACPI AC (ac_adapter) undefined: $2 $3 $4"
+                msg="acpi-eeepc-generic-handler: undefined 'ac_adapter' event: $2 $3 $4"
                 logger "$msg"
             ;;
         esac
@@ -86,7 +86,7 @@ case "$1" in
                 esac
                 ;;
             *)
-                msg="ACPI battery (battery) undefined: $2 $3 $4"
+                msg="acpi-eeepc-generic-handler: undefined 'battery' event: $2 $3 $4"
                 logger "$msg"
             ;;
         esac
@@ -131,7 +131,7 @@ case "$1" in
             fi
         ;;
         *)
-            msg="Button (button/lid) undefined: $2 $3 $4"
+            msg="acpi-eeepc-generic-handler: undefined 'button/lid' event: $2 $3 $4"
             eeepc_notify "$msg" keyboard
         ;;
         esac
@@ -139,49 +139,49 @@ case "$1" in
     hotkey)
         case "$3" in
             $EEEPC_BLANK) # Silver function button 1 (Blank)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (Blank)"
+                logger "acpi-eeepc-generic-handler: (hotkey): Silver function button (Blank)"
                 execute_commands "${COMMANDS_BUTTON_BLANK[@]}"
             ;;
             $EEEPC_RESOLUTION) # Silver function button 2 (Resolution)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (Resolution)"
+                logger "acpi-eeepc-generic-handler: (hotkey): Silver function button (Resolution)"
                 execute_commands "${COMMANDS_BUTTON_RESOLUTION[@]}"
             ;;
             $EEEPC_USER1) # Silver function button 3 (User1)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User1)"
+                logger "acpi-eeepc-generic-handler: (hotkey): Silver function button (User1)"
                 execute_commands "${COMMANDS_BUTTON_USER1[@]}"
             ;;
             $EEEPC_USER2) # Silver function button 4 (User2)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Silver function button (User2)"
+                logger "acpi-eeepc-generic-handler: (hotkey): Silver function button (User2)"
                 execute_commands "${COMMANDS_BUTTON_USER2[@]}"
             ;;
             $EEEPC_USER3) # Fn+Space
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Fn+Space"
+                logger "acpi-eeepc-generic-handler: (hotkey): Fn+Space"
                 execute_commands "${COMMANDS_BUTTON_USER3[@]}"
             ;;
 
             $EEEPC_SLEEP)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Sleep"
+                logger "acpi-eeepc-generic-handler: (hotkey): Sleep"
                 eeepc_notify "Going to sleep..." gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
             $EEEPC_WIFI_TOGGLE) # WiFi Toggle
-                logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi toggle"
+                logger "acpi-eeepc-generic-handler: (hotkey): WiFi toggle"
                 execute_commands "${COMMANDS_WIFI_TOGGLE[@]}"
             ;;
             $EEEPC_WIFI_UP) # WiFi Up
-                logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi Up"
+                logger "acpi-eeepc-generic-handler: (hotkey): WiFi Up"
                 execute_commands "${COMMANDS_WIFI_UP[@]}"
             ;;
             $EEEPC_WIFI_DOWN) # WiFi Down
-                logger "acpi-eeepc-generic-handler.sh (hotkey): WiFi Down"
+                logger "acpi-eeepc-generic-handler: (hotkey): WiFi Down"
                 execute_commands "${COMMANDS_WIFI_DOWN[@]}"
             ;;
             $EEEPC_TOUCHPAD_TOGGLE) # Toggle touchpad
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Toggling touchpad"
+                logger "acpi-eeepc-generic-handler: (hotkey): Toggling touchpad"
                 execute_commands "${COMMANDS_TOUCHPAD_TOGGLE[@]}"
             ;;
             $EEEPC_RESOLUTION) # Change resolution
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Changing resolution"
+                logger "acpi-eeepc-generic-handler: (hotkey): Changing resolution"
                 execute_commands "${COMMANDS_RESOLUTION[@]}"
             ;;
             $EEEPC_BRIGHTNESS_UP|$EEEPC_BRIGHTNESS_DOWN) # Brightness
@@ -189,12 +189,12 @@ case "$1" in
                 if [ "$brightness_direction" == "up" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_UP[@]}"
                     brightness_percentage=`brightness_get_percentage`
-                    [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Up ($brightness_percentage%)"
+                    [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler: (hotkey): Brightness Up ($brightness_percentage%)"
                     [ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
                 elif [ "$brightness_direction" == "down" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_DOWN[@]}"
                     brightness_percentage=`brightness_get_percentage`
-                    [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler.sh (hotkey): Brightness Down ($brightness_percentage%)"
+                    [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler: (hotkey): Brightness Down ($brightness_percentage%)"
                     [ "$brightness_percentage" != "0" ] && eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
                 fi
             ;;
@@ -219,11 +219,11 @@ case "$1" in
                 execute_commands "${COMMANDS_XRANDR_LCD[@]}"
             ;;
             $EEEPC_TASKMAN) # Task Manager
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Task Manager"
+                logger "acpi-eeepc-generic-handler: (hotkey): Task Manager"
                 execute_commands "${COMMANDS_TASKM[@]}"
             ;;
             $EEEPC_VOL_MUTE) # Mute
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Mute"
+                logger "acpi-eeepc-generic-handler: (hotkey): Mute"
                 execute_commands "${COMMANDS_MUTE[@]}"
                 if [ "`volume_is_mute`" == "1" ]; then
                     volume_icon="audio-volume-muted"
@@ -269,10 +269,10 @@ case "$1" in
         esac
     ;;
     processor)
-        logger "Processor acpi event not implemented: $1 $2 $3 $4"
+        logger "acpi-eeepc-generic-handler: undefined 'processor' event: $2 $3 $4"
     ;;
     *)
-        msg="ACPI group/action ($1) undefined: $2 $3 $4"
+        msg="acpi-eeepc-generic-handler: undefined group/action ($1) event: $2 $3 $4"
         eeepc_notify "$msg" keyboard
         logger "$msg"
     ;;
