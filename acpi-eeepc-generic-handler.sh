@@ -38,8 +38,8 @@ case "$1" in
             ;;
             *)
                 msg="Button (button/power) undefined: $2 $3 $4"
-                eeepc_notify $msg keyboard
-                logger $msg
+                eeepc_notify "$msg" keyboard
+                logger "$msg"
             ;;
         esac
         ;;
@@ -52,8 +52,8 @@ case "$1" in
             ;;
             *)
                 msg="Button (button/sleep) undefined: $2 $3 $4"
-                eeepc_notify $msg keyboard
-                logger $msg
+                eeepc_notify "$msg" keyboard
+                logger "$msg"
             ;;
         esac
         ;;
@@ -72,8 +72,8 @@ case "$1" in
                 ;;
             *)
                 msg="ACPI AC (ac_adapter) undefined: $2 $3 $4"
-                eeepc_notify $msg keyboard
-                logger $msg
+                eeepc_notify "$msg" keyboard
+                logger "$msg"
             ;;
         esac
         ;;
@@ -90,8 +90,8 @@ case "$1" in
                 ;;
             *)
                 msg="ACPI battery (battery) undefined: $2 $3 $4"
-                eeepc_notify $msg keyboard
-                logger $msg
+                eeepc_notify "$msg" keyboard
+                logger "$msg"
             ;;
         esac
         ;;
@@ -136,8 +136,8 @@ case "$1" in
         ;;
         *)
             msg="Button (button/lid) undefined: $2 $3 $4"
-            eeepc_notify $msg keyboard
-            logger $msg
+            eeepc_notify "$msg" keyboard
+            logger "$msg"
         ;;
         esac
         ;;
@@ -276,8 +276,8 @@ case "$1" in
 #             ;;
             *)
                 msg="Hotkey (hotkey) undefined: $2 $3 $4"
-                eeepc_notify $msg keyboard
-                logger $msg
+                eeepc_notify "$msg" keyboard
+                logger "$msg"
             ;;
         esac
     ;;
@@ -286,8 +286,8 @@ case "$1" in
     ;;
     *)
         msg="ACPI group/action ($1) undefined: $2 $3 $4"
-        eeepc_notify $msg keyboard
-        logger $msg
+        eeepc_notify "$msg" keyboard
+        logger "$msg"
     ;;
 esac
 
