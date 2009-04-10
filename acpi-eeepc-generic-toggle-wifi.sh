@@ -36,14 +36,14 @@ INTERFACE=$(/usr/sbin/iwconfig 2>/dev/null | grep ESSID | awk '{print $1}')
 INTERFACE_UP="/sbin/ifconfig $INTERFACE up 2>/dev/null"
 INTERFACE_DOWN="/sbin/ifconfig $INTERFACE down 2>/dev/null"
 
-### Detect if using madwifi #####################################
-madwifi_modules=(`lsmod | grep -e "wlan" -e "ath_" -e "wlan_" | awk '{print ""$1""}'`)
-if [[ "${madwifi_modules[*]}" != "" ]]; then
-    WIFI_MADWIFI="yes"
-    DRIVERS=("${madwifi_modules[@]}")
-else
-    WIFI_MADWIFI="no"
-fi
+# ### Detect if using madwifi #####################################
+# madwifi_modules=(`lsmod | grep -e "wlan" -e "ath_" -e "wlan_" | awk '{print ""$1""}'`)
+# if [[ "${madwifi_modules[*]}" != "" ]]; then
+#     WIFI_MADWIFI="yes"
+#     DRIVERS=("${madwifi_modules[@]}")
+# else
+#     WIFI_MADWIFI="no"
+# fi
 
 ### Load saved state from file ##################################
 load_saved_state
@@ -57,23 +57,23 @@ check_sys_interface
 ### Detect if card is enabled or disabled #######################
 detect_if_enabled
 
-function quirks_madwifi_post_up() {
-    # The module "pciehp" needs to be loaded _after_ rfkill
-    # switch has been turned on.
-    load_modules "pciehp pciehp_force=1"
-}
-function quirks_madwifi_post_down() {
-    # Sometimes, "wlan_scan_sta" and "wlan" modules are still
-    # present in memory. Add them to a removal list if they are
-    # still present. We also, want to remove "pciehp" _after_
-    # rfkill switch has been turned off.
-    #modules_still_in_memory=( \
-    #    `lsmod | grep -e wlan | awk '{print ""$1""}'` \
-    #    pciehp \
-    #)
-    #unload_modules "${modules_still_in_memory[@]}"
-    unload_modules ("${madwifi_modules[@]}" "pciehp")
-}
+# function quirks_madwifi_post_up() {
+#     # The module "pciehp" needs to be loaded _after_ rfkill
+#     # switch has been turned on.
+#     load_modules "pciehp pciehp_force=1"
+# }
+# function quirks_madwifi_post_down() {
+#     # Sometimes, "wlan_scan_sta" and "wlan" modules are still
+#     # present in memory. Add them to a removal list if they are
+#     # still present. We also, want to remove "pciehp" _after_
+#     # rfkill switch has been turned off.
+#     #modules_still_in_memory=( \
+#     #    `lsmod | grep -e wlan | awk '{print ""$1""}'` \
+#     #    pciehp \
+#     #)
+#     #unload_modules "${modules_still_in_memory[@]}"
+#     unload_modules ("${madwifi_modules[@]}" "pciehp")
+# }
 
 
 #################################################################
@@ -83,34 +83,34 @@ case $1 in
     ;;
     "restore")
         device_restore
-        if [ "$WIFI_MADWIFI" == "yes" ]; then
-            if [ "${SAVED_STATE}" == "1" ]; then
-                quirks_madwifi_post_up
-            else
-                quirks_madwifi_post_down
-            fi
-        fi
+#         if [ "$WIFI_MADWIFI" == "yes" ]; then
+#             if [ "${SAVED_STATE}" == "1" ]; then
+#                 quirks_madwifi_post_up
+#             else
+#                 quirks_madwifi_post_down
+#             fi
+#         fi
     ;;
     "off")
         device_off 1
-        [ "$WIFI_MADWIFI" == "yes" ] && quirks_madwifi_post_down
+#         [ "$WIFI_MADWIFI" == "yes" ] && quirks_madwifi_post_down
     ;;
     "on")
         device_on 1
-        [ "$WIFI_MADWIFI" == "yes" ] && quirks_madwifi_post_up
+#         [ "$WIFI_MADWIFI" == "yes" ] && quirks_madwifi_post_up
     ;;
     *)
         device_toggle
-        if [ "$WIFI_MADWIFI" == "yes" ]; then
-            # If the card was disabled, IS_ENABLED was set to "no". So
-            # toggling its status would enable it and we need to
-            # execute post_up quirks.
-            if [ "${IS_ENABLED}" == "no" ]; then
-                quirks_madwifi_post_up
-            else
-                quirks_madwifi_post_down
-            fi
-        fi
+#         if [ "$WIFI_MADWIFI" == "yes" ]; then
+#             # If the card was disabled, IS_ENABLED was set to "no". So
+#             # toggling its status would enable it and we need to
+#             # execute post_up quirks.
+#             if [ "${IS_ENABLED}" == "no" ]; then
+#                 quirks_madwifi_post_up
+#             else
+#                 quirks_madwifi_post_down
+#             fi
+#         fi
     ;;
 esac
 
