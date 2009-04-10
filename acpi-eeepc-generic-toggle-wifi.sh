@@ -40,10 +40,10 @@ INTERFACE_DOWN="/sbin/ifconfig $INTERFACE down 2>/dev/null"
 madwifi_modules=(`lsmod | grep -e "wlan" -e "ath_" -e "wlan_" | awk '{print ""$1""}'`)
 if [[ "${madwifi_modules[*]}" != "" ]]; then
     WIFI_MADWIFI="yes"
+    DRIVERS=("${madwifi_modules[@]}")
 else
     WIFI_MADWIFI="no"
 fi
-DRIVERS=("${madwifi_modules[@]}")
 
 ### Load saved state from file ##################################
 load_saved_state
