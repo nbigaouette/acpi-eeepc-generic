@@ -39,7 +39,6 @@ case "$1" in
             *)
                 msg="Button (button/power) undefined: $2 $3 $4"
                 eeepc_notify "$msg" keyboard
-                logger "$msg"
             ;;
         esac
         ;;
@@ -53,7 +52,6 @@ case "$1" in
             *)
                 msg="Button (button/sleep) undefined: $2 $3 $4"
                 eeepc_notify "$msg" keyboard
-                logger "$msg"
             ;;
         esac
         ;;
@@ -72,7 +70,6 @@ case "$1" in
                 ;;
             *)
                 msg="ACPI AC (ac_adapter) undefined: $2 $3 $4"
-                eeepc_notify "$msg" keyboard
                 logger "$msg"
             ;;
         esac
@@ -90,7 +87,6 @@ case "$1" in
                 ;;
             *)
                 msg="ACPI battery (battery) undefined: $2 $3 $4"
-                eeepc_notify "$msg" keyboard
                 logger "$msg"
             ;;
         esac
@@ -137,7 +133,6 @@ case "$1" in
         *)
             msg="Button (button/lid) undefined: $2 $3 $4"
             eeepc_notify "$msg" keyboard
-            logger "$msg"
         ;;
         esac
         ;;
@@ -204,27 +199,22 @@ case "$1" in
                 fi
             ;;
             $EEEPC_SCREEN_OFF) # Turn off screen
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Turn off screen"
                 execute_commands "${COMMANDS_SCREEN_OFF[@]}"
                 eeepc_notify "Turning screen off..." dialog-information
             ;;
             $EEEPC_XRANDR_TOGGLE) # RandR
-                logger "acpi-eeepc-generic-handler.sh (hotkey): RandR"
                 execute_commands "${COMMANDS_XRANDR_TOGGLE[@]}"
                 #eeepc_notify "Clone" video-display
             ;;
             $EEEPC_XRANDR_CLONE) # RandR (clone)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): RandR (clone)"
                 execute_commands "${COMMANDS_XRANDR_CLONE[@]}"
                 eeepc_notify "Clone" video-display
             ;;
-            $EEEPC_XRANDR_VGA) # RandR (vga only)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): RandR (vga only)"
+            $EEEPC_XRANDR_VGA) # RandR (vga only)"
                 eeepc_notify "VGA" video-display
                 execute_commands "${COMMANDS_XRANDR_VGA[@]}"
             ;;
             $EEEPC_XRANDR_LCD) # RandR (lcd only)
-                logger "acpi-eeepc-generic-handler.sh (hotkey): RandR (lcd only)"
                 eeepc_notify "LCD" video-display
                 execute_commands "${COMMANDS_XRANDR_LCD[@]}"
             ;;
@@ -255,7 +245,6 @@ case "$1" in
                     sleep 0.1
                     eeepc_notify "Volume Down (`get_volume`%)" $volume_icon
                 fi
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Volume Down"
             ;;
             $EEEPC_VOL_UP) # Volume Up
                 if [ "`volume_is_mute`" == "1" ]; then
@@ -268,7 +257,6 @@ case "$1" in
                     sleep 0.1
                     eeepc_notify "Volume Up (`get_volume`%)" $volume_icon
                 fi
-                logger "acpi-eeepc-generic-handler.sh (hotkey): Volume Up"
             ;;
 #             00000052) # battery level critical
 #             logger "Battery is critical, suspending"
@@ -277,7 +265,6 @@ case "$1" in
             *)
                 msg="Hotkey (hotkey) undefined: $2 $3 $4"
                 eeepc_notify "$msg" keyboard
-                logger "$msg"
             ;;
         esac
     ;;
