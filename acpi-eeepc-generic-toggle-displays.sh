@@ -57,13 +57,32 @@ xrandr_clone_name="Clone"
 xrandr_vga_name="VGA only"
 xrandr_vga_and_lvds_name="VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
 
-# Available modes and their name
-modes=(
-    "${xrandr_lvds}"            "${xrandr_lvds_name}"
-    "${xrandr_clone}"           "${xrandr_clone_name}"
-    "${xrandr_vga}"             "${xrandr_vga_name}"
-    "${xrandr_vga_and_lvds}"    "${xrandr_vga_and_lvds_name}"
-)
+
+# Available modes and their name. Needs first to contain only LVDS.
+modes=("${xrandr_lvds}" "${xrandr_lvds_name}")
+# Now get the other available modes from the config file.
+j=2
+for ((i=0 ; i < ${#XRANDR_AVAILABLE_MODES[*]} ; i++)); do
+    mode=${XRANDR_AVAILABLE_MODES[i]}
+    case ${mode} in
+        "clone")
+            modes[j]="${xrandr_clone}"
+            modes[j+1]="${xrandr_clone_name}"
+            j=$(($j+2))
+        ;;
+        "vga")
+            modes[j]="${xrandr_vga}"
+            modes[j+1]="${xrandr_vga_name}"
+            j=$(($j+2))
+        ;;
+        "both")
+            modes[j]="${xrandr_vga_and_lvds}"
+            modes[j+1]="${xrandr_vga_and_lvds_name}"
+            j=$(($j+2))
+        ;;
+    esac
+done
+
 
 # Get the number of modes of LVDS
 lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
