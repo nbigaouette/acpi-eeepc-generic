@@ -218,18 +218,6 @@ case "$1" in
                 execute_commands "${COMMANDS_XRANDR_TOGGLE[@]}"
                 eeepc_notify "Toggling displays..." video-display
             ;;
-            $EEEPC_XRANDR_CLONE) # RandR (clone)
-                execute_commands "${COMMANDS_XRANDR_CLONE[@]}"
-                eeepc_notify "Clone displays" video-display
-            ;;
-            $EEEPC_XRANDR_VGA) # RandR (vga only)"
-                eeepc_notify "VGA only" video-display
-                execute_commands "${COMMANDS_XRANDR_VGA[@]}"
-            ;;
-            $EEEPC_XRANDR_LCD) # RandR (lcd only)
-                eeepc_notify "LCD only" video-display
-                execute_commands "${COMMANDS_XRANDR_LCD[@]}"
-            ;;
             $EEEPC_TASKMAN) # Task Manager
                 logger "acpi-eeepc-generic-handler: (hotkey): Task Manager"
                 execute_commands "${COMMANDS_TASKM[@]}"
