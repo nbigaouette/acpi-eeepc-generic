@@ -239,6 +239,9 @@ case "$1" in
                     eeepc_notify "Volume Up (`get_volume`%)" $volume_icon
                 fi
             ;;
+            00000050|00000051) # AC is plugged-in or unplugged
+                # Don't do anything, should be handled in ac_adapter group
+            ;;
 #             00000052) # battery level critical
 #             logger "Battery is critical, suspending"
 #             $BATTERY_CRITICAL &
