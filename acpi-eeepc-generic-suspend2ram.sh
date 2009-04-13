@@ -62,21 +62,23 @@ if grep -q mem /sys/power/state ; then
 
     logger "Start suspend sequence"
 
-    # Get console number
-    CONSOLE_NUMBER=$(fgconsole)
-    logger "Saving console number: $CONSOLE_NUMBER"
+    if [[ "$SUSPEND_QUIRKS_VTSWITCH" == "yes" ]]; then
+        # Get console number
+        CONSOLE_NUMBER=$(fgconsole)
+        logger "Saving console number: $CONSOLE_NUMBER"
 
-    # Turn off external monitor
-    xrandr --output LVDS --preferred --output VGA --off
+        # Turn off external monitor
+        xrandr --output LVDS --preferred --output VGA --off
+
+        # Change virtual terminal to not screw up X
+        chvt 1
+    fi
 
     # Save logs
     /etc/rc.d/logsbackup stop
 
     # Flush disk buffers
     sync
-
-    # Change virtual terminal to not screw up X
-    chvt 1
 
     # Suspend
     execute_commands "${SUSPEND2RAM_COMMANDS[@]}"
@@ -86,8 +88,10 @@ if grep -q mem /sys/power/state ; then
     # Restore screen
     #/usr/sbin/vbetool post
 
-    # Get back to screen
-    chvt $CONSOLE_NUMBER
+    if [[ "$SUSPEND_QUIRKS_VTSWITCH" == "yes" ]]; then
+        # Get back to screen
+        chvt $CONSOLE_NUMBER
+    fi
 
     # Restore brightness
     restore_brightness
