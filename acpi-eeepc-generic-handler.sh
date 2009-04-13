@@ -21,9 +21,6 @@
 get_model
 . /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
 
-# Disable access control. Needed for GUI notification.
-execute_commands "@xhost +localhost"
-
 SELECTION=$3
 if [ "$KEY_SHOW" = "1" ]; then
 eeepc_notify "The event of the pressed key is: \"$SELECTION\"" keyboard 20000
@@ -258,7 +255,4 @@ case "$1" in
         logger "$msg"
     ;;
 esac
-
-# Restore access control
-execute_commands "@xhost -localhost"
 
