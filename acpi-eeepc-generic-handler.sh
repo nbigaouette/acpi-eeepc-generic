@@ -30,6 +30,26 @@ eeepc_notify "The event of the pressed key is: \"$SELECTION\"" keyboard 20000
 fi
 
 case "$1" in
+
+    battery|processor)
+        # Don't do anything
+    ;;
+
+    ac_adapter)
+        case "$4" in
+            00000000) # AC unplugged
+                execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
+            ;;
+            00000001) # AC plugged-in
+                execute_commands "${COMMANDS_AC_PLUGGED[@]}"
+            ;;
+            *)
+                msg="acpi-eeepc-generic-handler: undefined 'ac_adapter' event: $2 $3 $4"
+                logger "$msg"
+            ;;
+        esac
+    ;;
+
     button/power)
         case "$2" in
             PWRF|PBTN)
@@ -41,7 +61,7 @@ case "$1" in
                 eeepc_notify "$msg" keyboard
             ;;
         esac
-        ;;
+    ;;
 
     button/sleep)
         case "$2" in
@@ -54,43 +74,7 @@ case "$1" in
                 eeepc_notify "$msg" keyboard
             ;;
         esac
-        ;;
-
-    ac_adapter)
-        case "$2" in
-            AC0)
-                case "$4" in
-                    $POWER_BAT) # AC off
-                        execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
-                    ;;
-                    $POWER_AC) # AC on
-                        execute_commands "${COMMANDS_AC_PLUGGED[@]}"
-                    ;;
-                esac
-                ;;
-            *)
-                msg="acpi-eeepc-generic-handler: undefined 'ac_adapter' event: $2 $3 $4"
-                logger "$msg"
-            ;;
-        esac
-        ;;
-
-    battery)
-        case "$2" in
-            BAT0)
-                case "$4" in
-                    00000000) # Battery removed
-                    ;;
-                    00000001) # Battery present
-                    ;;
-                esac
-                ;;
-            *)
-                msg="acpi-eeepc-generic-handler: undefined 'battery' event: $2 $3 $4"
-                logger "$msg"
-            ;;
-        esac
-        ;;
+    ;;
 
     button/lid)
         # Detect correctly lid state
@@ -135,7 +119,7 @@ case "$1" in
             eeepc_notify "$msg" keyboard
         ;;
         esac
-        ;;
+    ;;
     hotkey)
         case "$3" in
             $EEEPC_BLANK) # Silver function button 1 (Blank)
@@ -267,9 +251,6 @@ case "$1" in
                 eeepc_notify "$msg" keyboard
             ;;
         esac
-    ;;
-    processor)
-        logger "acpi-eeepc-generic-handler: undefined 'processor' event: $2 $3 $4"
     ;;
     *)
         msg="acpi-eeepc-generic-handler: undefined group/action ($1) event: $2 $3 $4"
