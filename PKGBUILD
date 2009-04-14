@@ -57,8 +57,6 @@ source=(
     "eeepc.desktop")
 
 build() {
-    #cd $srcdir/$pkgname-$pkgver
-
     mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}}
 
     # Install our own handler
