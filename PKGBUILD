@@ -1,7 +1,7 @@
 # Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
-pkgver=0.9.2
+pkgver=0.9.3
 pkgrel=1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
@@ -59,7 +59,7 @@ source=(
 md5sums=('25bd92d98277a9fc85d0526667e20c72'
          '25bd92d98277a9fc85d0526667e20c72'
          '25bd92d98277a9fc85d0526667e20c72'
-         'd66f4e490682c9a5b099194750557aae'
+         '2bcb2acab06a06ac3b8a093070dfc783'
          '9cb149714f72e898e035e46b28b6cf94'
          '9cb149714f72e898e035e46b28b6cf94'
          'a8d84f7be1fd6f97a7f65db99bb58788'
