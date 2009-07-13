@@ -44,6 +44,9 @@ TOGGLE_MAX_TRY=3
 
 ### Generic notification function ###############################
 function eeepc_notify {
+    # $1: Message
+    # $2: Icon (only libnotify)
+    # $3: Duration [ms] (optional)
     if [ "$NOTIFY" == "libnotify" ]; then
         send_libnotify "$1" "$2" "$3"
     elif [ "$NOTIFY" == "kdialog" ]; then
