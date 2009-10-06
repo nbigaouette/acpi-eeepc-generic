@@ -19,7 +19,7 @@
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
 
-### Information for bluetooth ###################################
+### Information #################################################
 DRIVERS=("${WIFI_DRIVERS[@]}")
 NAME="Wifi"
 NAME_SMALL="wlan"
