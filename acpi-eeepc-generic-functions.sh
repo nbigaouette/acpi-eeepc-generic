@@ -53,6 +53,8 @@ function eeepc_notify {
         send_kdialog "$1" "$2" "$3"
     elif [ "$NOTIFY" == "dzen" ]; then
         send_dzen "$1" "$2" "$3"
+    elif [ "$NOTIFY" == "naughty" ]; then
+        send_naughty "$1" "$2" "$3"
     fi
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }
@@ -97,6 +99,20 @@ function send_dzen() {
     [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
     duration=$(( $duration / 1000 )) # Dzen2 duration is in second
     cmd="(echo \"$1\"; sleep $duration) | /usr/bin/dzen2 &"
+    send_generic "${cmd}"
+}
+
+### awesome / nayghty ###########################################
+function send_naughty() {
+    if [ ! -e /usr/bin/awesome-client ]; then
+        logger "To use awesome's OSD, please install 'awesome'"
+        echo   "To use awesome's OSD, please install 'awesome'"
+        return 1
+    fi
+    duration=$3
+    [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
+    duration=$(( $duration / 1000 )) # naughty duration is in second
+    cmd="echo 'naughty.notify({title = \"EeePC $EEEPC_MODEL\", text = \"$1\", timeout = $duration})' | awesome-client - &"
     send_generic "${cmd}"
 }
 
