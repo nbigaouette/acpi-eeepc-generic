@@ -40,17 +40,17 @@ connected=$(grep " connected " $var_xrandr | awk '{print ""$1""}')
 disconnected=$(grep " disconnected " $var_xrandr | awk '{print ""$1""}')
 all="$connected $disconnected"
 
-name_lvds=$(cat $var_xrandr | grep -i connected | grep -i lvds | awk '{print ""$1""}')
+name_lvds=$(grep -i connected $var_xrandr | grep -i lvds | awk '{print ""$1""}')
 name_vga=""
 
 if [ "x`echo $connected | grep -i VGA`" == "x" ]; then
     vga_connected="no"
 else
     vga_connected="yes"
-    name_vga=$(cat $var_xrandr | grep -i connected | grep -i vga | awk '{print ""$1""}')
-    vga_max_res=$(xrandr | grep ${name_vga} -A 1 | grep -v ${name_vga} | awk '{print ""$1""}')
+    name_vga=$(grep -i connected $var_xrandr | grep -i vga | awk '{print ""$1""}')
+    vga_max_res=$(grep ${name_vga} -A 1 $var_xrandr | grep -v ${name_vga} | awk '{print ""$1""}')
 fi
-lvds_max_res=$(xrandr | grep ${name_lvds} -A 1 | grep -v ${name_lvds} | awk '{print ""$1""}')
+lvds_max_res=$(grep ${name_lvds} -A 1 $var_xrandr | grep -v ${name_lvds} | awk '{print ""$1""}')
 
 # Define XRandR commands for each modes
 xrandr_lvds="$xrandr --output ${name_lvds} --auto --output ${name_vga} --off"
