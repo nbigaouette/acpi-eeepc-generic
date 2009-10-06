@@ -473,7 +473,7 @@ function device_on {
     fi
 
     # Load module(s)
-    load_modules "${DRIVERS[@]}"
+    [ "${STATIC_KERNEL}" != "yes" ] && load_modules "${DRIVERS[@]}"
 
     success=$?
     if [ $success ]; then
@@ -533,7 +533,7 @@ function device_off {
     fi
 
     # Unload module
-    unload_modules "${DRIVERS[@]}"
+    [ "${STATIC_KERNEL}" != "yes" ] && unload_modules "${DRIVERS[@]}"
 
     success=$?
     if [ $success ]; then
