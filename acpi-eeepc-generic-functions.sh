@@ -181,7 +181,7 @@ function unload_modules() {
     done
 }
 
-### Verify if volume if muted ###################################
+### Verify if volume is muted ###################################
 function volume_is_mute() {
     # 1 is true, 0 is false
     on_off=`amixer get ${ALSA_MUTE_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
