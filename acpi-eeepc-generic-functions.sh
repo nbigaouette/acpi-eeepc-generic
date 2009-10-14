@@ -184,7 +184,8 @@ function unload_modules() {
 ### Verify if volume is muted ###################################
 function volume_is_mute() {
     # 1 is true, 0 is false
-    on_off=`amixer get ${ALSA_MUTE_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
+    # Only check the first mixer in the list
+    on_off=`amixer get ${ALSA_MUTE_MIXER[0]} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
     is_muted=0
     [ "$on_off" == "[off]" ] && is_muted=1
     echo $is_muted
@@ -192,14 +193,23 @@ function volume_is_mute() {
 
 ### Return the volume level #####################################
 function get_volume() {
-    echo `amixer get ${ALSA_MAIN_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
+    # Only check the first mixer in the list
+    echo `amixer get ${ALSA_MAIN_MIXER[0]} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
 }
 
 ### Return the mixer ############################################
 function get_output_mixers() {
-    mixers=`amixer scontrols | awk '{print ""$4""}' | sed -e "s|'||g" -e "s|,0||g"`
+    # Get what is between single quotes from amixer's output
+    mixers=`amixer scontrols | sed "s|.*'\(.*\)',0|\1|g"`
     i=0
+    unset output_mixers
     for m in ${mixers}; do
+        # Skip 'Mic' or 'Boost' (to filter out 'Mic Boost')
+        # since we only look for output mixers and 'Mic Boost'
+        # is split into 'Mic' and 'Boost' by bash. Skip also 'Beep'
+        if [[ "`echo $m | grep -i -e mic -e boost -e beep`" != "" ]]; then
+            continue
+        fi
         # If not a capture, its a playback
         if [ "`amixer sget $m | grep -i capture`" == "" ]; then
             output_mixers[i]=$m
