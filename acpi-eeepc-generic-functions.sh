@@ -227,7 +227,7 @@ function get_output_mixers() {
 }
 
 ### Mute/Unmute mixers ##########################################
-function set_alsa_mute() {
+function alsa_toggle_mute() {
     unset mixers_num i m action
     mixers_num=${#ALSA_MUTE_MIXER[@]}
     if [[ "`volume_is_mute`" == "0" ]]; then
