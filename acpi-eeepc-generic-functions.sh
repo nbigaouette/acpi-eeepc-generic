@@ -194,7 +194,9 @@ function volume_is_mute() {
 ### Return the volume level #####################################
 function get_volume() {
     # Only check the first mixer in the list
-    echo `amixer get ${ALSA_VOLUME_MIXER[0]} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
+    # Keep only the line containing a "%" charater. Then sed to
+    # get the number inside the [NUMBER%] pattern.
+    echo `amixer get ${ALSA_VOLUME_MIXER[0]} | grep "%" | sed "s|.*\[\([0-9]*\)%.*|\1|g"`
 }
 
 ### Return the mixer ############################################
