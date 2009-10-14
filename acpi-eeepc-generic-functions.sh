@@ -185,9 +185,10 @@ function unload_modules() {
 function volume_is_mute() {
     # 1 is true, 0 is false
     # Only check the first mixer in the list
-    on_off=`amixer get ${ALSA_MUTE_MIXER[0]} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
+    # Keep only line with [on] or [off], and extract which one
+    on_off=`amixer get ${ALSA_MUTE_MIXER[0]} | grep -e "\[on\]" -e "\[off\]" | sed "s|.*\[\(o[nf]*\)\].*|\1|g"`
     is_muted=0
-    [ "$on_off" == "[off]" ] && is_muted=1
+    [ "$on_off" == "off" ] && is_muted=1
     echo $is_muted
 }
 
