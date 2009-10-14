@@ -18,6 +18,12 @@
 # along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#################################################################
+### Needed path
+EEEPC_PATH=/etc/acpi/eeepc
+EEEPC_VAR=/var/eeepc
+
+# Load configuration
 . /etc/conf.d/acpi-eeepc-generic.conf
 
 [ ! -d "${EEEPC_VAR}/states" ] && mkdir -p ${EEEPC_VAR}/states
@@ -198,6 +204,17 @@ function get_volume() {
     # Keep only the line containing a "%" charater. Then sed to
     # get the number inside the [NUMBER%] pattern.
     echo `amixer get ${ALSA_VOLUME_MIXER[0]} | grep "%" | sed "s|.*\[\([0-9]*\)%.*|\1|g"`
+}
+
+### Set the volume level ########################################
+function alsa_set_volume() {
+    # Call this function with a parameter, for example with "5%+"
+    # to raise of 5% the volume of all mixers in ALSA_VOLUME_MIXER
+    mixers_num=${#ALSA_VOLUME_MIXER[@]}
+    for ((i=0;i<${mixers_num};i++)); do
+        m="${ALSA_VOLUME_MIXER[${i}]}"
+        amixer set $m $1
+    done
 }
 
 ### Return the mixer ############################################
