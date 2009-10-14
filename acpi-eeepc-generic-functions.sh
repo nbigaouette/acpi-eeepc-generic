@@ -273,41 +273,41 @@ function get_model() {
 
 ### Return brightness level percentage ##########################
 function brightness_get_percentage() {
-    actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
-    maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
+    actual_brightness=`cat  ${sys_path}/backlight/eeepc/actual_brightness`
+    maximum_brightness=`cat ${sys_path}/backlight/eeepc/max_brightness`
     echo $((10000*$actual_brightness / (100*$maximum_brightness) ))
 }
 
 ### Set the brightness level percentage #########################
 function brightness_set_percentage() {
-    #actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
-    maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
+    #actual_brightness=`cat ${sys_path}/backlight/eeepc/actual_brightness`
+    maximum_brightness=`cat ${sys_path}/backlight/eeepc/max_brightness`
     to_set=$(( $1 * $maximum_brightness / 100 ))
     #echo "max = $maximum_brightness"
     #echo "now = $actual_brightness"
     #echo "1 = $1"
     #echo "to set = $to_set"
-    echo $to_set > /sys/class/backlight/eeepc/brightness
+    echo $to_set > ${sys_path}/backlight/eeepc/brightness
 }
 
 ### Save brightness #############################################
 function save_brightness() {
-    cat /sys/class/backlight/eeepc/brightness > ${EEEPC_VAR}/states/brightness
+    cat ${sys_path}/backlight/eeepc/brightness > ${EEEPC_VAR}/states/brightness
 }
 
 ### Restore brightness ##########################################
 function restore_brightness() {
-    cat ${EEEPC_VAR}/states/brightness > /sys/class/backlight/eeepc/brightness
+    cat ${EEEPC_VAR}/states/brightness > ${sys_path}/backlight/eeepc/brightness
 }
 
 ### Set brightness (absolute value) #############################
 function brightness_set_absolute() {
-    echo $1 > /sys/class/backlight/eeepc/brightness
+    echo $1 > ${sys_path}/backlight/eeepc/brightness
 }
 
 ### Get direction of brightness change ##########################
 function brightness_find_direction() {
-    actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
+    actual_brightness=`cat ${sys_path}/backlight/eeepc/actual_brightness`
     previous_brightness=`cat ${EEEPC_VAR}/states/brightness`
     [ "x$previous_brightness" == "x" ] && previous_brightness=$actual_brightness
     to_return=""
