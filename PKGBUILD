@@ -44,6 +44,7 @@ source=(
     "acpi-eeepc-generic-rotate-lvds.sh"
     "acpi-eeepc-generic-suspend2ram.sh"
     "acpi-eeepc-generic-toggle-bluetooth.sh"
+    "acpi-eeepc-generic-toggle-cardr.sh"
     "acpi-eeepc-generic-toggle-displays.sh"
     "acpi-eeepc-generic-toggle-lock-suspend.sh"
     "acpi-eeepc-generic-toggle-resolution.sh"
@@ -65,23 +66,24 @@ md5sums=('25bd92d98277a9fc85d0526667e20c72'
          'a8d84f7be1fd6f97a7f65db99bb58788'
          'c5d0521ea9058270d1ac6fd6b5fbfe70'
          '26e7a9ded8a342765abeb786417a0dfb'
-         'bad61c7e5ec007e0c95f034e54399aa5'
-         '510ff5ff6dac8ea7bad26ca956a7de56'
+         '1830c0d0d778e7e6be306b58c873df45'
+         '98dda3fd86d5ebdf3f1932e1996364e4'
          'cf253e386d7e743a3d25ec4165051521'
-         '340390ce925b4dfe307b8de82826158b'
+         '3633a31d5850d6ad7287a8364b315cdf'
          '6451b2bed31f7684a9bf4a1fcdb38ca6'
          '91f27d2a66b8907f86b14d4ac9a48e2f'
          '7e26565bd36e2411ab998d6bcfe15f9e'
          'cdfd2a0ddba5ad21ce4f08f1722fa784'
          'b482e6023981b8a2b9442cc945fb5727'
          '8e5f6c2dcdd2c16e095ab58726f09e1e'
-         'fe6ced0bd5abf8f5425deacba646af09'
+         'ed03fa563c36c23ffbf586cfaff5a14d'
+         '37b0ad8bfa8acc50ff3b21f5d44d8805'
          'd231ec9fd49a1a9413265ea52526d621'
          '12c506d5a4ae304833f22f04b5d5c1f0'
-         'b1f127a9b7808b22a1985a5b0301340b'
+         '5fac6135c02c1308ca981f81fc2adced'
          '8668240f98b6500107fe675dbe898ebf'
          'e2c66aadc54e923076d7b69e6737a2af'
-         'a2ae7f747cd1cf9a664cbc37aef02947'
+         'dff00312f8aba042a3ace1ad1a95d2ba'
          'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
          '3adb93ff8f99bf6ce7746acf119df0fd'
@@ -117,4 +119,3 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
-
