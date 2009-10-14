@@ -226,6 +226,21 @@ function get_output_mixers() {
     echo ${output_mixers[@]}
 }
 
+### Mute/Unmute mixers ##########################################
+function set_alsa_mute() {
+    unset mixers_num i m action
+    mixers_num=${#ALSA_MUTE_MIXER[@]}
+    if [[ "`volume_is_mute`" == "0" ]]; then
+        action="mute"
+    else
+        action="unmute"
+    fi
+    for ((i=0;i<${mixers_num};i++)); do
+        m="${ALSA_MUTE_MIXER[${i}]}"
+        amixer set $m $action
+    done
+}
+
 ### Get the model name ##########################################
 function get_model() {
     if [ -z "${EEEPC_MODEL}" ]; then
