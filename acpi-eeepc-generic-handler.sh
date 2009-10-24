@@ -135,10 +135,6 @@ case "$1" in
                 logger "acpi-eeepc-generic-handler: (hotkey): Silver function button (User2)"
                 execute_commands "${COMMANDS_BUTTON_USER2[@]}"
             ;;
-#             $EEEPC_USER3) # Fn+Space
-#                 logger "acpi-eeepc-generic-handler: (hotkey): Fn+Space"
-#                 execute_commands "${COMMANDS_BUTTON_USER3[@]}"
-#             ;;
             $EEEPC_SHE_TOGGLE) # Super Hybrid Engine
                 logger "acpi-eeepc-generic-handler: (hotkey): SHE"
                 execute_commands "${COMMANDS_SHE_TOGGLE[@]}"
