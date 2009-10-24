@@ -29,6 +29,9 @@ source=(
     "acpi-eeepc-1000H-events.conf"
     "acpi-eeepc-1000HD-events.conf"
     "acpi-eeepc-1000HE-events.conf"
+    "acpi-eeepc-1005-HA-H-events.conf"
+    "acpi-eeepc-1005HA-events.conf"
+    "acpi-eeepc-1008HA-events.conf"
     "acpi-eeepc-700-events.conf"
     "acpi-eeepc-701-events.conf"
     "acpi-eeepc-900-events.conf"
@@ -48,6 +51,7 @@ source=(
     "acpi-eeepc-generic-toggle-displays.sh"
     "acpi-eeepc-generic-toggle-lock-suspend.sh"
     "acpi-eeepc-generic-toggle-resolution.sh"
+    "acpi-eeepc-generic-toggle-she.sh"
     "acpi-eeepc-generic-toggle-touchpad.sh"
     "acpi-eeepc-generic-toggle-webcam.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
@@ -60,29 +64,33 @@ source=(
 md5sums=('25bd92d98277a9fc85d0526667e20c72'
          '25bd92d98277a9fc85d0526667e20c72'
          '25bd92d98277a9fc85d0526667e20c72'
-         '2bcb2acab06a06ac3b8a093070dfc783'
-         '9cb149714f72e898e035e46b28b6cf94'
-         '9cb149714f72e898e035e46b28b6cf94'
-         'a8d84f7be1fd6f97a7f65db99bb58788'
-         'c5d0521ea9058270d1ac6fd6b5fbfe70'
-         '26e7a9ded8a342765abeb786417a0dfb'
-         '1830c0d0d778e7e6be306b58c873df45'
-         '98dda3fd86d5ebdf3f1932e1996364e4'
+         'adb95ed777d1a601180741d6c9d6d99f'
+         'c5dc209025f5b0923c00729fef85633c'
+         'dc83b07fd398f237faaf305cb56ee278'
+         'dc83b07fd398f237faaf305cb56ee278'
+         '45573412b704eb599b6705afe12bb432'
+         '45573412b704eb599b6705afe12bb432'
+         'db451374b504c0cf3459931a376a4ec3'
+         '0f175b043418b17e61b48a34fe30dcab'
+         'd48945a8142aab647f76ad2e98fc5c3f'
+         'b32bafaf56a7e489bfd9dea2000a5689'
+         '8068d8ba142f223832a19472afb934cf'
          'cf253e386d7e743a3d25ec4165051521'
-         '3633a31d5850d6ad7287a8364b315cdf'
-         '6451b2bed31f7684a9bf4a1fcdb38ca6'
+         'dadad72382159107d37c24d5ce23b81b'
+         '1d48e5a600e3d9b70d663e47e93c304e'
          '91f27d2a66b8907f86b14d4ac9a48e2f'
          '7e26565bd36e2411ab998d6bcfe15f9e'
-         'cdfd2a0ddba5ad21ce4f08f1722fa784'
-         'b482e6023981b8a2b9442cc945fb5727'
+         '13c38e64dab996301f8d724342178cfc'
+         'ee7ee3ac79d46a14f47cbfb3edac8cbd'
          '8e5f6c2dcdd2c16e095ab58726f09e1e'
          'ed03fa563c36c23ffbf586cfaff5a14d'
-         '37b0ad8bfa8acc50ff3b21f5d44d8805'
+         '45738315630165b45470694a67c8121d'
          'd231ec9fd49a1a9413265ea52526d621'
          '12c506d5a4ae304833f22f04b5d5c1f0'
-         '5fac6135c02c1308ca981f81fc2adced'
+         'fe36e1bb098b1cf11012fd2ba2779ec8'
+         'c28c987e7bf99e244d63c21c336f7e87'
          '8668240f98b6500107fe675dbe898ebf'
-         'e2c66aadc54e923076d7b69e6737a2af'
+         'd8ea2a77d7176c85b348a1dafb064346'
          'dff00312f8aba042a3ace1ad1a95d2ba'
          'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
@@ -90,7 +98,7 @@ md5sums=('25bd92d98277a9fc85d0526667e20c72'
          '6e46b54564cdd14f2588c921c0a7faf1')
 
 build() {
-    mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}}
+    mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}} || return 1
 
     # Install our own handler
     install -m0755 ${srcdir}/acpi-eeepc-generic-handler.sh ${pkgdir}/etc/acpi/acpi-eeepc-generic-handler.sh || return 1
@@ -101,7 +109,7 @@ build() {
 
     # Install events configuration files for each model
     for f in ${srcdir}/acpi-eeepc-*-events.conf; do
-        install -m0644 $f ${pkgdir}/etc/acpi/eeepc/models
+        install -m0644 $f ${pkgdir}/etc/acpi/eeepc/models || return 1
     done
 
     install -m0755 ${srcdir}/acpi-eeepc-generic-restore.rcd ${pkgdir}/etc/rc.d/eeepc-restore || return 1
@@ -111,7 +119,7 @@ build() {
     install -m0755 ${srcdir}/acpi-eeepc-generic-rotate-lvds.sh ${pkgdir}/etc/acpi/eeepc || return 1
     install -m0755 ${srcdir}/acpi-eeepc-generic-suspend2ram.sh ${pkgdir}/etc/acpi/eeepc || return 1
     for f in ${srcdir}/acpi-eeepc-generic-toggle-*.sh; do
-        install -m0755 $f ${pkgdir}/etc/acpi/eeepc
+        install -m0755 $f ${pkgdir}/etc/acpi/eeepc || return 1
     done
 
     install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications || return 1
