@@ -555,8 +555,8 @@ function device_off {
     # First argument ($1):  Number of times the funciton has been called
     # Second argument ($2): Should we show notifications?
 
-    # Check if 2nd argument to given to function is "0" and disable
-    # notifications,
+    # Check if 2nd argument given to function is "0" and disable
+    # notifications.
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
 
@@ -577,50 +577,31 @@ function device_off {
         sleep 1
     fi
 
-    # Unload module
-    [ "${STATIC_KERNEL}" != "yes" ] && unload_modules "${DRIVERS[@]}"
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+        # If rfkill switch exists
 
-    success=$?
-    if [ $success ]; then
-        # If successful...
-        if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
-            # ...and rfkill switch exists
+        # Disable the card via rfkill switch
+        echo 0 > ${RFKILL_SWITCH}
 
-            # Disable the card via rfkill switch
-            echo 0 > ${RFKILL_SWITCH}
-
-            if [ ${KERNEL_rel} -lt 29 ]; then
-                s="rfkill switch usage might fail on kernel lower than 2.6.29"
-                logger "$s"
-                echo "$s"
-            fi
-        fi
-
-        # If /sys device exists, disable it too
-        [ "${SYS_IS_PRESENT}" == "yes" ] && \
-            echo 0 > ${SYS_DEVICE}
-
-        # Save the card states
-        echo 0 > $SAVED_STATE_FILE
-
-        # Execute post-down commands
-        execute_commands "${COMMANDS_POST_DOWN[@]}"
-
-        [ "$show_notifications" == "1" ] && \
-            eeepc_notify "${NAME} is now off" ${ICON}
-    else
-        # If module unloading unsuccessful, try again
-
-        [ "$show_notifications" == "1" ] && \
-            eeepc_notify "Could not disable ${NAME}" stop
-
-        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
-            [ "$show_notifications" == "1" ] && \
-                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
-            sleep 2
-            device_off $(($1+1)) $show_notifications
+        if [ ${KERNEL_rel} -lt 29 ]; then
+            s="rfkill switch usage might fail on kernel lower than 2.6.29"
+            logger "$s"
+            echo "$s"
         fi
     fi
+
+    # If /sys device exists, disable it too
+    [ "${SYS_IS_PRESENT}" == "yes" ] && \
+        echo 0 > ${SYS_DEVICE}
+
+    # Save the card states
+    echo 0 > $SAVED_STATE_FILE
+
+    # Execute post-down commands
+    execute_commands "${COMMANDS_POST_DOWN[@]}"
+
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "${NAME} is now off" ${ICON}
 }
 
 ### Get username ################################################
