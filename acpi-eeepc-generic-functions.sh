@@ -169,7 +169,10 @@ function load_modules() {
     modules_num=${#modules[@]}
     for ((i=0;i<${modules_num};i++)); do
         m=${modules[${i}]}
-        /sbin/modprobe ${m}
+        # If module is not already present, load it
+        if [ "`lsmod | grep ${m}`" == "" ]; then
+            /sbin/modprobe ${m}
+        fi
         #sleep 1
     done
 }
