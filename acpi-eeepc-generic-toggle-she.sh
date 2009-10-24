@@ -41,9 +41,31 @@ check_sys_interface
 detect_if_enabled
 
 ### Toggle Super Hybrid Engine ##################################
-# function she_toggle() {
-#
-# }
+# To test: ./c_speedtest -nsize 1000000 -niters 10 > 0x302_2_powersave.log
+she_names=("performance" "normal" "powersave")
+she_value_performance=("0" "0x300") # 768
+she_value_normal=(     "1" "0x301") # 769
+she_value_powersave=(  "2" "0x302") # 770
+
+# Find current
+she_current=`cat ${SYS_DEVICE}`
+
+if   [[ "${she_current}" == "${she_value_performance[1]}" ]]; then
+    she_next=${she_value_normal[0]}
+elif [[ "${she_current}" == "${she_value_normal[1]}" ]]; then
+    she_next=${she_value_powersave[0]}
+elif [[ "${she_current}" == "${she_value_powersave[1]}" ]]; then
+    she_next=${she_value_performance[0]}
+fi
+
+function she_toggle() {
+    if [[ "${she_names[${she_current/0x30/}]}" != "${she_names[${she_next}]}" ]]; then
+        eeepc_notify "Super Hybrid Engine: ${she_names[${she_current/0x30/}]} to ${she_names[${she_next}]}" cpu
+        echo ${she_next} > ${SYS_DEVICE}
+    else
+        eeepc_notify "Super Hybrid Engine: Already at ${she_names[${she_next}]}" cpu
+    fi
+}
 
 #################################################################
 case $1 in
@@ -51,16 +73,16 @@ case $1 in
         print_generic_debug
     ;;
     "powersave")
-        echo 2 > ${SYS_DEVICE}
-        # 770
+        she_next=2
+        she_toggle
     ;;
     "normal")
-        echo 1 > ${SYS_DEVICE}
-        # 769
+        she_next=1
+        she_toggle
     ;;
     "performance")
-        echo 0 > ${SYS_DEVICE}
-        # 768
+        she_next=0
+        she_toggle
     ;;
     *)
         she_toggle
