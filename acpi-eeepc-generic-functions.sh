@@ -244,19 +244,23 @@ function get_output_mixers() {
     #echo "output_mixers: ${output_mixers[@]}"
     #echo "nb: ${#output_mixers[@]} $i"
     echo ${output_mixers[@]}
+
+    # Might be easier:
+    #amixer controls | grep -i Playback | sed "s|.*'\(.*\)'.*|\1|g" | awk '{print ""$1""}' | uniq
 }
 
 ### Mute/Unmute mixers ##########################################
 function alsa_toggle_mute() {
-    unset mixers_num i m action
-    mixers_num=${#ALSA_MUTE_MIXER[@]}
+    unset output_mixers output_mixers_num i m action
+    output_mixers=(`get_output_mixers`)
+    output_mixers_num=${#output_mixers[@]}
     if [[ "`volume_is_mute`" == "0" ]]; then
         action="mute"
     else
         action="unmute"
     fi
-    for ((i=0;i<${mixers_num};i++)); do
-        m="${ALSA_MUTE_MIXER[${i}]}"
+    for ((i=0 ; i < ${output_mixers_num} ; i++)); do
+        m="${output_mixers[${i}]}"
         amixer set $m $action
     done
 }
