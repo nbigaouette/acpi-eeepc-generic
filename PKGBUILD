@@ -1,8 +1,8 @@
 # Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
-pkgver=1.0b
-pkgrel=1
+pkgver=1.0
+pkgrel=0.1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
