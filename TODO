@@ -4,6 +4,5 @@ Translations
 XOSD for really basic osd
 Suspend2disk helper script
 Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
-Volume devices autodetection (LineIn/LineOut/iSpeaker...)
 Reset values of AC after resume (see powersource.sh, called at the end of suspend2ram.sh)
-FSB+Fan control
+Fan control
