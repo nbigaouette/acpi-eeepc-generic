@@ -1,11 +1,6 @@
 
 Resolution script independant of current screen
 Translations
-XRandR toggle between (see acpi-eeepc900, display.sh):
-    -LVDS only
-    -VGA only
-    -VGA clone of LVDS
-    -VGA left/right/below/top of LVDS
 XOSD for really basic osd
 Suspend2disk helper script
 Wifi module autodetection + hacks (See acpi-eee 10.0-1's wlan.sh)
