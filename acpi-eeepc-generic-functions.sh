@@ -195,7 +195,10 @@ function volume_is_mute() {
     # 1 is true, 0 is false
     # Only check the first mixer in the list
     # Keep only line with [on] or [off], and extract which one
-    on_off=`amixer get ${ALSA_MUTE_MIXER[0]} | grep -e "\[on\]" -e "\[off\]" | sed "s|.*\[\(o[nf]*\)\].*|\1|g"`
+    unset output_mixers output_mixers_num is_muted on_off
+    output_mixers=(`get_output_mixers`)
+    output_mixers_num=${#output_mixers[@]}
+    on_off=`amixer get ${output_mixers[0]} | grep -e "\[on\]" -e "\[off\]" | sed "s|.*\[\(o[nf]*\)\].*|\1|g"`
     is_muted=0
     [ "$on_off" == "off" ] && is_muted=1
     echo $is_muted
