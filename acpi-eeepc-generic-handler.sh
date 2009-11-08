@@ -35,19 +35,23 @@ case "$1" in
     ac_adapter)
         case "$4" in
             00000000) # AC unplugged
-                if [ -e ${EEEPC_VAR}/ac_event_unplugged ]; then
+                # These events are generated twice (at least on the 1000)
+                # Make sure the commands are executed only once
+                if [ ! -e ${EEEPC_VAR}/ac_event_unplugged ]; then
                     execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
-                    rm -f ${EEEPC_VAR}/ac_event_unplugged
-                else
                     touch ${EEEPC_VAR}/ac_event_unplugged
+                else
+                    rm -f ${EEEPC_VAR}/ac_event_unplugged
                 fi
             ;;
             00000001) # AC plugged-in
-                if [ -e ${EEEPC_VAR}/ac_event_plugged ]; then
+                # These events are generated twice (at least on the 1000)
+                # Make sure the commands are executed only once
+                if [ ! -e ${EEEPC_VAR}/ac_event_plugged ]; then
                     execute_commands "${COMMANDS_AC_PLUGGED[@]}"
-                    rm -f ${EEEPC_VAR}/ac_event_plugged
-                else
                     touch ${EEEPC_VAR}/ac_event_plugged
+                else
+                    rm -f ${EEEPC_VAR}/ac_event_plugged
                 fi
             ;;
             *)
