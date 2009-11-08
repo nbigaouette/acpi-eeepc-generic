@@ -35,10 +35,20 @@ case "$1" in
     ac_adapter)
         case "$4" in
             00000000) # AC unplugged
-                execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
+                if [ -e ${EEEPC_VAR}/ac_event_unplugged ]; then
+                    execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
+                    rm -f ${EEEPC_VAR}/ac_event_unplugged
+                else
+                    touch ${EEEPC_VAR}/ac_event_unplugged
+                fi
             ;;
             00000001) # AC plugged-in
-                execute_commands "${COMMANDS_AC_PLUGGED[@]}"
+                if [ -e ${EEEPC_VAR}/ac_event_plugged ]; then
+                    execute_commands "${COMMANDS_AC_PLUGGED[@]}"
+                    rm -f ${EEEPC_VAR}/ac_event_plugged
+                else
+                    touch ${EEEPC_VAR}/ac_event_plugged
+                fi
             ;;
             *)
                 msg="acpi-eeepc-generic-handler: undefined 'ac_adapter' event: $2 $3 $4"
@@ -171,12 +181,12 @@ case "$1" in
                     execute_commands "${COMMANDS_BRIGHTNESS_UP[@]}"
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler: (hotkey): Brightness Up ($brightness_percentage%)"
-                    [ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
+                    #[ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
                 elif [ "$brightness_direction" == "down" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_DOWN[@]}"
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler: (hotkey): Brightness Down ($brightness_percentage%)"
-                    [ "$brightness_percentage" != "0" ] && eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
+                    #[ "$brightness_percentage" != "0" ] && eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
                 fi
             ;;
             $EEEPC_SCREEN_OFF) # Turn off screen
