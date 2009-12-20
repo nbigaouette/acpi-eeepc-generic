@@ -111,7 +111,6 @@ build() {
         install -m0755 $f ${pkgdir}/etc/acpi/eeepc || return 1
     done
 
-    install -m0755 ${srcdir}/eeepc.desktop ${pkgdir}/usr/share/applications || return 1
     install -m0755 ${srcdir}/eeepc-suspend-lock.desktop ${pkgdir}/usr/share/applications || return 1
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
