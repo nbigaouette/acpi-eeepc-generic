@@ -237,7 +237,6 @@ case "$1" in
                 fi
                 if [ "`get_volume`" != "0" ]; then
                     execute_commands "${COMMANDS_VOLUME_DOWN[@]}"
-                    sleep 0.1
                     eeepc_notify "Volume Down (`get_volume`%)" $volume_icon
                 fi
             ;;
@@ -249,7 +248,6 @@ case "$1" in
                 fi
                 if [ "`get_volume`" != "100" ]; then
                     execute_commands "${COMMANDS_VOLUME_UP[@]}"
-                    sleep 0.1
                     eeepc_notify "Volume Up (`get_volume`%)" $volume_icon
                 fi
             ;;
