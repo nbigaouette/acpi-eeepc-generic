@@ -9,16 +9,6 @@ arch=(any)
 license=(GPL3)
 depends=(acpid xorg-server-utils dmidecode)
 optdepends=(
-    "notification-daemon: On Screen Display (OSD) of notifications (GTK+)"
-    "kdebase: On Screen Display (OSD) of notifications (KDE)"
-    "dzen2: On Screen Display (OSD) with no depedencies"
-    "lxtask: Lightweight task manager from LXDE"
-    "lxrandr: Lightweight GUI for controling screen output from LXDE"
-    "pcmanfm: Lightweight file browser from LXDE"
-    "lxterminal: Lightweight terminal from LXDE"
-    "wicd: Network connection GUI"
-    "xf86-input-synaptics: Touchpad driver"
-    "gksu: Graphical su frontend to edit the configuration file"
     "unclutter: Hide cursor when touchpad is disable"
 )
 install=$pkgname.install
@@ -58,8 +48,7 @@ source=(
     "acpi-eeepc-generic.conf"
     "bluetooth.png"
     "eee.png"
-    "eeepc-suspend-lock.desktop"
-    "eeepc.desktop")
+    "eeepc-suspend-lock.desktop")
 
 md5sums=('07e82644997f2a12911511cbde9c158d'
          '07e82644997f2a12911511cbde9c158d'
