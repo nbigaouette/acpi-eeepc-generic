@@ -19,6 +19,7 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 get_model
+. /etc/acpi/eeepc/models/acpi-eeepc-defaults-events.conf
 . /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
 
 SELECTION=$3
@@ -178,6 +179,10 @@ case "$1" in
             $EEEPC_RESOLUTION) # Change resolution
                 logger "acpi-eeepc-generic-handler: (hotkey): Changing resolution"
                 execute_commands "${COMMANDS_RESOLUTION[@]}"
+            ;;
+            $EEEPC_EEEPC_ROTATE) # Rotate screen.
+                logger "acpi-eeepc-generic-handler: (hotkey): Rotate"
+                execute_commands "${COMMANDS_ROTATE_TOGGLE[@]}"
             ;;
             $EEEPC_BRIGHTNESS_UP|$EEEPC_BRIGHTNESS_DOWN) # Brightness
                 brightness_direction=`brightness_find_direction`
