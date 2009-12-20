@@ -219,7 +219,7 @@ function alsa_set_volume() {
     mixers_num=${#ALSA_VOLUME_MIXER[@]}
     for ((i=0;i<${mixers_num};i++)); do
         m="${ALSA_VOLUME_MIXER[${i}]}"
-        amixer set $m $1
+        amixer set $m $1 &
     done
 }
 
