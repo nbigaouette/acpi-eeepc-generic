@@ -9,7 +9,11 @@ arch=(any)
 license=(GPL3)
 depends=(acpid xorg-server-utils dmidecode)
 optdepends=(
-    "unclutter: Hide cursor when touchpad is disable"
+    "unclutter: Hide cursor when touchpad is disabled"
+    "kdebase-runtime: KDE's super-user privileges gaining"
+    "kdebase-kdialog: KDE's OSD"
+    "sudo: super-user privileges gaining"
+    "gksu: GNOME/GTK super-user privileges gaining"
 )
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
@@ -48,43 +52,11 @@ source=(
     "acpi-eeepc-generic.conf"
     "bluetooth.png"
     "eee.png"
-    "eeepc-suspend-lock.desktop")
+    "eeepc-rotate-lvds.desktop"
+    "eeepc-suspend-lock.desktop"
+    "eeepc-suspend2ram.desktop"
+    "eeepc-toggle.desktop")
 
-md5sums=('07e82644997f2a12911511cbde9c158d'
-         '07e82644997f2a12911511cbde9c158d'
-         '07e82644997f2a12911511cbde9c158d'
-         '2a5807c11264c753f0609d6cd55d81ed'
-         'c5dc209025f5b0923c00729fef85633c'
-         'dc83b07fd398f237faaf305cb56ee278'
-         'dc83b07fd398f237faaf305cb56ee278'
-         '45573412b704eb599b6705afe12bb432'
-         '45573412b704eb599b6705afe12bb432'
-         'db451374b504c0cf3459931a376a4ec3'
-         '0f175b043418b17e61b48a34fe30dcab'
-         'd48945a8142aab647f76ad2e98fc5c3f'
-         'b32bafaf56a7e489bfd9dea2000a5689'
-         '8068d8ba142f223832a19472afb934cf'
-         'cf253e386d7e743a3d25ec4165051521'
-         'fe03a179a105fa6a95f7498fa1deaf96'
-         '66622ba2974a9f67da93dfecccd3a202'
-         '91f27d2a66b8907f86b14d4ac9a48e2f'
-         '7e26565bd36e2411ab998d6bcfe15f9e'
-         '13c38e64dab996301f8d724342178cfc'
-         'ee7ee3ac79d46a14f47cbfb3edac8cbd'
-         '8e5f6c2dcdd2c16e095ab58726f09e1e'
-         'ed03fa563c36c23ffbf586cfaff5a14d'
-         '45738315630165b45470694a67c8121d'
-         'd231ec9fd49a1a9413265ea52526d621'
-         '12c506d5a4ae304833f22f04b5d5c1f0'
-         'ae9cc2beecc1990688bf811cbe075642'
-         'c28c987e7bf99e244d63c21c336f7e87'
-         '8668240f98b6500107fe675dbe898ebf'
-         'd8ea2a77d7176c85b348a1dafb064346'
-         '03bfa167e2e22a6906e3d0daab92becd'
-         'b6e3ad05a0d6c9ed87bd0859267e86d8'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '3adb93ff8f99bf6ce7746acf119df0fd'
-         '6e46b54564cdd14f2588c921c0a7faf1')
 
 build() {
     mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}} || return 1
@@ -111,7 +83,14 @@ build() {
         install -m0755 $f ${pkgdir}/etc/acpi/eeepc || return 1
     done
 
+    install -m0755 ${srcdir}/eeepc-rotate-lvds.desktop ${pkgdir}/usr/share/applications || return 1
     install -m0755 ${srcdir}/eeepc-suspend-lock.desktop ${pkgdir}/usr/share/applications || return 1
+    install -m0755 ${srcdir}/eeepc-suspend2ram.desktop ${pkgdir}/usr/share/applications || return 1
+    for action in bluetooth cardr displays resolution she touchpad webcam wifi; do
+        install -m0755 ${srcdir}/eeepc-toggle.desktop ${pkgdir}/usr/share/applications/eeepc-toggle-${action}.desktop || return 1
+        sed -e "s|GENERIC|${action}|g" -i ${pkgdir}/usr/share/applications/eeepc-toggle-${action}.desktop || return 1
+    done
+
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
