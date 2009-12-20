@@ -11,4 +11,4 @@ Icon[en_US]=eee.png
 Name=Lock-Unlock suspend
 Comment=Disable or enable suspension prevention
 Icon=eee.png
-Categories=GNOME;GTK;Settings;HardwareSettings;
+Categories=Settings;HardwareSettings;
