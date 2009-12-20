@@ -528,7 +528,7 @@ function device_on {
     fi
 
     # Load module(s)
-    [ "${STATIC_KERNEL}" != "yes" ] && load_modules "${DRIVERS[@]}"
+    [ "${DRIVERS_LOAD}" != "no" ] && load_modules "${DRIVERS[@]}"
 
     success=$?
     if [ $success ]; then
@@ -606,6 +606,9 @@ function device_off {
 
     # Save the card states
     echo 0 > $SAVED_STATE_FILE
+
+    # Unload module(s)
+    [ "${DRIVERS_UNLOAD}" != "no" ] && unload_modules "${DRIVERS[@]}"
 
     # Execute post-down commands
     execute_commands "${COMMANDS_POST_DOWN[@]}"
