@@ -38,20 +38,20 @@ case "$1" in
                 # These events are generated twice (at least on the 1000)
                 # Make sure the commands are executed only once
                 if [ ! -e ${EEEPC_VAR}/ac_event_unplugged ]; then
-                    execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
                     touch ${EEEPC_VAR}/ac_event_unplugged
-                else
-                    rm -f ${EEEPC_VAR}/ac_event_unplugged
+                    # Wait 5 seconds (in background) before deleting the file
+                    echo `sleep 5 && rm -f ${EEEPC_VAR}/ac_event_unplugged` &
+                    execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
                 fi
             ;;
             00000001) # AC plugged-in
                 # These events are generated twice (at least on the 1000)
                 # Make sure the commands are executed only once
                 if [ ! -e ${EEEPC_VAR}/ac_event_plugged ]; then
-                    execute_commands "${COMMANDS_AC_PLUGGED[@]}"
                     touch ${EEEPC_VAR}/ac_event_plugged
-                else
-                    rm -f ${EEEPC_VAR}/ac_event_plugged
+                    # Wait 5 seconds (in background) before deleting the file
+                    echo `sleep 5 && rm -f ${EEEPC_VAR}/ac_event_plugged` &
+                    execute_commands "${COMMANDS_AC_PLUGGED[@]}"
                 fi
             ;;
             *)
