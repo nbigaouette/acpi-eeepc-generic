@@ -1,7 +1,7 @@
 # Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
-pkgver=1.0
+pkgver=1.0rc1
 pkgrel=0.1
 pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
@@ -57,7 +57,44 @@ source=(
     "eeepc-suspend-lock.desktop"
     "eeepc-suspend2ram.desktop"
     "eeepc-toggle.desktop")
-
+md5sums=('be2c9c078c781185356c775f7a785569'
+         'be2c9c078c781185356c775f7a785569'
+         'be2c9c078c781185356c775f7a785569'
+         '8978b064b40be086942116b0c7779de6'
+         'be56ea98b9aa016098bdab9cbb110334'
+         '5ec8097c18e623d6ba2bff1f5a814885'
+         '5ec8097c18e623d6ba2bff1f5a814885'
+         '75016dde1f414772434c2c151b159c29'
+         '75016dde1f414772434c2c151b159c29'
+         'ae981fe86cd99b736ba740fffbfec3e0'
+         'a34fbf623a7d3e41cdf378924837dbbe'
+         '0e7c2e4cdcb2894d67cb62f526ae491d'
+         '533018701f2f67873396994ec364bb36'
+         'ce02758525ba114f2f0ab3d5c564d4f3'
+         '323c03e32baec7eca3f360a282490cda'
+         'cf253e386d7e743a3d25ec4165051521'
+         '48eed5007f934785a7b5a03c538e59bb'
+         '9d2c81af757aad3eb4569082209351ed'
+         '06137998d8ef768763bb327f8716641e'
+         '7e26565bd36e2411ab998d6bcfe15f9e'
+         '13c38e64dab996301f8d724342178cfc'
+         '266d068f186ea33c1851d20476847aeb'
+         '3927305c811cef63ae52e803a169d7b2'
+         'e956bc5d3761630f3c01b8b7df80f1d1'
+         '45738315630165b45470694a67c8121d'
+         '87a977662d92c640b21b97e1c705ad57'
+         '12c506d5a4ae304833f22f04b5d5c1f0'
+         '614647590c18eb4de123263bd7bceaa8'
+         'ca53efde37b4484ca05a5a9dddde423c'
+         'fb7539a926831b28050267e13394c831'
+         '39f88b5f21b1249a1da04e921deeec95'
+         '5c556151d8f497eccb57cc6c95a25a37'
+         'b6e3ad05a0d6c9ed87bd0859267e86d8'
+         '4d9af939dbd59121cd4bb191d340eb1c'
+         '65f4a9f8b860500ee9e24440f167be2d'
+         'b0f1db5801d32668aa76437cf40e9879'
+         '8377c74074844a14c9588d10f6e152e4'
+         '05e95ab6b843c08a5e66d1b3770a50d9')
 
 build() {
     mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}} || return 1
