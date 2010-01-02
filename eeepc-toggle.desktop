@@ -7,4 +7,4 @@ Exec=/etc/acpi/eeepc/acpi-eeepc-generic-toggle-GENERIC.sh
 Name=EeePC toggle: GENERIC
 Comment=EeePC toggle: GENERIC
 Icon=eee.png
-Categories=Settings;HardwareSettings;
+Categories=Settings;HardwareSettings;EeePC
