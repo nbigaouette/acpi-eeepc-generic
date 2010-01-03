@@ -57,6 +57,7 @@ source=(
     "eeepc-suspend-lock.desktop"
     "eeepc-suspend2ram.desktop"
     "eeepc-toggle.desktop")
+
 md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
@@ -73,7 +74,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          'ce02758525ba114f2f0ab3d5c564d4f3'
          '323c03e32baec7eca3f360a282490cda'
          'cf253e386d7e743a3d25ec4165051521'
-         '48eed5007f934785a7b5a03c538e59bb'
+         '06ac985d224b36ac5822ccaeb2349e45'
          '9d2c81af757aad3eb4569082209351ed'
          '06137998d8ef768763bb327f8716641e'
          '7e26565bd36e2411ab998d6bcfe15f9e'
@@ -88,7 +89,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          'ca53efde37b4484ca05a5a9dddde423c'
          'fb7539a926831b28050267e13394c831'
          '39f88b5f21b1249a1da04e921deeec95'
-         '5c556151d8f497eccb57cc6c95a25a37'
+         '98b7a18979b830661d639daeba738074'
          'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
          '65f4a9f8b860500ee9e24440f167be2d'
