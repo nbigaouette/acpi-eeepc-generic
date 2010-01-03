@@ -675,6 +675,8 @@ and set XUSER variable to your username." stop 20000
     # accordingly.
     if [ "x$user" != "x" ]; then
         home=$(getent passwd $user | cut -d: -f6)
+        # If XAUTHORITY is not set, put a default value of
+        # $home/.Xauthority. Else, take that value.
         XAUTHORITY=${XAUTHORITY:-$home/.Xauthority}
         [ -f $XAUTHORITY ] && export XAUTHORITY
     fi
