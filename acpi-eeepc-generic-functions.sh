@@ -203,7 +203,8 @@ function volume_is_mute() {
     output_mixers_num=${#output_mixers[@]}
     on_off=`amixer get ${output_mixers[0]} | grep -e "\[on\]" -e "\[off\]" | sed "s|.*\[\(o[nf]*\)\].*|\1|g"`
     is_muted=0
-    [ "$on_off" == "off" ] && is_muted=1
+    # FIXME: Cleaner fix for http://code.google.com/p/acpi-eeepc-generic/issues/detail?id=53
+    [ "${on_off:0:3}" == "off" ] && is_muted=1
     echo $is_muted
 }
 
