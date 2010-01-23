@@ -621,6 +621,25 @@ function device_off {
         eeepc_notify "${NAME} is now off" ${ICON}
 }
 
+### Block suspend if certain programs are running ###############
+function suspend_check_blacklisted_processes() {
+    processes=( "$@" )
+    p_num=${#processes[@]}
+    logger "Checking for processes before suspending: $processes ($p_num)"
+    for ((i=0;i<${p_num};i++)); do
+        p=${processes[${i}]}
+        pid=`pidof $p`
+        logger "process #$i: $p ($pid)"
+        echo "process #$i: $p ($pid)"
+        if [ "x$pid" != "x" ]; then
+            echo "$p is running! Canceling suspend"
+            logger "$p is running! Canceling suspend"
+            eeepc_notify "$p is running! Canceling suspend" stop 5000
+            exit 0
+        fi
+    done
+}
+
 ### Get username ################################################
 if [ -S /tmp/.X11-unix/X0 ]; then
     export DISPLAY=:0

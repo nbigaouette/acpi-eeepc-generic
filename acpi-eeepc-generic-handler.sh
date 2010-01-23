@@ -78,6 +78,7 @@ case "$1" in
     button/sleep)
         case "$2" in
             SLPB|SBTN)
+                suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
                 eeepc_notify "Sleep button pressed" gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
@@ -156,6 +157,7 @@ case "$1" in
             ;;
 
             $EEEPC_SLEEP)
+                suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
                 logger "acpi-eeepc-generic-handler: (hotkey): Sleep"
                 eeepc_notify "Going to sleep..." gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"

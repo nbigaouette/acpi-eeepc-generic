@@ -28,26 +28,6 @@ fi
 logger "#############################################"
 logger "acpi-eeepc-generic-suspend2ram.sh:"
 
-function suspend_check_blacklisted_processes() {
-    processes=( "$@" )
-    p_num=${#processes[@]}
-    logger "Checking for processes before suspending: $processes ($p_num)"
-    for ((i=0;i<${p_num};i++)); do
-        p=${processes[${i}]}
-        pid=`pidof $p`
-        logger "process #$i: $p ($pid)"
-        echo "process #$i: $p ($pid)"
-        if [ "x$pid" != "x" ]; then
-            echo "$p is running! Canceling suspend"
-            logger "$p is running! Canceling suspend"
-            eeepc_notify "$p is running! Canceling suspend" stop 5000
-            exit 0
-        fi
-    done
-}
-
-suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
-
 if [ -e "${EEEPC_VAR}/power.lock" ]; then
     msg="Suspend lock exist, canceling suspend"
     logger "$msg (${EEEPC_VAR}/power.lock)"
