@@ -57,7 +57,8 @@ source=(
     "eeepc-rotate-lvds.desktop"
     "eeepc-suspend-lock.desktop"
     "eeepc-suspend2ram.desktop"
-    "eeepc-toggle.desktop")
+    "eeepc-toggle.desktop"
+    "eeepc.directory")
 
 
 build() {
@@ -96,6 +97,7 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
+
 md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
@@ -132,6 +134,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
          '65f4a9f8b860500ee9e24440f167be2d'
-         'b0f1db5801d32668aa76437cf40e9879'
+         '5074d236a47a20b04e47c48c750de63d'
          '8377c74074844a14c9588d10f6e152e4'
-         '05e95ab6b843c08a5e66d1b3770a50d9')
+         '05e95ab6b843c08a5e66d1b3770a50d9'
+         '418b087c701364e8662ed416d32b7af3')
