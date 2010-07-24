@@ -79,6 +79,12 @@ case "$1" in
         case "$2" in
             SLPB|SBTN)
                 suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
+                if [ -e "${EEEPC_VAR}/power.lock" ]; then
+                    msg="Suspend lock exist, canceling suspend"
+                    logger "$msg (${EEEPC_VAR}/power.lock)"
+                    eeepc_notify "$msg" stop 5000
+                    exit 0
+                fi
                 eeepc_notify "Sleep button pressed" gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
