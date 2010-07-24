@@ -26,5 +26,7 @@ custom kernel or hacked kernel module. Should be present in vanilla kernel (test
 Developed for ArchLinux, it should work on any distribution where ACPI works. It would need repackaging 
 though which I can't provide. It sure is a simple task though: acpi-eeepc-generic is written in bash.
 
-See http://aur.archlinux.org/packages.php?ID=23318
+See:
+    http://code.google.com/p/acpi-eeepc-generic/
+    http://aur.archlinux.org/packages.php?ID=23318
 
