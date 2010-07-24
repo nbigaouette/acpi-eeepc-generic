@@ -1,0 +1,30 @@
+Simple ACPI event handler for the EeePCs (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 
+1000HE):
+
+    * Model agnostic
+    * Many On Screen Display (OSD) options:
+          o libnotify (GTK)
+          o knotify (KDE)
+          o dzen2
+          o none 
+    * Allow multiple commands to be executed for a single keypress
+    * Depends only on vanilla kernel features ("eeepc_laptop" and "rfkill" kernel module): no need to use a 
+custom kernel or hacked kernel module. Should be present in vanilla kernel (tested with 2.6.28.*)
+    * Helper scripts for:
+          o Suspend to ram
+          o Wifi on/off
+          o Bluetooth on/off (full support with 2.6.29 or patches, see here)
+          o Synaptics touchpad on/off
+          o Rotate screen
+          o Change LVDS resolution (all supported resolution for your screen)
+          o Change between LVDS, VGA or both (clone) 
+    * When both bluetooth and wireless are disabled, the blue "wireless" led turns off.
+    * Suspend is disable if:
+          o desktop shortcut (.desktop) is used to toggle
+          o some processes are running (can be changed in configuration file) 
+
+Developed for ArchLinux, it should work on any distribution where ACPI works. It would need repackaging 
+though which I can't provide. It sure is a simple task though: acpi-eeepc-generic is written in bash.
+
+See http://aur.archlinux.org/packages.php?ID=23318
+
