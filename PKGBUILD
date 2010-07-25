@@ -1,9 +1,9 @@
 # Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
 pkgname=acpi-eeepc-generic
-pkgver=1.0rc2
+pkgver=1.0rc3
 pkgrel=0.1
-pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE)"
+pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE, 1005HA, 1005-HA-H, 1005PE, 1008HA, 1201N)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
 license=(GPL3)
@@ -23,8 +23,9 @@ source=(
     "acpi-eeepc-1000H-events.conf"
     "acpi-eeepc-1000HD-events.conf"
     "acpi-eeepc-1000HE-events.conf"
-    "acpi-eeepc-1005-HA-H-events.conf"
     "acpi-eeepc-1005HA-events.conf"
+    "acpi-eeepc-1005-HA-H-events.conf"
+    "acpi-eeepc-1005PE-events.conf"
     "acpi-eeepc-1008HA-events.conf"
     "acpi-eeepc-1201N-events.conf"
     "acpi-eeepc-700-events.conf"
@@ -57,9 +58,7 @@ source=(
     "eeepc-rotate-lvds.desktop"
     "eeepc-suspend-lock.desktop"
     "eeepc-suspend2ram.desktop"
-    "eeepc-toggle.desktop"
-    "eeepc.directory")
-
+    "eeepc-toggle.desktop")
 
 build() {
     mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}} || return 1
@@ -102,8 +101,9 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          '8978b064b40be086942116b0c7779de6'
-         'be56ea98b9aa016098bdab9cbb110334'
          '5ec8097c18e623d6ba2bff1f5a814885'
+         'be56ea98b9aa016098bdab9cbb110334'
+         '03c04440f12e3700592664320b9138a6'
          '5ec8097c18e623d6ba2bff1f5a814885'
          'c75b95926e0ac397b0eea6e054ea9154'
          '75016dde1f414772434c2c151b159c29'
@@ -116,7 +116,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '323c03e32baec7eca3f360a282490cda'
          'cf253e386d7e743a3d25ec4165051521'
          'af5b69b3da8f18f6cab93740666b31d9'
-         '6996225897cd3566a12048230a9982b3'
+         '0964588390647e98b475af0fb3f688de'
          '06137998d8ef768763bb327f8716641e'
          '7e26565bd36e2411ab998d6bcfe15f9e'
          '13c38e64dab996301f8d724342178cfc'
@@ -134,7 +134,6 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          'b6e3ad05a0d6c9ed87bd0859267e86d8'
          '4d9af939dbd59121cd4bb191d340eb1c'
          '65f4a9f8b860500ee9e24440f167be2d'
-         '5074d236a47a20b04e47c48c750de63d'
+         '1625d4372b36096971a01f254bf72cf4'
          '8377c74074844a14c9588d10f6e152e4'
-         '05e95ab6b843c08a5e66d1b3770a50d9'
-         '418b087c701364e8662ed416d32b7af3')
+         '05e95ab6b843c08a5e66d1b3770a50d9')

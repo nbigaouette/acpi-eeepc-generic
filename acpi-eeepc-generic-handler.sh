@@ -188,7 +188,7 @@ case "$1" in
                 logger "acpi-eeepc-generic-handler: (hotkey): Changing resolution"
                 execute_commands "${COMMANDS_RESOLUTION[@]}"
             ;;
-            $EEEPC_EEEPC_ROTATE) # Rotate screen.
+            $EEEPC_ROTATE) # Rotate screen.
                 logger "acpi-eeepc-generic-handler: (hotkey): Rotate"
                 execute_commands "${COMMANDS_ROTATE_TOGGLE[@]}"
             ;;
