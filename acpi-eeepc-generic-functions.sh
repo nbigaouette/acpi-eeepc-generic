@@ -128,7 +128,16 @@ function send_naughty() {
 ### Make sure GUI is run as user ################################
 function send_generic() {
     if [ "x$UID" == "x0" ]; then
-        /bin/su $user --login -c "${@}"
+        # Verify if GDM is running
+        # See http://code.google.com/p/acpi-eeepc-generic/issues/detail?id=62
+        pkill -0 gdm
+        GDM_RUNNING=$?
+        if [ "x$GDM_RUNNING" == "x0" ]; then
+            eval "${@}"
+        else
+            /bin/su $user --login -c "${@}"
+        fi
+
     else
         #bash -c "${@}"
         eval "${@}"

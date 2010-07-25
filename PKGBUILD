@@ -98,7 +98,6 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
-
 md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
@@ -119,7 +118,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '75bd2c42f01a6733ab5a2f7a0c15c70d'
          '323c03e32baec7eca3f360a282490cda'
          'cf253e386d7e743a3d25ec4165051521'
-         'af5b69b3da8f18f6cab93740666b31d9'
+         '94089eb6f9d32bf80766f5ff26998b1f'
          '0964588390647e98b475af0fb3f688de'
          '06137998d8ef768763bb327f8716641e'
          '7e26565bd36e2411ab998d6bcfe15f9e'
