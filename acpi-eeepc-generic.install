@@ -8,12 +8,12 @@ post_install() {
     eeepc_model=`dmidecode -s system-product-name`
     if [[ ! -e "/etc/acpi/eeepc/models/acpi-eeepc-${eeepc_model}-events.conf" ]]; then
         echo ">>> You're model ${eeepc_model} is not (yet) supported."
-        echo ">>> Please report it to http://code.google.com/p/acpi-eeepc-generic/issues/list"
+        echo ">>> Please report it to http://github.com/nbigaouette/acpi-eeepc-generic/issues"
     fi
 
     echo " "
     echo ">>> To finish installation, read the initial setup wiki page:"
-    echo ">>> http://code.google.com/p/acpi-eeepc-generic/wiki/Setup"
+    echo ">>> http://wiki.github.com/nbigaouette/acpi-eeepc-generic/information-on-acpi-eeepc-generics-initial-setup"
     echo " "
 
     #echo ">>> "
