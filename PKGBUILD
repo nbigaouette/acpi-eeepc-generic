@@ -27,6 +27,7 @@ source=(
     "acpi-eeepc-1005-HA-H-events.conf"
     "acpi-eeepc-1005PE-events.conf"
     "acpi-eeepc-1008HA-events.conf"
+    "acpi-eeepc-1001P-events.conf"
     "acpi-eeepc-1201N-events.conf"
     "acpi-eeepc-700-events.conf"
     "acpi-eeepc-701-events.conf"
@@ -98,7 +99,6 @@ build() {
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
 
-
 md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
@@ -106,6 +106,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '5ec8097c18e623d6ba2bff1f5a814885'
          'be56ea98b9aa016098bdab9cbb110334'
          '03c04440f12e3700592664320b9138a6'
+         '5ec8097c18e623d6ba2bff1f5a814885'
          '5ec8097c18e623d6ba2bff1f5a814885'
          'c75b95926e0ac397b0eea6e054ea9154'
          '75016dde1f414772434c2c151b159c29'
