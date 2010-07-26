@@ -1,5 +1,9 @@
 # Contributor: Nicolas Bigaouette nbigaouette a_t gmail c o m
 
+# New branch:
+# One /etc/acpi/events/acpi-eeepc-generic-events per model
+#
+
 pkgname=acpi-eeepc-generic
 pkgver=1.0rc3
 pkgrel=0.1

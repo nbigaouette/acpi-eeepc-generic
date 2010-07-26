@@ -1,3 +1,8 @@
-event=.*
-action=/etc/acpi/acpi-eeepc-generic-handler.sh %e
+#event=.*
+#action=/etc/acpi/acpi-eeepc-generic-handler.sh %e
 
+#event=.*
+#action=echo "e = %e -- 1 = "
+
+event=hotkey ASUS010:00 00000013
+action=echo "e = %e"

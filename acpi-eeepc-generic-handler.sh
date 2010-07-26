@@ -27,6 +27,9 @@ if [ "$KEY_SHOW" = "1" ]; then
 eeepc_notify "The event of the pressed key is: \"$SELECTION\"" keyboard 20000
 fi
 
+echo "ALL: $@"
+exit
+
 case "$1" in
 
     battery|processor)
