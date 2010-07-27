@@ -55,9 +55,7 @@ source=(
     "acpi-eeepc-generic-toggle-touchpad.sh"
     "acpi-eeepc-generic-toggle-webcam.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
-    "acpi-eeepc-generic.conf"
-    "bluetooth.png"
-    "eee.png")
+    "acpi-eeepc-generic.conf")
 
 build() {
     mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}} || return 1
@@ -83,9 +81,6 @@ build() {
     for f in ${srcdir}/acpi-eeepc-generic-toggle-*.sh; do
         install -m0755 $f ${pkgdir}/etc/acpi/eeepc || return 1
     done
-
-    install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
-    install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
 
 md5sums=('be2c9c078c781185356c775f7a785569'
@@ -124,6 +119,4 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          'ca53efde37b4484ca05a5a9dddde423c'
          'fb7539a926831b28050267e13394c831'
          '39f88b5f21b1249a1da04e921deeec95'
-         '78c1e053f5c310a697d4e52988b2d342'
-         'b6e3ad05a0d6c9ed87bd0859267e86d8'
-         '4d9af939dbd59121cd4bb191d340eb1c')
+         '78c1e053f5c310a697d4e52988b2d342')
