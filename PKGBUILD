@@ -57,11 +57,7 @@ source=(
     "acpi-eeepc-generic-toggle-wifi.sh"
     "acpi-eeepc-generic.conf"
     "bluetooth.png"
-    "eee.png"
-    "eeepc-rotate-lvds.desktop"
-    "eeepc-suspend-lock.desktop"
-    "eeepc-suspend2ram.desktop"
-    "eeepc-toggle.desktop")
+    "eee.png")
 
 build() {
     mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}} || return 1
@@ -88,57 +84,6 @@ build() {
         install -m0755 $f ${pkgdir}/etc/acpi/eeepc || return 1
     done
 
-    install -m0644 ${srcdir}/eeepc-rotate-lvds.desktop ${pkgdir}/usr/share/applications || return 1
-    install -m0644 ${srcdir}/eeepc-suspend-lock.desktop ${pkgdir}/usr/share/applications || return 1
-    install -m0644 ${srcdir}/eeepc-suspend2ram.desktop ${pkgdir}/usr/share/applications || return 1
-    for action in bluetooth cardr displays resolution she touchpad webcam wifi; do
-        install -m0644 ${srcdir}/eeepc-toggle.desktop ${pkgdir}/usr/share/applications/eeepc-toggle-${action}.desktop || return 1
-        sed -e "s|GENERIC|${action}|g" -i ${pkgdir}/usr/share/applications/eeepc-toggle-${action}.desktop || return 1
-    done
-
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
-md5sums=('be2c9c078c781185356c775f7a785569'
-         'be2c9c078c781185356c775f7a785569'
-         'be2c9c078c781185356c775f7a785569'
-         '8978b064b40be086942116b0c7779de6'
-         '5ec8097c18e623d6ba2bff1f5a814885'
-         'be56ea98b9aa016098bdab9cbb110334'
-         '03c04440f12e3700592664320b9138a6'
-         '03c04440f12e3700592664320b9138a6'
-         '5ec8097c18e623d6ba2bff1f5a814885'
-         '5ec8097c18e623d6ba2bff1f5a814885'
-         'c75b95926e0ac397b0eea6e054ea9154'
-         '75016dde1f414772434c2c151b159c29'
-         '75016dde1f414772434c2c151b159c29'
-         'ae981fe86cd99b736ba740fffbfec3e0'
-         'a34fbf623a7d3e41cdf378924837dbbe'
-         '0e7c2e4cdcb2894d67cb62f526ae491d'
-         '533018701f2f67873396994ec364bb36'
-         'ce02758525ba114f2f0ab3d5c564d4f3'
-         '75bd2c42f01a6733ab5a2f7a0c15c70d'
-         '323c03e32baec7eca3f360a282490cda'
-         'cf253e386d7e743a3d25ec4165051521'
-         '9444ff2c95380825af9f8c0c3ea65566'
-         '0964588390647e98b475af0fb3f688de'
-         '06137998d8ef768763bb327f8716641e'
-         '7e26565bd36e2411ab998d6bcfe15f9e'
-         '13c38e64dab996301f8d724342178cfc'
-         '026238ef581ca0e844d3304c5df9433f'
-         '3927305c811cef63ae52e803a169d7b2'
-         'e956bc5d3761630f3c01b8b7df80f1d1'
-         '45738315630165b45470694a67c8121d'
-         '87a977662d92c640b21b97e1c705ad57'
-         '12c506d5a4ae304833f22f04b5d5c1f0'
-         '614647590c18eb4de123263bd7bceaa8'
-         'ca53efde37b4484ca05a5a9dddde423c'
-         'fb7539a926831b28050267e13394c831'
-         '39f88b5f21b1249a1da04e921deeec95'
-         '78c1e053f5c310a697d4e52988b2d342'
-         'b6e3ad05a0d6c9ed87bd0859267e86d8'
-         '4d9af939dbd59121cd4bb191d340eb1c'
-         '65f4a9f8b860500ee9e24440f167be2d'
-         '1625d4372b36096971a01f254bf72cf4'
-         '8377c74074844a14c9588d10f6e152e4'
-         '05e95ab6b843c08a5e66d1b3770a50d9')
