@@ -3,7 +3,7 @@
 pkgname=acpi-eeepc-generic
 pkgver=1.0rc3
 pkgrel=0.1
-pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE, 1005HA, 1005-HA-H, 1005PE, 1008HA, 1201N, T91MT)"
+pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE, 1005HA, 1005-HA-H, 1005PE, 1005P, 1008HA, 1201N, T91MT)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
 license=(GPL3)
@@ -26,6 +26,7 @@ source=(
     "acpi-eeepc-1005HA-events.conf"
     "acpi-eeepc-1005-HA-H-events.conf"
     "acpi-eeepc-1005PE-events.conf"
+    "acpi-eeepc-1005P-events.conf"
     "acpi-eeepc-1008HA-events.conf"
     "acpi-eeepc-1001P-events.conf"
     "acpi-eeepc-1201N-events.conf"
@@ -98,13 +99,13 @@ build() {
     install -m0644 ${srcdir}/eee.png ${pkgdir}/usr/share/pixmaps || return 1
     install -m0644 ${srcdir}/bluetooth.png ${pkgdir}/usr/share/pixmaps || return 1
 }
-
 md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          '8978b064b40be086942116b0c7779de6'
          '5ec8097c18e623d6ba2bff1f5a814885'
          'be56ea98b9aa016098bdab9cbb110334'
+         '03c04440f12e3700592664320b9138a6'
          '03c04440f12e3700592664320b9138a6'
          '5ec8097c18e623d6ba2bff1f5a814885'
          '5ec8097c18e623d6ba2bff1f5a814885'
