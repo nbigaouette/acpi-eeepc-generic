@@ -20,28 +20,28 @@ backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
 source=(
     "acpi-eeepc-1000-events.conf"
-    "acpi-eeepc-1000H-events.conf"
     "acpi-eeepc-1000HD-events.conf"
     "acpi-eeepc-1000HE-events.conf"
+    "acpi-eeepc-1000H-events.conf"
+    "acpi-eeepc-1001P-events.conf"
+    "acpi-eeepc-1001PX-events.conf"
     "acpi-eeepc-1005HA-events.conf"
     "acpi-eeepc-1005-HA-H-events.conf"
     "acpi-eeepc-1005PE-events.conf"
     "acpi-eeepc-1005P-events.conf"
     "acpi-eeepc-1008HA-events.conf"
-    "acpi-eeepc-1001P-events.conf"
-	"acpi-eeepc-1001PX-events.conf"
+    "acpi-eeepc-1015P-events.conf"
     "acpi-eeepc-1201N-events.conf"
     "acpi-eeepc-1201NL-events.conf"
     "acpi-eeepc-700-events.conf"
     "acpi-eeepc-701-events.conf"
-    "acpi-eeepc-900-events.conf"
     "acpi-eeepc-900A-events.conf"
+    "acpi-eeepc-900-events.conf"
     "acpi-eeepc-901-events.conf"
     "acpi-eeepc-904HD-events.conf"
+    "acpi-eeepc-defaults-events.conf"
     "acpi-eeepc-S101-events.conf"
     "acpi-eeepc-T91MT-events.conf"
-    "acpi-eeepc-defaults-events.conf"
-    "acpi-eeepc-generic-events"
     "acpi-eeepc-generic-functions.sh"
     "acpi-eeepc-generic-handler.sh"
     "acpi-eeepc-generic-logsbackup.rcd"
@@ -87,27 +87,27 @@ build() {
 
 md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
-         'be2c9c078c781185356c775f7a785569'
          '8978b064b40be086942116b0c7779de6'
+         'be2c9c078c781185356c775f7a785569'
+         '5ec8097c18e623d6ba2bff1f5a814885'
+         '476668a307c1ac833049ead5303cbc37'
          '5ec8097c18e623d6ba2bff1f5a814885'
          'be56ea98b9aa016098bdab9cbb110334'
          '03c04440f12e3700592664320b9138a6'
          '03c04440f12e3700592664320b9138a6'
          '5ec8097c18e623d6ba2bff1f5a814885'
-         '5ec8097c18e623d6ba2bff1f5a814885'
-         '476668a307c1ac833049ead5303cbc37'
+         '03c04440f12e3700592664320b9138a6'
          'c75b95926e0ac397b0eea6e054ea9154'
          'c75b95926e0ac397b0eea6e054ea9154'
          '75016dde1f414772434c2c151b159c29'
          '75016dde1f414772434c2c151b159c29'
-         'ae981fe86cd99b736ba740fffbfec3e0'
          'a34fbf623a7d3e41cdf378924837dbbe'
+         'ae981fe86cd99b736ba740fffbfec3e0'
          '0e7c2e4cdcb2894d67cb62f526ae491d'
          '533018701f2f67873396994ec364bb36'
+         '323c03e32baec7eca3f360a282490cda'
          'ce02758525ba114f2f0ab3d5c564d4f3'
          '75bd2c42f01a6733ab5a2f7a0c15c70d'
-         '323c03e32baec7eca3f360a282490cda'
-         'cf253e386d7e743a3d25ec4165051521'
          '34c794f1c83e5e6d0c5f618f9d36b358'
          '0964588390647e98b475af0fb3f688de'
          '06137998d8ef768763bb327f8716641e'
