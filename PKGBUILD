@@ -31,6 +31,7 @@ source=(
     "acpi-eeepc-1001P-events.conf"
 	"acpi-eeepc-1001PX-events.conf"
     "acpi-eeepc-1201N-events.conf"
+    "acpi-eeepc-1201NL-events.conf"
     "acpi-eeepc-700-events.conf"
     "acpi-eeepc-701-events.conf"
     "acpi-eeepc-900-events.conf"
@@ -96,6 +97,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '5ec8097c18e623d6ba2bff1f5a814885'
          '476668a307c1ac833049ead5303cbc37'
          'c75b95926e0ac397b0eea6e054ea9154'
+         'c75b95926e0ac397b0eea6e054ea9154'
          '75016dde1f414772434c2c151b159c29'
          '75016dde1f414772434c2c151b159c29'
          'ae981fe86cd99b736ba740fffbfec3e0'
@@ -118,7 +120,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '87a977662d92c640b21b97e1c705ad57'
          '12c506d5a4ae304833f22f04b5d5c1f0'
          '614647590c18eb4de123263bd7bceaa8'
-         'ca53efde37b4484ca05a5a9dddde423c'
+         '325faeee229790c3f89e25ca957e0f6d'
          'fb7539a926831b28050267e13394c831'
          '39f88b5f21b1249a1da04e921deeec95'
          '78c1e053f5c310a697d4e52988b2d342')
