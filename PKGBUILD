@@ -42,6 +42,7 @@ source=(
     "acpi-eeepc-904HD-events.conf"
     "acpi-eeepc-defaults-events.conf"
     "acpi-eeepc-S101-events.conf"
+    "acpi-eeepc-T101MT-events.conf"
     "acpi-eeepc-T91MT-events.conf"
     "acpi-eeepc-generic-functions.sh"
     "acpi-eeepc-generic-handler.sh"
