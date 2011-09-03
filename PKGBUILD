@@ -3,7 +3,7 @@
 pkgname=acpi-eeepc-generic
 pkgver=1.0rc3
 pkgrel=0.1
-pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE, 1005HA, 1005-HA-H, 1005PE, 1005P, 1008HA, 1201N, T91MT)"
+pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE, 1005HA, 1005-HA-H, 1005PE, 1005P, 1008HA, 1201N, 1215N & T91MT)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
 license=(GPL3)
@@ -34,6 +34,7 @@ source=(
     "acpi-eeepc-1201N-events.conf"
     "acpi-eeepc-1201PN-events.conf"
     "acpi-eeepc-1201NL-events.conf"
+    "acpi-eeepc-1215N-events.conf"
     "acpi-eeepc-700-events.conf"
     "acpi-eeepc-701-events.conf"
     "acpi-eeepc-900A-events.conf"
@@ -86,7 +87,6 @@ build() {
         install -m0755 $f ${pkgdir}/etc/acpi/eeepc || return 1
     done
 }
-
 md5sums=('be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          '8978b064b40be086942116b0c7779de6'
@@ -99,6 +99,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '03c04440f12e3700592664320b9138a6'
          '5ec8097c18e623d6ba2bff1f5a814885'
          '03c04440f12e3700592664320b9138a6'
+         'c75b95926e0ac397b0eea6e054ea9154'
          'c75b95926e0ac397b0eea6e054ea9154'
          'c75b95926e0ac397b0eea6e054ea9154'
          'c75b95926e0ac397b0eea6e054ea9154'
@@ -117,15 +118,14 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '06137998d8ef768763bb327f8716641e'
          '7e26565bd36e2411ab998d6bcfe15f9e'
          '13c38e64dab996301f8d724342178cfc'
-         '026238ef581ca0e844d3304c5df9433f'
-         '3927305c811cef63ae52e803a169d7b2'
-         'e956bc5d3761630f3c01b8b7df80f1d1'
+         'b84ce693c3095e5059da0fa84b575990'
+         'fc6902bccab69842ba5bfc6139fcf74c'
+         '0be0da28548b7f54baab01c4a559de8e'
          '45738315630165b45470694a67c8121d'
          '87a977662d92c640b21b97e1c705ad57'
          '12c506d5a4ae304833f22f04b5d5c1f0'
-         '614647590c18eb4de123263bd7bceaa8'
-         '325faeee229790c3f89e25ca957e0f6d'
-         'fb7539a926831b28050267e13394c831'
-         '39f88b5f21b1249a1da04e921deeec95'
+         '3534a41cf64b2f9782636ff82cc1d07e'
+         '318d5cae4a833dfccd0f10ba9496352b'
+         '63908e6167fc455c678c21a045aef037'
+         '4621ffb00858a03d05a89a669a20e6f5'
          '78c1e053f5c310a697d4e52988b2d342')
-
