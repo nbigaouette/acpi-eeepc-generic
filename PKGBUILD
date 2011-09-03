@@ -29,6 +29,7 @@ source=(
     "acpi-eeepc-1005-HA-H-events.conf"
     "acpi-eeepc-1005PE-events.conf"
     "acpi-eeepc-1005P-events.conf"
+    "acpi-eeepc-1005PX-events.conf"
     "acpi-eeepc-1008HA-events.conf"
     "acpi-eeepc-1015P-events.conf"
     "acpi-eeepc-1201N-events.conf"
@@ -95,6 +96,7 @@ md5sums=('be2c9c078c781185356c775f7a785569'
          '476668a307c1ac833049ead5303cbc37'
          '5ec8097c18e623d6ba2bff1f5a814885'
          'be56ea98b9aa016098bdab9cbb110334'
+         '03c04440f12e3700592664320b9138a6'
          '03c04440f12e3700592664320b9138a6'
          '03c04440f12e3700592664320b9138a6'
          '5ec8097c18e623d6ba2bff1f5a814885'
