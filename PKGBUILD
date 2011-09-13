@@ -19,6 +19,7 @@ install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
 source=(
+    "acpi-eeepc-generic-events"
     "acpi-eeepc-1000-events.conf"
     "acpi-eeepc-1000HD-events.conf"
     "acpi-eeepc-1000HE-events.conf"
@@ -89,7 +90,9 @@ build() {
         install -m0755 $f ${pkgdir}/etc/acpi/eeepc || return 1
     done
 }
-md5sums=('be2c9c078c781185356c775f7a785569'
+
+md5sums=('cf253e386d7e743a3d25ec4165051521'
+         'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          '8978b064b40be086942116b0c7779de6'
          'be2c9c078c781185356c775f7a785569'
