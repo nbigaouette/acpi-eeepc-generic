@@ -3,7 +3,7 @@
 pkgname=acpi-eeepc-generic
 pkgver=1.0rc3
 pkgrel=0.1
-pkgdesc="ACPI scripts for EeePC netbook computers (700, 701, 900, 900A, 901, 904HD, S101, 1000, 1000H, 1000HD, 1000HE, 1005HA, 1005-HA-H, 1005PE, 1005P, 1008HA, 1201N, 1215N & T91MT)"
+pkgdesc="ACPI scripts for EeePC netbook computers (1000, 1000HD, 1000HE, 1000H, 1001P, 1001PX, 1005HA, 1005-HA-H, 1005PE, 1005P, 1005PX, 1008HA, 1015P, 1015T, 1201HA, 1201N, 1201PN, 1201NL, 1215N, 700, 701, 900A, 900, 901, 904HD, S101, T101MT & T91MT)"
 url="http://code.google.com/p/acpi-eeepc-generic/"
 arch=(any)
 license=(GPL3)
@@ -20,6 +20,7 @@ backup=(etc/conf.d/acpi-eeepc-generic.conf)
 conflicts=("acpi-eee" "acpi-eee900" "acpi-eee901" "acpi-eee1000" "acpi-eeepc900" "buttons-eee901" "e3acpi" "eee-control" "eee-fan")
 source=(
     "acpi-eeepc-generic-events"
+    "acpi-eeepc-defaults-events.conf"
     "acpi-eeepc-1000-events.conf"
     "acpi-eeepc-1000HD-events.conf"
     "acpi-eeepc-1000HE-events.conf"
@@ -34,6 +35,7 @@ source=(
     "acpi-eeepc-1008HA-events.conf"
     "acpi-eeepc-1015P-events.conf"
     "acpi-eeepc-1015T-events.conf"
+    "acpi-eeepc-1201HA-events.conf"
     "acpi-eeepc-1201N-events.conf"
     "acpi-eeepc-1201PN-events.conf"
     "acpi-eeepc-1201NL-events.conf"
@@ -44,7 +46,6 @@ source=(
     "acpi-eeepc-900-events.conf"
     "acpi-eeepc-901-events.conf"
     "acpi-eeepc-904HD-events.conf"
-    "acpi-eeepc-defaults-events.conf"
     "acpi-eeepc-S101-events.conf"
     "acpi-eeepc-T101MT-events.conf"
     "acpi-eeepc-T91MT-events.conf"
@@ -92,6 +93,7 @@ build() {
 }
 
 md5sums=('cf253e386d7e743a3d25ec4165051521'
+         '323c03e32baec7eca3f360a282490cda'
          'be2c9c078c781185356c775f7a785569'
          'be2c9c078c781185356c775f7a785569'
          '8978b064b40be086942116b0c7779de6'
@@ -110,13 +112,13 @@ md5sums=('cf253e386d7e743a3d25ec4165051521'
          'c75b95926e0ac397b0eea6e054ea9154'
          'c75b95926e0ac397b0eea6e054ea9154'
          'c75b95926e0ac397b0eea6e054ea9154'
+         'c75b95926e0ac397b0eea6e054ea9154'
          '75016dde1f414772434c2c151b159c29'
          '75016dde1f414772434c2c151b159c29'
          'a34fbf623a7d3e41cdf378924837dbbe'
          'ae981fe86cd99b736ba740fffbfec3e0'
          '0e7c2e4cdcb2894d67cb62f526ae491d'
          '533018701f2f67873396994ec364bb36'
-         '323c03e32baec7eca3f360a282490cda'
          'ce02758525ba114f2f0ab3d5c564d4f3'
          '75bd2c42f01a6733ab5a2f7a0c15c70d'
          '75bd2c42f01a6733ab5a2f7a0c15c70d'
