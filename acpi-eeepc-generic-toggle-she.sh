@@ -67,8 +67,8 @@ fi
 
 function she_toggle() {
     if [[ "${she_names[${she_current/0x30/}]}" != "${she_names[${she_next}]}" ]]; then
-        eeepc_notify "Super Hybrid Engine: ${she_names[${she_current/0x30/}]} to ${she_names[${she_next}]}" cpu
-        echo ${she_next} > ${SYS_DEVICE}
+        eeepc_notify "Super Hybrid Engine: Changing to ${she_names[${she_next}]}" cpu
+        echo ${she_next} > ${SYS_DEVICE} && eeepc_notify "Super Hybrid Engine: ${she_names[${she_current/0x30/}]} to ${she_names[${she_next}]}" cpu &
     else
         eeepc_notify "Super Hybrid Engine: Already at ${she_names[${she_next}]}" cpu
     fi
