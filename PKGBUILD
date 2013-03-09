@@ -3,7 +3,7 @@
 pkgname=acpi-eeepc-generic
 pkgver=1.0rc3
 pkgrel=0.1
-pkgdesc="ACPI scripts for EeePC netbook computers (1000, 1000HD, 1000HE, 1000H, 1001P, 1001PX, 1005HA, 1005-HA-H, 1005HAG, 1005PE, 1005PEB, 1005P, 1005PX, 1008HA, 1015B, 1015P, 1015T, 1201HA, 1201N, 1201PN, 1201NL, 1215N, 1215B, 700, 701, 900A, 900, 901, 904HD, S101, T101MT & T91MT)"
+pkgdesc="ACPI scripts for EeePC netbook computers (1000, 1000HD, 1000HE, 1000H, 1001P, 1001PX, 1005HA, 1005-HA-H, 1005HAG, 1005PE, 1005PEB, 1005P, 1005PX, 1008HA, 1015B, 1015P, 1015T, 1201HA, 1201N, 1201PN, 1201NL, 1215N, 1215B, 700, 701, 900A, 900, 901, 904HD, S101, T101MT, T91MT & X101H)"
 url="https://github.com/nbigaouette/acpi-eeepc-generic"
 arch=(any)
 license=(GPL3)
@@ -53,6 +53,7 @@ source=(
     "acpi-eeepc-S101-events.conf"
     "acpi-eeepc-T101MT-events.conf"
     "acpi-eeepc-T91MT-events.conf"
+    "acpi-eeepc-X101H-events.conf"
     "acpi-eeepc-generic-functions.sh"
     "acpi-eeepc-generic-handler.sh"
     "acpi-eeepc-generic-logsbackup.rcd"
@@ -96,7 +97,6 @@ build() {
     done
 }
 
-
 md5sums=('cf253e386d7e743a3d25ec4165051521'
          '323c03e32baec7eca3f360a282490cda'
          'be2c9c078c781185356c775f7a785569'
@@ -131,6 +131,7 @@ md5sums=('cf253e386d7e743a3d25ec4165051521'
          'ce02758525ba114f2f0ab3d5c564d4f3'
          '75bd2c42f01a6733ab5a2f7a0c15c70d'
          '75bd2c42f01a6733ab5a2f7a0c15c70d'
+         'c75b95926e0ac397b0eea6e054ea9154'
          '34c794f1c83e5e6d0c5f618f9d36b358'
          '0964588390647e98b475af0fb3f688de'
          '06137998d8ef768763bb327f8716641e'
