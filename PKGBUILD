@@ -2,8 +2,8 @@
 
 pkgname=acpi-eeepc-generic
 pkgver=1.0
-pkgrel=1
-pkgdesc="ACPI scripts for EeePC netbook computers (1000, 1000HD, 1000HE, 1000H, 1001P, 1001PX, 1005HA, 1005-HA-H, 1005HAG, 1005PE, 1005PEB, 1005P, 1005PX, 1008HA, 1015B, 1015P, 1015PEM, 1015T, 1201HA, 1201N, 1201PN, 1201NL, 1215N, 1215B, 700, 701, 900A, 900, 901, 904HD, S101, T101MT, T91MT & X101H)"
+pkgrel=2
+pkgdesc="ACPI scripts for many EeePC netbook computers"
 url="https://github.com/nbigaouette/acpi-eeepc-generic"
 arch=(any)
 license=(GPL3)
