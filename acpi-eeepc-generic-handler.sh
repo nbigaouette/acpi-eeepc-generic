@@ -2,23 +2,24 @@
 # Copyright 2009 Nicolas Bigaouette
 # This file is part of acpi-eeepc-generic.
 # http://code.google.com/p/acpi-eeepc-generic/
-# 
+#
 # acpi-eeepc-generic is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # acpi-eeepc-generic is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
 
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 get_model
+. /etc/acpi/eeepc/models/acpi-eeepc-defaults-events.conf
 . /etc/acpi/eeepc/models/acpi-eeepc-$EEEPC_MODEL-events.conf
 
 SELECTION=$3
@@ -35,10 +36,24 @@ case "$1" in
     ac_adapter)
         case "$4" in
             00000000) # AC unplugged
-                execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
+                # These events are generated twice (at least on the 1000)
+                # Make sure the commands are executed only once
+                if [ ! -e ${EEEPC_VAR}/ac_event_unplugged ]; then
+                    touch ${EEEPC_VAR}/ac_event_unplugged
+                    # Wait 5 seconds (in background) before deleting the file
+                    echo `sleep 5 && rm -f ${EEEPC_VAR}/ac_event_unplugged` &
+                    execute_commands "${COMMANDS_AC_UNPLUGGED[@]}"
+                fi
             ;;
             00000001) # AC plugged-in
-                execute_commands "${COMMANDS_AC_PLUGGED[@]}"
+                # These events are generated twice (at least on the 1000)
+                # Make sure the commands are executed only once
+                if [ ! -e ${EEEPC_VAR}/ac_event_plugged ]; then
+                    touch ${EEEPC_VAR}/ac_event_plugged
+                    # Wait 5 seconds (in background) before deleting the file
+                    echo `sleep 5 && rm -f ${EEEPC_VAR}/ac_event_plugged` &
+                    execute_commands "${COMMANDS_AC_PLUGGED[@]}"
+                fi
             ;;
             *)
                 msg="acpi-eeepc-generic-handler: undefined 'ac_adapter' event: $2 $3 $4"
@@ -63,6 +78,13 @@ case "$1" in
     button/sleep)
         case "$2" in
             SLPB|SBTN)
+                suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
+                if [ -e "${EEEPC_VAR}/power.lock" ]; then
+                    msg="Suspend lock exist, canceling suspend"
+                    logger "$msg (${EEEPC_VAR}/power.lock)"
+                    eeepc_notify "$msg" stop 5000
+                    exit 0
+                fi
                 eeepc_notify "Sleep button pressed" gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
             ;;
@@ -135,12 +157,13 @@ case "$1" in
                 logger "acpi-eeepc-generic-handler: (hotkey): Silver function button (User2)"
                 execute_commands "${COMMANDS_BUTTON_USER2[@]}"
             ;;
-            $EEEPC_USER3) # Fn+Space
-                logger "acpi-eeepc-generic-handler: (hotkey): Fn+Space"
-                execute_commands "${COMMANDS_BUTTON_USER3[@]}"
+            $EEEPC_SHE_TOGGLE) # Super Hybrid Engine
+                logger "acpi-eeepc-generic-handler: (hotkey): SHE"
+                execute_commands "${COMMANDS_SHE_TOGGLE[@]}"
             ;;
 
             $EEEPC_SLEEP)
+                suspend_check_blacklisted_processes "${SUSPEND_BLACKLISTED_PROCESSES[@]}"
                 logger "acpi-eeepc-generic-handler: (hotkey): Sleep"
                 eeepc_notify "Going to sleep..." gnome-session-suspend
                 execute_commands "${COMMANDS_SLEEP[@]}"
@@ -165,18 +188,22 @@ case "$1" in
                 logger "acpi-eeepc-generic-handler: (hotkey): Changing resolution"
                 execute_commands "${COMMANDS_RESOLUTION[@]}"
             ;;
+            $EEEPC_ROTATE) # Rotate screen.
+                logger "acpi-eeepc-generic-handler: (hotkey): Rotate"
+                execute_commands "${COMMANDS_ROTATE_TOGGLE[@]}"
+            ;;
             $EEEPC_BRIGHTNESS_UP|$EEEPC_BRIGHTNESS_DOWN) # Brightness
                 brightness_direction=`brightness_find_direction`
                 if [ "$brightness_direction" == "up" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_UP[@]}"
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "100" ] && logger "acpi-eeepc-generic-handler: (hotkey): Brightness Up ($brightness_percentage%)"
-                    [ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
+                    #[ "$brightness_percentage" != "100" ] && eeepc_notify "Brightness Up ($brightness_percentage%)" dialog-information
                 elif [ "$brightness_direction" == "down" ]; then
                     execute_commands "${COMMANDS_BRIGHTNESS_DOWN[@]}"
                     brightness_percentage=`brightness_get_percentage`
                     [ "$brightness_percentage" != "0" ] && logger "acpi-eeepc-generic-handler: (hotkey): Brightness Down ($brightness_percentage%)"
-                    [ "$brightness_percentage" != "0" ] && eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
+                    #[ "$brightness_percentage" != "0" ] && eeepc_notify "Brightness Down ($brightness_percentage%)" dialog-information
                 fi
             ;;
             $EEEPC_SCREEN_OFF) # Turn off screen
@@ -223,7 +250,6 @@ case "$1" in
                 fi
                 if [ "`get_volume`" != "0" ]; then
                     execute_commands "${COMMANDS_VOLUME_DOWN[@]}"
-                    sleep 0.1
                     eeepc_notify "Volume Down (`get_volume`%)" $volume_icon
                 fi
             ;;
@@ -235,7 +261,6 @@ case "$1" in
                 fi
                 if [ "`get_volume`" != "100" ]; then
                     execute_commands "${COMMANDS_VOLUME_UP[@]}"
-                    sleep 0.1
                     eeepc_notify "Volume Up (`get_volume`%)" $volume_icon
                 fi
             ;;

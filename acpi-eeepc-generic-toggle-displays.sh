@@ -40,22 +40,29 @@ connected=$(grep " connected " $var_xrandr | awk '{print ""$1""}')
 disconnected=$(grep " disconnected " $var_xrandr | awk '{print ""$1""}')
 all="$connected $disconnected"
 
+name_lvds=$(grep -i connected $var_xrandr | grep -i lvds | awk '{print ""$1""}')
+name_vga=""
+
 if [ "x`echo $connected | grep -i VGA`" == "x" ]; then
     vga_connected="no"
 else
     vga_connected="yes"
+    name_vga=$(grep -i connected $var_xrandr | grep -i vga | awk '{print ""$1""}')
+    vga_max_res=$(grep ${name_vga} -A 1 $var_xrandr | grep -v ${name_vga} | awk '{print ""$1""}')
 fi
+lvds_max_res=$(grep ${name_lvds} -A 1 $var_xrandr | grep -v ${name_lvds} | awk '{print ""$1""}')
 
 # Define XRandR commands for each modes
-xrandr_lvds="$xrandr --output LVDS --auto --output VGA --off"
-xrandr_clone="$xrandr --output LVDS --auto --output VGA --auto"
-xrandr_vga="$xrandr --output LVDS --off --output VGA --auto"
-xrandr_vga_and_lvds="$xrandr --output LVDS --auto --output VGA --auto --${COMMANDS_XRANDR_TOGGLE_VGA}-of LVDS"
+xrandr_lvds="$xrandr --output ${name_lvds} --auto --output ${name_vga} --off"
+xrandr_clone="$xrandr --output ${name_lvds} --auto --output ${name_vga} --auto"
+xrandr_vga="$xrandr --output ${name_lvds} --off --output ${name_vga} --auto"
+#xrandr_vga_and_lvds="$xrandr --output LVDS --auto --output ${name_vga} --auto --${COMMANDS_XRANDR_TOGGLE_VGA} ${name_lvds}"
+xrandr_vga_and_lvds="$xrandr --auto --output ${name_vga} --mode ${vga_max_res} --${COMMANDS_XRANDR_TOGGLE_VGA} ${name_lvds}"
 
 xrandr_lvds_name="Laptop screen only"
 xrandr_clone_name="Clone"
 xrandr_vga_name="VGA only"
-xrandr_vga_and_lvds_name="VGA (${COMMANDS_XRANDR_TOGGLE_VGA} of) laptop screen"
+xrandr_vga_and_lvds_name="VGA (${COMMANDS_XRANDR_TOGGLE_VGA/-/ }) laptop screen"
 
 
 # Available modes and their name. Needs first to contain only LVDS.
@@ -89,7 +96,7 @@ lvds_nb_modes=$((`sed -n '/LVDS/,//p' $var_xrandr | wc -l` - 1))
 # What is the actual LVDS mode?
 actual_mode_lvds=`sed -n '/LVDS/,//p' $var_xrandr | grep "*" | awk '{print ""$1""}'`
 # Get the position of LVDS
-position_lvds=(`grep LVDS $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
+position_lvds=(`grep ${name_lvds} $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
 
 #################################################################
 function get_mode_index() {
@@ -119,7 +126,7 @@ if [[ "$vga_connected" = "yes" ]]; then
     # Get the position of VGA
     position_vga=(`grep VGA $var_xrandr | awk '{print ""$3""}' | sed "s|[0-9]*x[0-9]*+\(.*\)+\(.*\)|\1 \2|g"`)
 
-    # If the position is detected (and awk/sed of previous line does not 
+    # If the position is detected (and awk/sed of previous line does not
     # return a bogus value of '(normal'), detect which mode we actually use.
     if [ "${position_vga}" != "(normal" ]; then
         # Detect if we are at mode clone
@@ -166,23 +173,25 @@ function display_toggle() {
 
     echo "Next mode will be ${modes[$mn]} (m=$m)"
 
+    xrandr_cmd="${modes[$mc]}"
+    echo "xrandr_cmd = ${xrandr_cmd}"
+#     return
+
     if [ "${prev_mc}" == "${mc}" ]; then
         eeepc_notify "Display already in '${modes[$mn]}' mode" video-display
         return
     fi
 
-    xrandr_cmd="${modes[$mc]}"
-
     # If next mode is 0 (LVDS only), we really want to go there,
     # whatever the state of the VGA is.
     if [ "$m" == "0" ]; then
-        eeepc_notify "Changing display mode to: ${modes[$mn]}" video-display
+        eeepc_notify "Changing display mode to: ${modes[$mn]}" video-display 10000
         execute_commands "${xrandr_cmd}"
     else
         # Else, we check if VGA is connected: it does not make sense
         # to activate it if it's not present.
         if [ "$vga_connected" == "yes" ]; then
-            eeepc_notify "Changing display mode to '${modes[$mn]}' mode" video-display
+            eeepc_notify "Changing display mode to '${modes[$mn]}' mode" video-display 10000
             execute_commands "${xrandr_cmd}"
         else
             # If VGA is not connected, don't do anything

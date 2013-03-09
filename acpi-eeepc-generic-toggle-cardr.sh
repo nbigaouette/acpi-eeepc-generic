@@ -26,12 +26,17 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 
-### Information for bluetooth ###################################
-DRIVERS=("${CAMERA_DRIVERS[@]}")
-NAME="Camera"
-NAME_SMALL="camera"
-ICON="camera-web"
-SYS_NAME="camera"
+### Information #################################################
+DRIVERS=()
+NAME="Card Reader"
+NAME_SMALL="cardr"
+ICON="media-flash-sd-mmc"
+SYS_NAME="cardr"
+COMMANDS_PRE_UP=""
+COMMANDS_PRE_DOWN=""
+COMMANDS_POST_UP=""
+COMMANDS_POST_DOWN=""
+
 
 ### Load saved state from file ##################################
 load_saved_state
@@ -41,6 +46,7 @@ check_sys_interface
 
 ### Detect if card is enabled or disabled #######################
 detect_if_enabled
+
 
 #################################################################
 case $1 in

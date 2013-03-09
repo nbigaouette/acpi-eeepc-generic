@@ -18,8 +18,15 @@
 
 . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
 
+# Make sure we run as root
+if [[ $EUID -ne 0 ]]; then
+   me="`dirname $0`/`basename $0`"
+   ${SUDO} "${me}" ${@}
+   exit 1
+fi
 
-### Information for bluetooth ###################################
+
+### Information #################################################
 DRIVERS=("${WIFI_DRIVERS[@]}")
 NAME="Wifi"
 NAME_SMALL="wlan"

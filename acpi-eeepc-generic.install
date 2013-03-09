@@ -4,57 +4,16 @@ post_install() {
     [ -e /etc/acpi/events/anything ] && \
         sed -i 's/^[^#]/#&/' /etc/acpi/events/anything
 
-    # Make sure the right modules are loaded
-    modprobe eeepc_laptop &> /dev/null
-    modprobe rfkill &> /dev/null
+    # Detect if model is not supported
+    eeepc_model=`dmidecode -s system-product-name`
+    if [[ ! -e "/etc/acpi/eeepc/models/acpi-eeepc-${eeepc_model}-events.conf" ]]; then
+        echo ">>> You're model ${eeepc_model} is not (yet) supported."
+        echo ">>> Please report it to http://github.com/nbigaouette/acpi-eeepc-generic/issues"
+    fi
 
-    /etc/rc.d/acpid restart
-
     echo " "
-    echo ">>> Note that the file /etc/acpi/handler.sh is useless now."
-    echo ">>> It is superseeded by /etc/acpi/acpi-eeepc-generic-handler.sh"
-    echo " "
-    echo ">>> To protect your SSD, you should"
-    echo ">>> mount /var/log as a ramfs in your /etc/fstab:"
-    echo "      none  /var/log    tmpfs   defaults,size=10M   0 0"
-    echo ">>> If you do, add 'logsbackup' to your DAEMONS array"
-    echo ">>> in /etc/rc.conf if you want to copy your logs"
-    echo ">>> from /var/log/ to /logs_backup/DATE on shutdown/suspend."
-    echo " "
-    echo ">>> You will need to load these modules: 'rfkill' and 'eeepc_laptop'"
-    echo ">>> You can load them at boot in your /etc/rc.conf file:"
-    echo ">>> MODULES=(... rfkill eeepc_laptop ...)"
-    echo ">>> If you want bluetooth, load the module:"
-    echo ">>> MODULES=(... bluetooth ...)"
-    echo " "
-    echo ">>> Please verify that your model is supported. Type:"
-    echo "      sudo dmidecode -s system-product-name"
-    echo ">>> and verify that there is a file '/etc/acpi/eeepc/models/acpi-eeepc-MODEL-events.conf'"
-    echo ">>> where 'MODEL' is what the previous command return."
-    echo ">>> You can look up the file for your model and verify that it is"
-    echo ">>> working."
-    echo " "
-    echo ">>> If you found any bug or problem, if something is not working like"
-    echo ">>> it should or if your model is not (yet) supported or fully supported,"
-    echo ">>> please report it:"
-    echo ">>> on the homepage: http://code.google.com/p/acpi-eeepc-generic/"
-    echo ">>> on AUR: http://aur.archlinux.org/packages.php?ID=23318"
-    echo ">>> on the forum: http://bbs.archlinux.org/viewtopic.php?pid=484713"
-    echo " "
-    echo ">>> Here is a list of helper scripts you can use:"
-    echo ">>> Rotate screen:        /etc/acpi/eeepc/acpi-eeepc-generic-rotate-lvds.sh"
-    echo ">>> Suspend to ram:       /etc/acpi/eeepc/acpi-eeepc-generic-suspend2ram.sh"
-    echo ">>> Toggle bluetooth:     /etc/acpi/eeepc/acpi-eeepc-generic-toggle-bluetooth.sh"
-    echo ">>> Toggle resolution:    /etc/acpi/eeepc/acpi-eeepc-generic-toggle-resolution.sh"
-    echo ">>> Toggle touchpad:      /etc/acpi/eeepc/acpi-eeepc-generic-toggle-touchpad.sh"
-    echo ">>> Toggle Wifi:          /etc/acpi/eeepc/acpi-eeepc-generic-toggle-wifi.sh"
-    echo " "
-    echo ">>> PLEASE READ:"
-    echo ">>> Edit the file /etc/conf.d/acpi-eeepc-generic.conf"
-    echo ">>> and adapt it to your own needs. Some defaults are"
-    echo ">>> provided, but it might not work on yours. So if"
-    echo ">>> any function does not work, make sure the settings"
-    echo ">>> there makes sence for your machine."
+    echo ">>> To finish installation, read the initial setup wiki page:"
+    echo ">>> http://wiki.github.com/nbigaouette/acpi-eeepc-generic/information-on-acpi-eeepc-generics-initial-setup"
     echo " "
 
     #echo ">>> "
@@ -69,9 +28,10 @@ post_upgrade() {
 }
 
 pre_remove() {
-    /etc/rc.d/acpid restart
     echo " "
-    echo ">>> Note that the file /etc/acpi/eee-handler.sh is now the default."
+    echo ">>> Note that the file /etc/acpi/handler.sh is now the default."
     sed -e 's/#event/event/g' -e 's/#action/action/g' -i /etc/acpi/events/anything
+    echo ">>> Please restart acpid to reload actions."
+    echo "# /etc/rc.d/acpid restart"
 }
 

@@ -18,6 +18,12 @@
 # along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#################################################################
+### Needed path
+EEEPC_PATH=/etc/acpi/eeepc
+EEEPC_VAR=/var/eeepc
+
+# Load configuration
 . /etc/conf.d/acpi-eeepc-generic.conf
 
 [ ! -d "${EEEPC_VAR}/states" ] && mkdir -p ${EEEPC_VAR}/states
@@ -38,18 +44,26 @@ KERNEL_patch=${k%%\.*}
 ### Some paths
 rfkills_path="/sys/class/rfkill"
 sys_path="/sys/devices/platform/eeepc"
+unset eee_backlight eee_backlight_tmp
+eee_backlight_tmp=(`\ls /sys/class/backlight/`)
+eee_backlight="/sys/class/backlight/${eee_backlight_tmp[0]}" # take first
 
 ### Maximum try for toggling. Should not be even needed
 TOGGLE_MAX_TRY=3
 
 ### Generic notification function ###############################
 function eeepc_notify {
+    # $1: Message
+    # $2: Icon (only libnotify)
+    # $3: Duration [ms] (optional)
     if [ "$NOTIFY" == "libnotify" ]; then
         send_libnotify "$1" "$2" "$3"
     elif [ "$NOTIFY" == "kdialog" ]; then
         send_kdialog "$1" "$2" "$3"
     elif [ "$NOTIFY" == "dzen" ]; then
         send_dzen "$1" "$2" "$3"
+    elif [ "$NOTIFY" == "naughty" ]; then
+        send_naughty "$1" "$2" "$3"
     fi
     logger "EeePC $EEEPC_MODEL: $1 ($2)"
 }
@@ -97,9 +111,33 @@ function send_dzen() {
     send_generic "${cmd}"
 }
 
+### awesome / nayghty ###########################################
+function send_naughty() {
+    if [ ! -e /usr/bin/awesome-client ]; then
+        logger "To use awesome's OSD, please install 'awesome'"
+        echo   "To use awesome's OSD, please install 'awesome'"
+        return 1
+    fi
+    duration=$3
+    [ "x$duration" == "x" ] && duration=${NOTIFY_DURATION}
+    duration=$(( $duration / 1000 )) # naughty duration is in second
+    cmd="echo 'naughty.notify({title = \"EeePC $EEEPC_MODEL\", text = \"$1\", timeout = $duration})' | awesome-client - &"
+    send_generic "${cmd}"
+}
+
 ### Make sure GUI is run as user ################################
 function send_generic() {
     if [ "x$UID" == "x0" ]; then
+        # Verify if GDM is running
+        # See http://code.google.com/p/acpi-eeepc-generic/issues/detail?id=62
+        #pkill -0 gdm
+        #GDM_RUNNING=$?
+        #if [ "x$GDM_RUNNING" == "x0" ]; then
+        #    eval "${@}"
+        #else
+        #    /bin/su $user --login -c "${@}"
+        #fi
+        #export XAUTHORITY=${XAUTHORITY-/home/$user/.Xauthority}
         /bin/su $user --login -c "${@}"
     else
         #bash -c "${@}"
@@ -144,7 +182,10 @@ function load_modules() {
     modules_num=${#modules[@]}
     for ((i=0;i<${modules_num};i++)); do
         m=${modules[${i}]}
-        /sbin/modprobe ${m}
+        # If module is not already present, load it
+        if [ "`lsmod | grep \"^${m} \"`" == "" ]; then
+            /sbin/modprobe ${m}
+        fi
         #sleep 1
     done
 }
@@ -162,25 +203,53 @@ function unload_modules() {
     done
 }
 
-### Verify if volume if muted ###################################
+### Verify if volume is muted ###################################
 function volume_is_mute() {
     # 1 is true, 0 is false
-    on_off=`amixer get ${ALSA_MUTE_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$4""}'`
+    # Only check the first mixer in the list
+    # Keep only line with [on] or [off], and extract which one
+    unset output_mixers output_mixers_num is_muted on_off
+    output_mixers=(`get_output_mixers`)
+    output_mixers_num=${#output_mixers[@]}
+    on_off=`amixer get ${output_mixers[0]} | grep -e "\[on\]" -e "\[off\]" | sed -n "1 s|.*\[\(o[nf]*\)\].*|\1|pg"`
     is_muted=0
-    [ "$on_off" == "[off]" ] && is_muted=1
+    # FIXME: Cleaner fix for http://code.google.com/p/acpi-eeepc-generic/issues/detail?id=53
+    [ "${on_off:0:3}" == "off" ] && is_muted=1
     echo $is_muted
 }
 
 ### Return the volume level #####################################
 function get_volume() {
-    echo `amixer get ${ALSA_MAIN_MIXER} | grep -A 1 -e Mono | grep Playback | awk '{print ""$5""}' | sed -e "s|\[||g" -e "s|]||g" -e "s|\%||g"`
+    # Only check the first mixer in the list
+    # Keep only the line containing a "%" charater. Then sed to
+    # get the number inside the [NUMBER%] pattern.
+    echo `amixer get ${ALSA_VOLUME_MIXER[0]} | grep "%" | sed "s|.*\[\([0-9]*\)%.*|\1|g"`
+}
+
+### Set the volume level ########################################
+function alsa_set_volume() {
+    # Call this function with a parameter, for example with "5%+"
+    # to raise of 5% the volume of all mixers in ALSA_VOLUME_MIXER
+    mixers_num=${#ALSA_VOLUME_MIXER[@]}
+    for ((i=0;i<${mixers_num};i++)); do
+        m="${ALSA_VOLUME_MIXER[${i}]}"
+        amixer set $m $1 &
+    done
 }
 
 ### Return the mixer ############################################
 function get_output_mixers() {
-    mixers=`amixer scontrols | awk '{print ""$4""}' | sed -e "s|'||g" -e "s|,0||g"`
+    # Get what is between single quotes from amixer's output
+    mixers=`amixer scontrols | sed "s|.*'\(.*\)',0|\1|g"`
     i=0
+    unset output_mixers
     for m in ${mixers}; do
+        # Skip 'Mic' or 'Boost' (to filter out 'Mic Boost')
+        # since we only look for output mixers and 'Mic Boost'
+        # is split into 'Mic' and 'Boost' by bash. Skip also 'Beep'
+        if [[ "`echo $m | grep -i -e mic -e boost -e beep`" != "" ]]; then
+            continue
+        fi
         # If not a capture, its a playback
         if [ "`amixer sget $m | grep -i capture`" == "" ]; then
             output_mixers[i]=$m
@@ -192,6 +261,25 @@ function get_output_mixers() {
     #echo "output_mixers: ${output_mixers[@]}"
     #echo "nb: ${#output_mixers[@]} $i"
     echo ${output_mixers[@]}
+
+    # Might be easier:
+    #amixer controls | grep -i Playback | sed "s|.*'\(.*\)'.*|\1|g" | awk '{print ""$1""}' | uniq
+}
+
+### Mute/Unmute mixers ##########################################
+function alsa_toggle_mute() {
+    unset output_mixers output_mixers_num i m action
+    output_mixers=(`get_output_mixers`)
+    output_mixers_num=${#output_mixers[@]}
+    if [[ "`volume_is_mute`" == "0" ]]; then
+        action="mute"
+    else
+        action="unmute"
+    fi
+    for ((i=0 ; i < ${output_mixers_num} ; i++)); do
+        m="${output_mixers[${i}]}"
+        amixer set $m $action
+    done
 }
 
 ### Get the model name ##########################################
@@ -209,41 +297,41 @@ function get_model() {
 
 ### Return brightness level percentage ##########################
 function brightness_get_percentage() {
-    actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
-    maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
+    actual_brightness=`cat  ${eee_backlight}/actual_brightness`
+    maximum_brightness=`cat ${eee_backlight}/max_brightness`
     echo $((10000*$actual_brightness / (100*$maximum_brightness) ))
 }
 
 ### Set the brightness level percentage #########################
 function brightness_set_percentage() {
-    #actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
-    maximum_brightness=`cat /sys/class/backlight/eeepc/max_brightness`
+    #actual_brightness=`cat ${eee_backlight}/actual_brightness`
+    maximum_brightness=`cat ${eee_backlight}/max_brightness`
     to_set=$(( $1 * $maximum_brightness / 100 ))
     #echo "max = $maximum_brightness"
     #echo "now = $actual_brightness"
     #echo "1 = $1"
     #echo "to set = $to_set"
-    echo $to_set > /sys/class/backlight/eeepc/brightness
+    echo $to_set > ${eee_backlight}/brightness
 }
 
 ### Save brightness #############################################
 function save_brightness() {
-    cat /sys/class/backlight/eeepc/brightness > ${EEEPC_VAR}/states/brightness
+    cat ${eee_backlight}/brightness > ${EEEPC_VAR}/states/brightness
 }
 
 ### Restore brightness ##########################################
 function restore_brightness() {
-    cat ${EEEPC_VAR}/states/brightness > /sys/class/backlight/eeepc/brightness
+    cat ${EEEPC_VAR}/states/brightness > ${eee_backlight}/brightness
 }
 
 ### Set brightness (absolute value) #############################
 function brightness_set_absolute() {
-    echo $1 > /sys/class/backlight/eeepc/brightness
+    echo $1 > ${eee_backlight}/brightness
 }
 
 ### Get direction of brightness change ##########################
 function brightness_find_direction() {
-    actual_brightness=`cat /sys/class/backlight/eeepc/actual_brightness`
+    actual_brightness=`cat ${eee_backlight}/actual_brightness`
     previous_brightness=`cat ${EEEPC_VAR}/states/brightness`
     [ "x$previous_brightness" == "x" ] && previous_brightness=$actual_brightness
     to_return=""
@@ -454,7 +542,7 @@ function device_on {
     fi
 
     # Load module(s)
-    load_modules "${DRIVERS[@]}"
+    [ "${DRIVERS_LOAD}" != "no" ] && load_modules "${DRIVERS[@]}"
 
     success=$?
     if [ $success ]; then
@@ -491,8 +579,8 @@ function device_off {
     # First argument ($1):  Number of times the funciton has been called
     # Second argument ($2): Should we show notifications?
 
-    # Check if 2nd argument to given to function is "0" and disable
-    # notifications,
+    # Check if 2nd argument given to function is "0" and disable
+    # notifications.
     show_notifications=1
     [ "$2" == "0" ] && show_notifications=0
 
@@ -513,50 +601,53 @@ function device_off {
         sleep 1
     fi
 
-    # Unload module
-    unload_modules "${DRIVERS[@]}"
+    if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
+        # If rfkill switch exists
 
-    success=$?
-    if [ $success ]; then
-        # If successful...
-        if [ "${RFKILL_IS_PRESENT}" == "yes" ]; then
-            # ...and rfkill switch exists
+        # Disable the card via rfkill switch
+        echo 0 > ${RFKILL_SWITCH}
 
-            # Disable the card via rfkill switch
-            echo 0 > ${RFKILL_SWITCH}
-
-            if [ ${KERNEL_rel} -lt 29 ]; then
-                s="rfkill switch usage might fail on kernel lower than 2.6.29"
-                logger "$s"
-                echo "$s"
-            fi
-        fi
-
-        # If /sys device exists, disable it too
-        [ "${SYS_IS_PRESENT}" == "yes" ] && \
-            echo 0 > ${SYS_DEVICE}
-
-        # Save the card states
-        echo 0 > $SAVED_STATE_FILE
-
-        # Execute post-down commands
-        execute_commands "${COMMANDS_POST_DOWN[@]}"
-
-        [ "$show_notifications" == "1" ] && \
-            eeepc_notify "${NAME} is now off" ${ICON}
-    else
-        # If module unloading unsuccessful, try again
-
-        [ "$show_notifications" == "1" ] && \
-            eeepc_notify "Could not disable ${NAME}" stop
-
-        if [ $1 -lt $TOGGLE_MAX_TRY ]; then
-            [ "$show_notifications" == "1" ] && \
-                eeepc_notify "Trying again in 2 second ($(($1+1)) / $TOGGLE_MAX_TRY)" ${ICON}
-            sleep 2
-            device_off $(($1+1)) $show_notifications
+        if [ ${KERNEL_rel} -lt 29 ]; then
+            s="rfkill switch usage might fail on kernel lower than 2.6.29"
+            logger "$s"
+            echo "$s"
         fi
     fi
+
+    # If /sys device exists, disable it too
+    [ "${SYS_IS_PRESENT}" == "yes" ] && \
+        echo 0 > ${SYS_DEVICE}
+
+    # Save the card states
+    echo 0 > $SAVED_STATE_FILE
+
+    # Unload module(s)
+    [ "${DRIVERS_UNLOAD}" != "no" ] && unload_modules "${DRIVERS[@]}"
+
+    # Execute post-down commands
+    execute_commands "${COMMANDS_POST_DOWN[@]}"
+
+    [ "$show_notifications" == "1" ] && \
+        eeepc_notify "${NAME} is now off" ${ICON}
+}
+
+### Block suspend if certain programs are running ###############
+function suspend_check_blacklisted_processes() {
+    processes=( "$@" )
+    p_num=${#processes[@]}
+    logger "Checking for processes before suspending: $processes ($p_num)"
+    for ((i=0;i<${p_num};i++)); do
+        p=${processes[${i}]}
+        pid=`pidof $p`
+        logger "process #$i: $p ($pid)"
+        echo "process #$i: $p ($pid)"
+        if [ "x$pid" != "x" ]; then
+            echo "$p is running! Canceling suspend"
+            logger "$p is running! Canceling suspend"
+            eeepc_notify "$p is running! Canceling suspend" stop 5000
+            exit 0
+        fi
+    done
 }
 
 ### Get username ################################################
@@ -614,9 +705,11 @@ and set XUSER variable to your username." stop 20000
     # accordingly.
     if [ "x$user" != "x" ]; then
         home=$(getent passwd $user | cut -d: -f6)
-        XAUTHORITY=$home/.Xauthority
-        [ -f $XAUTHORITY ] && export XAUTHORITY
     fi
+    # If XAUTHORITY is not set, put a default value of
+    # $home/.Xauthority. Else, take that value.
+    XAUTHORITY=${XAUTHORITY:-$home/.Xauthority}
+    [ -f $XAUTHORITY ] && export XAUTHORITY
 fi
 
 ### End of file #################################################
