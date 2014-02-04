@@ -30,7 +30,8 @@ post_upgrade() {
 pre_remove() {
     echo " "
     echo ">>> Note that the file /etc/acpi/handler.sh is now the default."
-    sed -e 's/#event/event/g' -e 's/#action/action/g' -i /etc/acpi/events/anything
+    [ -e /etc/acpi/events/anything ] && \
+        sed -e 's/#event/event/g' -e 's/#action/action/g' -i /etc/acpi/events/anything
     echo ">>> Please restart acpid to reload actions."
     echo "# /etc/rc.d/acpid restart"
 }
