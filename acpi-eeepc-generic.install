@@ -21,6 +21,9 @@ post_install() {
     # Get the model and save it to the configuration file
     . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
     get_model
+    echo " "
+    echo ">>> Please restart acpid to reload actions."
+    echo "# /etc/rc.d/acpid restart"
 }
 
 post_upgrade() {
