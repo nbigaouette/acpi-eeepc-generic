@@ -11,16 +11,16 @@ post_install() {
         echo ">>> Please report it to http://github.com/nbigaouette/acpi-eeepc-generic/issues"
     fi
 
-    echo " "
-    echo ">>> To finish installation, read the initial setup wiki page:"
-    echo ">>> http://wiki.github.com/nbigaouette/acpi-eeepc-generic/information-on-acpi-eeepc-generics-initial-setup"
-    echo " "
-
     #echo ">>> "
 
     # Get the model and save it to the configuration file
     . /etc/acpi/eeepc/acpi-eeepc-generic-functions.sh
     get_model
+
+    echo " "
+    echo ">>> Configuration is done via /etc/conf.d/acpi-eeepc-generic.conf"
+    echo ">>> Note that you will have to COMMENT-out the 'EEEPC_CONF_DONE' option."
+    echo ">>> Else you will receive an error/warning when hitting a special key!"
     echo " "
     echo ">>> Please restart acpid to reload actions."
     echo "# /etc/rc.d/acpid restart"
