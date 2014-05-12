@@ -2,7 +2,7 @@
 
 pkgname=acpi-eeepc-generic
 pkgver=1.0.2
-pkgrel=2
+pkgrel=3
 pkgdesc="ACPI scripts for many EeePC netbook computers"
 url="https://github.com/nbigaouette/acpi-eeepc-generic"
 arch=(any)
@@ -14,6 +14,7 @@ optdepends=(
     "kdebase-kdialog: KDE's OSD"
     "sudo: super-user privileges gaining"
     "gksu: GNOME/GTK super-user privileges gaining"
+    "pm-utils : Power management (suspend and hibernate) utilities"
 )
 install=$pkgname.install
 backup=(etc/conf.d/acpi-eeepc-generic.conf)
