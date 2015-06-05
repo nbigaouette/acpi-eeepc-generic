@@ -687,7 +687,7 @@ if [ -S /tmp/.X11-unix/X0 ]; then
     [ "x$user" == "x" ] && user=$(ps aux | awk '{print ""$1""}' | \
         sort | uniq | \
         grep -v \
-            -e avahi -e bin -e dbus -e ftp-e hal -e nobody \
+            -e avahi -e bin -e dbus -e ftp -e hal -e nobody \
             -e ntp -e nx -e policykit -e privoxy -e root \
             -e tor -e USER
         )
