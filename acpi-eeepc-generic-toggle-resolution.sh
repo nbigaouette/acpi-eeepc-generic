@@ -20,11 +20,11 @@
 
 tmp_xrandr="$EEEPC_VAR/lvds-modes"
 
-if [ -e "$tmp_xrandr" ]; then
-    LVDS_XRANDR=$(cat $tmp_xrandr)
-else
+#if [ -e "$tmp_xrandr" ]; then
+#    LVDS_XRANDR=$(cat $tmp_xrandr)
+#else
     LVDS_XRANDR=$(xrandr > $tmp_xrandr)
-fi
+#fi
 
 LVDS_MODES=$(cat $tmp_xrandr | grep -F -e LVDS -A 12 | grep [0-9]x[0-9] | grep -v -e LVDS | awk '{printf $1" "}')
 LVDS_CURRENT=$(cat $tmp_xrandr | grep -F -e LVDS -A 12 | grep -F -e [0-9]x[0-9] -e "*" | awk '{print $1}')
