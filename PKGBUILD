@@ -73,9 +73,13 @@ source=(
     "acpi-eeepc-generic-toggle-webcam.sh"
     "acpi-eeepc-generic-toggle-wifi.sh"
     "acpi-eeepc-generic.conf")
-
+    
 build() {
-    mkdir -p $pkgdir/{etc/{acpi/{eeepc/models,events},conf.d,rc.d},usr/share/{applications,pixmaps}} || return 1
+    :
+}
+
+package() {
+    mkdir -p $pkgdir/{etc/acpi/{eeepc/models,events},usr/share/{applications,pixmaps}} || return 1
 
     # Install our own handler
     install -m0755 ${srcdir}/acpi-eeepc-generic-handler.sh ${pkgdir}/etc/acpi/acpi-eeepc-generic-handler.sh || return 1
